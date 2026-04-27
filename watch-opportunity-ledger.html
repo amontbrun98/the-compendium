@@ -891,4 +891,28 @@ ranked.slice(0, 12).forEach(({c, score}, i) => {
         <div class="dossier-corr"><span class="corr-tag corr-${c.corr}">${CORR_LABELS[c.corr]}</span></div>
       </div>
       <div class="dossier-score-block">
-        <div class="dossier-score" style="color:${totCo
+        <div class="dossier-score" style="color:${totCol}">${score.toFixed(2)}</div>
+        <div class="dossier-score-label">Composite</div>
+        <div class="dossier-verdict ${v.cls}">${v.l}</div>
+      </div>
+    </div>
+    <div class="dossier-info-strip">${info}</div>
+    <div class="valuation-strip">${valInfo}</div>
+    <div class="pillar-readout">${pillars}</div>
+    <div class="bull-bear-block">
+      <div class="bull-cell">
+        <div class="bb-label bull">Bull Thesis</div>
+        <div class="bb-text">${c.bull}</div>
+      </div>
+      <div class="bear-cell-box">
+        <div class="bb-label bear">Bear Thesis</div>
+        <div class="bb-text">${c.bear}</div>
+      </div>
+    </div>
+    <div class="dossier-body">${c.body}</div>
+  `;
+  dgrid.appendChild(card);
+});
+</script>
+</body>
+</html>

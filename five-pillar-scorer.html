@@ -663,4 +663,27 @@ ranked.forEach(({c,s}, i) => {
   const vintLine = c.vint === null || c.vint === undefined ? '' : `<div class="dossier-vintage-line">Vintage · <span class="vintage-stamp ${vintCls}" style="margin-left:4px;">${vintageLabel(c.vint)} ${c.vint.toFixed(2)}×</span></div>`;
   
   card.innerHTML = `
-    <div cla
+    <div class="dossier-rule"></div>
+    <div class="dossier-header">
+      <div>
+        <div class="dossier-id">№ ${dossierNumber} · ${c.cat}</div>
+        <div class="dossier-ticker">${c.t}</div>
+        <div class="dossier-name">${c.n}</div>
+        ${vintLine}
+      </div>
+      <div class="dossier-score-block">
+        <div class="dossier-score" style="color:${totCol}">${s.tot.toFixed(2)}</div>
+        <div class="dossier-score-label">Composite</div>
+        <div class="dossier-verdict ${v.cls}">${v.l}</div>
+      </div>
+    </div>
+    <div class="dossier-info-strip">${info}</div>
+    <div class="pillar-readout">${pillars}</div>
+    ${gapBlock}
+    <div class="dossier-body">${c.note}</div>
+  `;
+  dgrid.appendChild(card);
+});
+</script>
+</body>
+</html>
