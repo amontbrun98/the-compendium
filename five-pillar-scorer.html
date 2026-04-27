@@ -1,0 +1,683 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Five Pillar Ledger v6 — Expanded Universe</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+
+:root {
+  --paper: #131210; --paper-warm: #1c1a17;
+  --ink: #f0ebe2; --ink-soft: #c4bdb0; --ink-mute: #8a8278; --ink-faint: #4a4540;
+  --rule: #2c2824; --rule-strong: #f0ebe2;
+  --accent: #e85d3d; --accent-deep: #b8270d;
+  --bull: #6db83d; --bear: #e85d3d; --watch: #d4a335;
+  --highlight: #1f1c18;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body { background: var(--paper); color: var(--ink); font-family: 'Fraunces', Georgia, serif; font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; font-optical-sizing: auto; font-variation-settings: "SOFT" 50, "WONK" 0; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
+body::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(circle at 13% 27%, rgba(184,39,13,.015) 0%, transparent 40%), radial-gradient(circle at 87% 73%, rgba(184,39,13,.015) 0%, transparent 40%); pointer-events: none; z-index: 0; }
+body::after { content: ''; position: fixed; inset: 0; background-image: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(0,0,0,.005) 2px, rgba(0,0,0,.005) 3px); pointer-events: none; z-index: 1; mix-blend-mode: multiply; }
+.broadsheet { position: relative; z-index: 2; max-width: 1180px; margin: 0 auto; padding: 56px 32px 100px; }
+
+.masthead { text-align: center; border-top: 4px double var(--rule-strong); border-bottom: 4px double var(--rule-strong); padding: 28px 0 32px; margin-bottom: 24px; position: relative; }
+.masthead::before, .masthead::after { content: ''; position: absolute; left: 50%; width: 40%; height: 1px; background: var(--rule-strong); transform: translateX(-50%); }
+.masthead::before { top: 14px; }
+.masthead::after { bottom: 18px; }
+.masthead-bar { display: flex; justify-content: space-between; align-items: center; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 18px; padding: 0 4px; }
+.masthead-bar > div { display: flex; align-items: center; gap: 8px; }
+.live-pulse { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s ease-in-out infinite; }
+@keyframes pulse { 0%,100%{opacity:1;transform:scale(1)} 50%{opacity:.4;transform:scale(1.4)} }
+.masthead-title { font-family: 'Fraunces', serif; font-weight: 900; font-size: clamp(56px, 9vw, 112px); line-height: .9; letter-spacing: -.04em; font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144; margin-bottom: 8px; }
+.masthead-title .ornament { display: inline-block; color: var(--accent); font-style: italic; font-weight: 400; font-size: .85em; vertical-align: -.06em; }
+.masthead-tagline { font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; font-weight: 300; color: var(--ink-soft); letter-spacing: .04em; margin-bottom: 6px; }
+.masthead-volume { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--ink-mute); }
+
+.press-line { display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; gap: 24px; padding: 14px 0; margin-bottom: 56px; border-bottom: 1px solid var(--rule); }
+.press-meta { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute); }
+.press-meta.right { text-align: right; }
+.press-edition { font-family: 'Fraunces', serif; font-style: italic; font-weight: 500; font-size: 13px; color: var(--accent); white-space: nowrap; }
+
+.lede { display: grid; grid-template-columns: 7fr 5fr; gap: 56px; margin-bottom: 56px; padding-bottom: 48px; border-bottom: 1px solid var(--rule); }
+.lede-headline { font-family: 'Fraunces', serif; font-weight: 700; font-size: clamp(32px, 4vw, 50px); line-height: 1.04; letter-spacing: -.02em; margin-bottom: 20px; font-variation-settings: "SOFT" 30, "opsz" 144; }
+.lede-headline em { font-style: italic; font-weight: 500; color: var(--accent); }
+.lede-deck { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 18px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 24px; border-left: 3px solid var(--accent); padding-left: 20px; }
+.lede-byline { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .14em; text-transform: uppercase; color: var(--ink-mute); padding-top: 12px; border-top: 1px solid var(--rule); }
+
+.weights-panel { background: var(--paper-warm); border: 1px solid var(--rule-strong); padding: 24px; position: relative; }
+.weights-panel::before { content: 'METHODOLOGY'; position: absolute; top: -10px; left: 16px; background: var(--paper); padding: 0 10px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .2em; color: var(--ink-mute); }
+.weights-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 17px; font-style: italic; margin-bottom: 16px; color: var(--ink); }
+.weight-row { display: grid; grid-template-columns: 1fr auto; align-items: baseline; padding: 10px 0; border-bottom: 1px dotted var(--rule); gap: 16px; }
+.weight-row:last-child { border-bottom: none; }
+.weight-name { font-family: 'Fraunces', serif; font-weight: 500; font-size: 14px; color: var(--ink); }
+.weight-name span { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .1em; color: var(--ink-mute); margin-left: 6px; text-transform: uppercase; }
+.weight-value { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; font-feature-settings: "tnum"; }
+
+.formula-box { background: var(--paper-warm); border: 1px solid var(--accent); padding: 20px 24px; margin-bottom: 32px; border-left: 4px solid var(--accent); }
+.formula-tag { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; font-weight: 600; }
+.formula-line { font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink); margin-bottom: 8px; line-height: 1.7; }
+.formula-line strong { color: var(--accent); font-weight: 600; }
+.formula-explainer { font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--rule); }
+
+.section-marker { display: flex; align-items: center; gap: 16px; margin: 56px 0 28px; }
+.section-marker-line { flex: 1; height: 1px; background: var(--rule-strong); }
+.section-marker-text { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink); font-weight: 500; }
+.section-marker-num { font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; color: var(--accent); font-weight: 500; }
+
+.filter-strip { display: flex; flex-wrap: wrap; gap: 0; margin-bottom: 24px; border-top: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 14px 0; }
+.filter-label { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); padding: 6px 14px 6px 0; border-right: 1px solid var(--rule); margin-right: 14px; display: flex; align-items: center; }
+.fchip { font-family: 'Fraunces', serif; font-style: italic; font-weight: 500; font-size: 13px; padding: 6px 14px; border: none; background: transparent; color: var(--ink-mute); cursor: pointer; transition: all .2s; }
+.fchip:hover { color: var(--ink); }
+.fchip.on { color: var(--accent); background: var(--paper-warm); }
+
+.ledger-wrap { overflow-x: auto; border-top: 3px solid var(--rule-strong); border-bottom: 3px solid var(--rule-strong); margin-bottom: 56px; }
+.ledger { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; min-width: 1000px; }
+.ledger thead tr { border-bottom: 1px solid var(--rule-strong); }
+.ledger thead th { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); padding: 14px 12px; text-align: left; font-weight: 500; white-space: nowrap; background: var(--paper-warm); }
+.ledger thead th:first-child { padding-left: 16px; }
+.ledger tbody tr { border-bottom: 1px solid var(--rule); transition: background .15s; }
+.ledger tbody tr:nth-child(even) { background: rgba(184,39,13,.015); }
+.ledger tbody tr:hover { background: var(--highlight); }
+.ledger tbody tr.hidden { display: none; }
+.ledger tbody td { padding: 14px 12px; vertical-align: middle; font-size: 13px; }
+.ledger tbody td:first-child { padding-left: 16px; }
+
+.rank-num { font-family: 'Fraunces', serif; font-weight: 700; font-size: 28px; color: var(--ink-faint); font-feature-settings: "tnum"; line-height: 1; }
+.rank-num.gold { color: var(--accent); } .rank-num.silver { color: var(--ink-soft); } .rank-num.bronze { color: var(--accent-deep); }
+
+.co-name-cell { display: flex; flex-direction: column; gap: 2px; }
+.co-ticker { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; letter-spacing: -.01em; line-height: 1; color: var(--ink); }
+.co-name { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 11px; color: var(--ink-mute); }
+
+.cat-tag { display: inline-block; font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: .14em; text-transform: uppercase; padding: 3px 8px; background: var(--paper-warm); border: 1px solid var(--rule); color: var(--ink-soft); white-space: nowrap; }
+
+.vintage-stamp { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .1em; padding: 3px 7px; border-radius: 3px; white-space: nowrap; font-weight: 600; }
+.vint-aged { background: rgba(45,80,22,.08); color: var(--bull); border: 1px solid var(--bull); }
+.vint-mature { background: rgba(184,39,13,.04); color: var(--ink); border: 1px solid var(--rule-strong); }
+.vint-young { background: rgba(138,101,16,.08); color: var(--watch); border: 1px solid var(--watch); }
+.vint-fresh { background: rgba(139,29,24,.08); color: var(--bear); border: 1px solid var(--bear); }
+
+.composite { font-family: 'Fraunces', serif; font-weight: 700; font-size: 32px; font-feature-settings: "tnum"; line-height: 1; letter-spacing: -.02em; }
+
+.pillar-pills { display: flex; gap: 3px; align-items: center; }
+.pp { display: inline-flex; align-items: center; justify-content: center; width: 28px; height: 22px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; font-weight: 600; font-feature-settings: "tnum"; border: 1px solid var(--rule); position: relative; cursor: default; }
+.pp:hover::after { content: attr(data-tip); position: absolute; bottom: 28px; left: 50%; transform: translateX(-50%); background: var(--ink); color: var(--paper); padding: 5px 9px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .05em; text-transform: uppercase; white-space: nowrap; z-index: 30; }
+
+.bar-cell { width: 90px; }
+.bar-track { height: 3px; background: var(--rule); position: relative; }
+.bar-fill { height: 100%; position: relative; }
+.bar-fill::after { content: ''; position: absolute; right: -1px; top: -2px; width: 1px; height: 7px; background: currentColor; }
+
+.gap-cell { display: flex; flex-direction: column; gap: 3px; min-width: 110px; }
+.gap-tag { font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; font-feature-settings: "tnum"; padding: 3px 8px; border: 1px solid currentColor; white-space: nowrap; letter-spacing: .04em; align-self: flex-start; }
+.gap-up { color: var(--bull); background: rgba(45,80,22,.06); }
+.gap-down { color: var(--bear); background: rgba(139,29,24,.06); }
+.gap-flat { color: var(--ink-mute); }
+.gap-detail { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--ink-mute); letter-spacing: .04em; }
+
+.verdict-tag { font-family: 'Fraunces', serif; font-style: italic; font-weight: 500; font-size: 12px; white-space: nowrap; }
+.v-strong { color: var(--bull); } .v-fair { color: var(--ink); } .v-watch { color: var(--watch); } .v-risk { color: var(--bear); }
+
+.dossiers { display: grid; grid-template-columns: repeat(auto-fill, minmax(340px, 1fr)); gap: 0; border-top: 1px solid var(--rule); border-left: 1px solid var(--rule); }
+.dossier { border-right: 1px solid var(--rule); border-bottom: 1px solid var(--rule); padding: 28px 24px; background: var(--paper); position: relative; transition: background .2s; }
+.dossier:hover { background: var(--paper-warm); }
+.dossier.hidden { display: none; }
+.dossier-rule { position: absolute; top: 0; left: 0; width: 4px; height: 100%; background: var(--cc); }
+
+.dossier-header { display: flex; justify-content: space-between; align-items: flex-start; padding-bottom: 16px; margin-bottom: 16px; border-bottom: 1px solid var(--rule); }
+.dossier-id { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 4px; }
+.dossier-ticker { font-family: 'Fraunces', serif; font-weight: 700; font-size: 36px; line-height: 1; letter-spacing: -.02em; color: var(--ink); margin-bottom: 4px; }
+.dossier-name { font-family: 'Fraunces', serif; font-style: italic; font-weight: 400; font-size: 13px; color: var(--ink-mute); }
+.dossier-vintage-line { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .12em; text-transform: uppercase; margin-top: 6px; color: var(--ink-soft); }
+.dossier-score-block { text-align: right; }
+.dossier-score { font-family: 'Fraunces', serif; font-weight: 700; font-size: 56px; font-feature-settings: "tnum"; line-height: .9; letter-spacing: -.04em; }
+.dossier-score-label { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); margin-top: 2px; }
+.dossier-verdict { font-family: 'Fraunces', serif; font-style: italic; font-weight: 500; font-size: 13px; margin-top: 6px; }
+
+.dossier-info-strip { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-soft); background: var(--paper-warm); padding: 10px 12px; margin-bottom: 16px; letter-spacing: .04em; border: 1px solid var(--rule); font-feature-settings: "tnum"; line-height: 1.7; }
+
+.pillar-readout { margin-bottom: 16px; }
+.pillar-line { display: grid; grid-template-columns: 1fr auto 50px; align-items: baseline; gap: 12px; padding: 8px 0; border-bottom: 1px dotted var(--rule); }
+.pillar-line:last-child { border-bottom: none; }
+.pillar-name-block { display: flex; flex-direction: column; }
+.pillar-name { font-family: 'Fraunces', serif; font-weight: 500; font-size: 13px; color: var(--ink); }
+.pillar-weight { font-family: 'IBM Plex Mono', monospace; font-size: 8px; letter-spacing: .12em; text-transform: uppercase; color: var(--ink-mute); margin-top: 1px; }
+.pillar-bar-block { width: 90px; height: 4px; background: var(--rule); position: relative; }
+.pillar-bar-fill { height: 100%; }
+.pillar-score { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px; font-feature-settings: "tnum"; text-align: right; }
+.pillar-adjusted { font-family: 'IBM Plex Mono', monospace; font-size: 8px; color: var(--accent); margin-left: 4px; font-style: italic; }
+
+.gap-callout { padding: 12px 14px; margin-bottom: 16px; font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; line-height: 1.55; border-left: 3px solid; }
+.gap-callout.up { background: rgba(45,80,22,.05); border-color: var(--bull); color: var(--ink); }
+.gap-callout.down { background: rgba(139,29,24,.05); border-color: var(--bear); color: var(--ink); }
+.gap-callout.flat { background: var(--paper-warm); border-color: var(--ink-mute); color: var(--ink-soft); }
+.gap-callout strong { font-style: normal; font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 11px; letter-spacing: .1em; text-transform: uppercase; }
+.gap-callout-detail { font-style: normal; font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-soft); margin-top: 6px; padding-top: 6px; border-top: 1px solid var(--rule); letter-spacing: .04em; }
+
+.dossier-body { font-family: 'Fraunces', serif; font-size: 14px; line-height: 1.6; color: var(--ink-soft); font-weight: 400; }
+.dossier-body::first-letter { font-family: 'Fraunces', serif; font-weight: 700; font-size: 38px; line-height: 1; float: left; padding: 4px 8px 0 0; color: var(--accent); }
+
+.colophon { margin-top: 80px; padding: 32px 0; border-top: 4px double var(--rule-strong); display: grid; grid-template-columns: 2fr 3fr; gap: 48px; }
+.colophon-title { font-family: 'Fraunces', serif; font-style: italic; font-weight: 600; font-size: 18px; color: var(--ink); margin-bottom: 8px; }
+.colophon-text { font-family: 'IBM Plex Mono', monospace; font-size: 10px; line-height: 1.9; color: var(--ink-mute); letter-spacing: .03em; }
+.colophon-text strong { color: var(--ink-soft); font-weight: 600; letter-spacing: .08em; text-transform: uppercase; font-size: 9px; }
+
+@media (max-width: 800px) {
+  .lede { grid-template-columns: 1fr; gap: 32px; }
+  .colophon { grid-template-columns: 1fr; gap: 24px; }
+  .dossiers { grid-template-columns: 1fr; }
+  .broadsheet { padding: 32px 18px 80px; }
+  .press-line { grid-template-columns: 1fr; gap: 8px; text-align: center; }
+  .press-meta.right { text-align: center; }
+}
+
+/* PRINT / PDF EXPORT */
+@media print {
+  @page {
+    size: A4 landscape;
+    margin: 12mm 10mm;
+  }
+  body, .broadsheet {
+    background: var(--paper) !important;
+    color: var(--ink) !important;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+  body::before, body::after { display: none !important; }
+  .broadsheet { padding: 0 !important; max-width: 100% !important; }
+  .masthead { padding: 16px 0 18px; margin-bottom: 14px; page-break-after: avoid; }
+  .masthead-title { font-size: 56px !important; }
+  .lede {
+    grid-template-columns: 1.6fr 1fr !important;
+    gap: 24px !important;
+    margin-bottom: 24px !important;
+    padding-bottom: 20px !important;
+    page-break-inside: avoid;
+  }
+  .lede-headline { font-size: 22px !important; line-height: 1.15 !important; margin-bottom: 10px !important; }
+  .lede-deck { font-size: 12px !important; padding-left: 12px !important; margin-bottom: 12px !important; }
+  .lede-byline { font-size: 8px !important; }
+  .weights-panel { padding: 14px !important; }
+  .weights-title { font-size: 13px !important; margin-bottom: 8px !important; }
+  .weight-row { padding: 5px 0 !important; }
+  .weight-name { font-size: 11px !important; }
+  .weight-value { font-size: 16px !important; }
+  .formula-box { padding: 12px 16px !important; margin-bottom: 18px !important; page-break-inside: avoid; }
+  .formula-line { font-size: 10px !important; }
+  .formula-explainer { font-size: 11px !important; }
+  .section-marker { margin: 24px 0 14px !important; page-break-after: avoid; }
+  .filter-strip { display: none !important; }
+  
+  /* THE CRITICAL FIX: ledger sized to fit landscape A4 */
+  .ledger-wrap {
+    overflow: visible !important;
+    page-break-inside: auto;
+    margin-bottom: 24px !important;
+  }
+  .ledger {
+    min-width: 0 !important;
+    width: 100% !important;
+    table-layout: fixed !important;
+    font-size: 8.5px !important;
+  }
+  .ledger thead { display: table-header-group; }
+  .ledger thead th {
+    padding: 6px 4px !important;
+    font-size: 7px !important;
+    letter-spacing: .08em !important;
+  }
+  .ledger tbody tr { page-break-inside: avoid; }
+  .ledger tbody td {
+    padding: 6px 4px !important;
+    font-size: 9px !important;
+    word-break: break-word;
+  }
+  .ledger tbody td:first-child { padding-left: 6px !important; }
+  
+  /* Column widths sized for A4 landscape (~270mm usable) */
+  .ledger thead th:nth-child(1) { width: 4% !important; }   /* № */
+  .ledger thead th:nth-child(2) { width: 14% !important; }  /* Enterprise */
+  .ledger thead th:nth-child(3) { width: 10% !important; }  /* Sector */
+  .ledger thead th:nth-child(4) { width: 9% !important; }   /* Vintage */
+  .ledger thead th:nth-child(5) { width: 8% !important; }   /* Composite */
+  .ledger thead th:nth-child(6) { width: 21% !important; }  /* Pillars */
+  .ledger thead th:nth-child(7) { width: 8% !important; }   /* Strength */
+  .ledger thead th:nth-child(8) { width: 14% !important; }  /* Market Gap */
+  .ledger thead th:nth-child(9) { width: 12% !important; }  /* Reading */
+  
+  .rank-num { font-size: 18px !important; }
+  .co-ticker { font-size: 14px !important; }
+  .co-name { font-size: 8px !important; }
+  .cat-tag { font-size: 6px !important; padding: 2px 4px !important; letter-spacing: .08em !important; }
+  .vintage-stamp { font-size: 7px !important; padding: 2px 4px !important; }
+  .composite { font-size: 18px !important; }
+  .pp { width: 18px !important; height: 14px !important; font-size: 7px !important; }
+  .pp:hover::after { display: none !important; }
+  .pillar-pills { gap: 1px !important; }
+  .bar-cell { width: 50px !important; }
+  .gap-cell { min-width: 0 !important; }
+  .gap-tag { font-size: 8px !important; padding: 2px 4px !important; }
+  .gap-detail { font-size: 6px !important; }
+  .verdict-tag { font-size: 9px !important; }
+  
+  /* DOSSIERS in print - 2 column layout, page breaks between groups */
+  .dossiers {
+    grid-template-columns: repeat(2, 1fr) !important;
+    page-break-inside: auto;
+  }
+  .dossier {
+    padding: 12px 14px !important;
+    page-break-inside: avoid;
+    break-inside: avoid;
+  }
+  .dossier-header { padding-bottom: 8px !important; margin-bottom: 8px !important; }
+  .dossier-id { font-size: 7px !important; margin-bottom: 2px !important; }
+  .dossier-ticker { font-size: 22px !important; }
+  .dossier-name { font-size: 10px !important; }
+  .dossier-vintage-line { font-size: 7px !important; margin-top: 3px !important; }
+  .dossier-score { font-size: 32px !important; }
+  .dossier-score-label { font-size: 7px !important; }
+  .dossier-verdict { font-size: 11px !important; margin-top: 3px !important; }
+  .dossier-info-strip { font-size: 8px !important; padding: 6px 8px !important; margin-bottom: 8px !important; line-height: 1.5 !important; }
+  .pillar-readout { margin-bottom: 8px !important; }
+  .pillar-line { padding: 3px 0 !important; gap: 6px !important; }
+  .pillar-name { font-size: 10px !important; }
+  .pillar-weight { font-size: 6px !important; }
+  .pillar-bar-block { width: 60px !important; }
+  .pillar-score { font-size: 10px !important; }
+  .gap-callout { padding: 8px 10px !important; margin-bottom: 8px !important; font-size: 10px !important; }
+  .gap-callout strong { font-size: 8px !important; }
+  .gap-callout-detail { font-size: 7px !important; padding-top: 4px !important; margin-top: 4px !important; }
+  .dossier-body { font-size: 10px !important; line-height: 1.45 !important; }
+  .dossier-body::first-letter { font-size: 26px !important; padding: 2px 5px 0 0 !important; }
+  
+  .colophon { margin-top: 24px !important; padding: 18px 0 !important; gap: 24px !important; page-break-inside: avoid; }
+  .colophon-title { font-size: 14px !important; }
+  .colophon-text { font-size: 8px !important; line-height: 1.6 !important; }
+}
+</style>
+</head>
+<body>
+<div class="broadsheet">
+
+<header class="masthead">
+  <div class="masthead-bar">
+    <div><div class="live-pulse"></div>LIVE EDITION</div>
+    <div>VOL. III · NO. 7</div>
+    <div>APR · MMXXVI</div>
+  </div>
+  <h1 class="masthead-title">The Five Pillar <span class="ornament">&</span> Ledger</h1>
+  <div class="masthead-tagline">Thirty-one enterprises across nine sectors — measured by what they earn, what they cost, and what is paid for the journey</div>
+  <div class="masthead-volume">Edition v6 · Expanded Universe · Vintage Adjusted · Growth-Implied Market Gap</div>
+</header>
+
+<div class="press-line">
+  <div class="press-meta">EST. 2026 · COMPILED IN MIAMI</div>
+  <div class="press-edition">Expanded Universe Edition</div>
+  <div class="press-meta right">THIRTY-ONE ENTERPRISES · NINE SECTORS · ONE PAGE</div>
+</div>
+
+<div class="lede">
+  <div>
+    <h2 class="lede-headline">The universe widens — healthcare, energy, financial services, and consumer brands now <em>tested against</em> the same five pillars.</h2>
+    <p class="lede-deck">A framework calibrated only on technology will never find the next undervalued name in pharma or energy. This edition expands the comparison set to thirty companies across nine sectors. Eli Lilly and Novo Nordisk reveal what genuine quality looks like in pharmaceuticals. Mastercard sits beside Visa for direct comparison. Adobe surfaces as a value-trap candidate the framework should flag. UnitedHealth shows what happens when a low-spread defensive business meets the scoring curve.</p>
+    <div class="lede-byline">A Working Framework · Educational Use Only · Not Investment Counsel</div>
+  </div>
+  <aside class="weights-panel">
+    <div class="weights-title">Pillar Weighting</div>
+    <div class="weight-row"><div class="weight-name">Quality <span>spread</span></div><div class="weight-value">30%</div></div>
+    <div class="weight-row"><div class="weight-name">Durability <span>moat</span></div><div class="weight-value">20%</div></div>
+    <div class="weight-row"><div class="weight-name">Growth <span>trajectory</span></div><div class="weight-value">20%</div></div>
+    <div class="weight-row"><div class="weight-name">Valuation <span>price paid</span></div><div class="weight-value">20%</div></div>
+    <div class="weight-row"><div class="weight-name">Regulatory <span>external</span></div><div class="weight-value">10%</div></div>
+  </aside>
+</div>
+
+<div class="formula-box">
+  <div class="formula-tag">The Market Gap Formula</div>
+  <div class="formula-line"><strong>Implied required growth =</strong> ( current P/E ÷ 20 ) ^ (1/5) − 1</div>
+  <div class="formula-line"><strong>Market gap =</strong> actual blended growth − implied required growth, capped between −5 and +5</div>
+  <div class="formula-explainer">
+    A positive gap means the market is paying for less growth than the company delivers. A negative gap means the price requires more growth than is realistically achievable. The formula does not break at extreme P/E levels.
+  </div>
+</div>
+
+<div class="section-marker">
+  <div class="section-marker-num">I.</div>
+  <div class="section-marker-text">The Standings</div>
+  <div class="section-marker-line"></div>
+</div>
+
+<div class="filter-strip">
+  <span class="filter-label">By Sector</span>
+  <div id="filters" style="display:flex;flex-wrap:wrap;"></div>
+</div>
+
+<div class="ledger-wrap"><table class="ledger"><thead><tr>
+  <th style="width:50px;">№</th>
+  <th>Enterprise</th>
+  <th>Sector</th>
+  <th>Vintage</th>
+  <th>Composite</th>
+  <th>Pillars · Q · D · G · V · R</th>
+  <th style="width:90px;">Strength</th>
+  <th>Market Gap</th>
+  <th>Reading</th>
+</tr></thead><tbody id="tbody"></tbody></table></div>
+
+<div class="section-marker">
+  <div class="section-marker-num">II.</div>
+  <div class="section-marker-text">Company Dossiers</div>
+  <div class="section-marker-line"></div>
+</div>
+
+<div class="dossiers" id="dossiers"></div>
+
+<footer class="colophon">
+  <div>
+    <div class="colophon-title">On the expanded universe</div>
+    <p class="colophon-text">
+      Thirty-one enterprises across nine sectors. The original sixteen plus fifteen new additions covering healthcare (Eli Lilly, Novo Nordisk, UnitedHealth), financial services (Berkshire Hathaway, JPMorgan, Mastercard), energy (Exxon Mobil), enterprise software (ServiceNow, Salesforce, Adobe), consumer brands (Nike, Starbucks, Nestle), streaming (Netflix), and analog semiconductors (Texas Instruments). Same five pillars, same vintage adjustment, same market gap formula applied to all.
+    </p>
+  </div>
+  <div>
+    <div class="colophon-title">Sources & honest disclaimers</div>
+    <p class="colophon-text">
+      <strong>Data:</strong> ROIC and WACC sourced from GuruFocus, FinanceCharts, and Alpha Spread, April 2026. Forward estimates from FactSet analyst consensus. Vintage classifications and moat scoring involve judgement.<br><br>
+      <strong>Caveats:</strong> Some seeded companies have approximate moat scores where direct comparable data was limited. The framework's fair-value P/E benchmark of 20× is itself a judgement.<br><br>
+      <strong>Important:</strong> Educational purposes only. Not investment advice, recommendation, or solicitation.
+    </p>
+  </div>
+</footer>
+
+</div>
+
+<script>
+const W={quality:.30,durability:.20,growth:.20,valuation:.20,regulatory:.10};
+
+const COMPANIES=[
+  {t:'NVDA', n:'Nvidia Corporation',         cat:'Magnificent 7',          col:'#76b900',pe:28, roic:94,wacc:11,spread:83,gm:74,gt:'up',  moat:[95,88,72,55],fwdG:38,fcfG:44,fcfY:2.8, peg:0.74,reg:50,cc:0,    vint:0.85,
+   note:'Highest quality spread of any company discussed at plus 83 percent. The export controls to China and custom silicon from hyperscalers are present risks. Vintage of 0.85 reflects only three years at this elevated quality level.'},
+  {t:'CRDO', n:'Credo Technology',            cat:'AI Infrastructure',      col:'#0d9488',pe:22, roic:77,wacc:25,spread:52,gm:68,gt:'flat',moat:[80,75,70,60],fwdG:50,fcfG:48,fcfY:1.8, peg:1.2, reg:55,cc:0.35, vint:0.55,
+   note:'Two hundred percent revenue growth with a fifty-two percent spread. Customer concentration penalty of 1.05 points applied because one buyer represents 35 percent of revenue.'},
+  {t:'GOOGL',n:'Alphabet Inc.',               cat:'Magnificent 7',          col:'#0891b2',pe:19, roic:26,wacc:9, spread:17,gm:57,gt:'up',  moat:[78,70,95,40],fwdG:14,fcfG:18,fcfY:4.8, peg:1.36,reg:72,cc:0,    vint:1.00,
+   note:'Highest free cash flow yield in the dataset at 4.8 percent. Decade-plus track record. Active DOJ antitrust cases create the regulatory discount that suppresses the multiple below where pure fundamentals would place it.'},
+  {t:'AAPL', n:'Apple Inc.',                  cat:'Magnificent 7',          col:'#94a3b8',pe:30, roic:49,wacc:9, spread:40,gm:47,gt:'up',  moat:[92,95,85,50],fwdG:10,fcfG:9, fcfY:3.4, peg:3.0, reg:60,cc:0,    vint:1.00,
+   note:'Best ecosystem switching cost score in the universe. Two decades of consistent quality. Single digit revenue growth at PEG 3.0 means the AI device upgrade cycle must materialise.'},
+  {t:'META', n:'Meta Platforms',              cat:'Magnificent 7',          col:'#7c3aed',pe:22, roic:27,wacc:11,spread:16,gm:82,gt:'flat',moat:[82,65,98,38],fwdG:18,fcfG:14,fcfY:3.8, peg:1.22,reg:62,cc:0,    vint:0.85,
+   note:'Highest gross margin in the dataset at 82 percent. The 65 billion dollar capex programme is the central forward risk. Vintage of 0.85 reflects rebuild from 2022.'},
+  {t:'MSFT', n:'Microsoft Corporation',       cat:'Magnificent 7',          col:'#0096c7',pe:30, roic:31,wacc:9, spread:22,gm:69,gt:'flat',moat:[85,90,82,60],fwdG:15,fcfG:14,fcfY:2.5, peg:2.0, reg:65,cc:0,    vint:1.00,
+   note:'Highest switching cost moat in the dataset. The safest enterprise profile. Two decades of consistent quality. The 99 billion dollar capex programme is the variable most likely to compress the spread.'},
+  {t:'AMZN', n:'Amazon.com',                  cat:'Magnificent 7',          col:'#f59e0b',pe:32, roic:17,wacc:10,spread:7, gm:49,gt:'up',  moat:[70,80,88,52],fwdG:28,fcfG:35,fcfY:2.1, peg:1.14,reg:58,cc:0,    vint:0.70,
+   note:'Lowest current quality spread among profitable Mag 7. Highest forward FCF growth in the universe at 35 percent. AWS margin expansion is changing the picture faster than consensus models capture.'},
+  {t:'WMT',  n:'Walmart Inc.',                cat:'Retail',                 col:'#1d4ed8',pe:45, roic:12,wacc:7, spread:5, gm:25,gt:'up',  moat:[72,80,75,68],fwdG:10,fcfG:9, fcfY:1.4, peg:4.8, reg:75,cc:0,    vint:1.00,
+   note:'Most durable physical retail moat. Advertising revenue grew 46 percent. PEG 4.8 is the structural problem. Full vintage credit cannot rescue the price.'},
+  {t:'TSLA', n:'Tesla, Inc.',                 cat:'Magnificent 7',          col:'#ef4444',pe:110,roic:7, wacc:12,spread:-5,gm:18,gt:'dn',  moat:[35,45,60,50],fwdG:22,fcfG:18,fcfY:0.6, peg:5.0, reg:55,cc:0,    vint:0.55,
+   note:'Only company with negative spread. Compressing margins from 29 percent to 18 percent. Valuation prices in autonomous vehicles at scale, none yet proven.'},
+  {t:'MSTR', n:'Strategy (MicroStrategy)',    cat:'Bitcoin Treasury',       col:'#f97316',pe:null,roic:null,wacc:null,spread:null,gm:null,gt:'na',moat:[30,20,40,50],fwdG:null,fcfG:null,fcfY:null,peg:null,reg:35,cc:0,override:3.2, vint:null,
+   note:'Bitcoin treasury vehicle. Override score of 3.2. Preferred dividends 904 million annually against revenue 475 million. Capital structure functions only if Bitcoin appreciates continuously.'},
+  {t:'PLTR', n:'Palantir Technologies',       cat:'AI Software',            col:'#7c3aed',pe:108,roic:60,wacc:16,spread:44,gm:80,gt:'up',  moat:[78,82,65,60],fwdG:30,fcfG:35,fcfY:0.6, peg:2.36,reg:62,cc:0,    vint:0.55,
+   note:'Vintage adjustment cuts deepest here. Only consistently profitable since 2023. Quality dropped from 8.52 to 4.69 once the 0.55 multiplier applied. Market gap correctly reads negative.'},
+  {t:'V',    n:'Visa Inc.',                   cat:'Payments Network',       col:'#1a56db',pe:24, roic:33,wacc:8, spread:25,gm:80,gt:'flat',moat:[72,95,98,75],fwdG:12,fcfG:12,fcfY:3.8, peg:1.88,reg:70,cc:0,    vint:1.00,
+   note:'Most durable payments network in existence. Spread of plus 25 percent sustained for over a decade. Two hundred billion transactions annually on infrastructure already built.'},
+  {t:'TSM',  n:'Taiwan Semiconductor',        cat:'Semiconductor Foundry',  col:'#0f766e',pe:21, roic:40,wacc:12,spread:28,gm:58,gt:'up',  moat:[92,88,80,30],fwdG:28,fcfG:22,fcfY:2.0, peg:0.58,reg:30,cc:0,    vint:1.00,
+   note:'Cheapest valuation relative to growth at PEG 0.58. Two decades of foundry dominance. Regulatory score of 3.0 captures Taiwan geopolitical risk — lowest in dataset.'},
+  {t:'ASML', n:'ASML Holding',                cat:'Semiconductor Equipment',col:'#e11d48',pe:37, roic:35,wacc:10,spread:25,gm:52,gt:'up',  moat:[98,90,72,45],fwdG:18,fcfG:15,fcfY:2.5, peg:2.02,reg:45,cc:0,    vint:1.00,
+   note:'Monopoly on extreme ultraviolet lithography. Pricing power score of 98 — the highest single indicator across the dataset.'},
+  {t:'COST', n:'Costco Wholesale',            cat:'Retail',                 col:'#0369a1',pe:47, roic:22,wacc:9, spread:13,gm:13,gt:'up',  moat:[80,92,78,72],fwdG:9, fcfG:10,fcfY:2.1, peg:5.11,reg:72,cc:0,    vint:1.00,
+   note:'Membership model inverts retail economics for over thirty years. Switching cost score is second highest in the universe. PEG of 5.11 is the precise valuation problem.'},
+  {t:'BABA', n:'Alibaba Group',               cat:'Chinese Tech',           col:'#f97316',pe:19, roic:7, wacc:6, spread:1, gm:40,gt:'dn',  moat:[70,65,85,20],fwdG:8, fcfG:5, fcfY:1.7, peg:2.24,reg:15,cc:0,    vint:0.70,
+   note:'Maximum narrative discount case. ROIC barely above WACC. FCF negative recently. Regulatory score 1.5 reflects Chinese government intervention.'},
+  {t:'LLY',  n:'Eli Lilly and Company',       cat:'Healthcare',             col:'#dc2626',pe:26, roic:40,wacc:9, spread:31,gm:80,gt:'up',  moat:[92,75,55,80],fwdG:30,fcfG:25,fcfY:1.5, peg:1.26,reg:60,cc:0,    vint:0.85,
+   note:'GLP-1 obesity drugs and diabetes franchise drove a structural inflection in 2023. ROIC of 40 percent with gross margin of 80 percent reflects pricing power that pharma rarely sustains. Vintage of 0.85 acknowledges the recency of the inflection.'},
+  {t:'UNH',  n:'UnitedHealth Group',          cat:'Healthcare',             col:'#0c4a6e',pe:16, roic:9, wacc:5, spread:4, gm:23,gt:'flat',moat:[55,72,68,75],fwdG:8, fcfG:8, fcfY:5.2, peg:3.01,reg:65,cc:0,    vint:1.00,
+   note:'Largest healthcare insurer in the United States. Spread is thin but durable across decades. Forward P/E of 16 with 5.2 percent FCF yield is unusual valuation for a defensive business of this scale.'},
+  {t:'BRK.B',n:'Berkshire Hathaway',          cat:'Financial Services',     col:'#1e40af',pe:23, roic:17,wacc:6, spread:11,gm:35,gt:'flat',moat:[60,55,45,70],fwdG:8, fcfG:9, fcfY:3.5, peg:2.5, reg:80,cc:0,    vint:1.00,
+   note:'Conglomerate with insurance float, equity portfolio, and operating businesses. Decades of compounding. Cash position over 300 billion dollars limits near-term return on capital but provides optionality.'},
+  {t:'JPM',  n:'JPMorgan Chase',              cat:'Financial Services',     col:'#1e3a8a',pe:14, roic:12,wacc:7, spread:5, gm:60,gt:'flat',moat:[55,72,68,72],fwdG:8, fcfG:6, fcfY:6.5, peg:1.46,reg:70,cc:0,    vint:1.00,
+   note:'Largest bank in America. Forward P/E of 14 with 6.5 percent FCF yield. Banks face structural challenges from regulation and capital requirements but the moat is durable.'},
+  {t:'MA',   n:'Mastercard Incorporated',     cat:'Payments Network',       col:'#0891b2',pe:26, roic:50,wacc:8, spread:42,gm:78,gt:'flat',moat:[72,95,98,75],fwdG:14,fcfG:14,fcfY:3.0, peg:1.58,reg:70,cc:0,    vint:1.00,
+   note:'Twin to Visa with similar network effect score. Even higher ROIC at 50 percent. Decade of consistent compounding. Both Visa and Mastercard score in the strongest tier of the framework.'},
+  {t:'XOM',  n:'Exxon Mobil',                 cat:'Energy',                 col:'#7c2d12',pe:14, roic:14,wacc:8, spread:6, gm:32,gt:'flat',moat:[55,40,30,55],fwdG:5, fcfG:6, fcfY:5.8, peg:2.8, reg:60,cc:0,    vint:1.00,
+   note:'Integrated oil major. Forward P/E of 14 with 5.8 percent FCF yield. The framework cannot capture the macro cyclicality of energy or the long-term energy transition risk.'},
+  {t:'NFLX', n:'Netflix Inc.',                cat:'Streaming',              col:'#dc2626',pe:38, roic:25,wacc:10,spread:15,gm:45,gt:'up',  moat:[68,72,55,55],fwdG:22,fcfG:28,fcfY:2.4, peg:1.65,reg:65,cc:0,    vint:0.85,
+   note:'Streaming leader with content moat and improving margins. Ads tier and password sharing crackdown drove a margin inflection in 2024. Vintage of 0.85 reflects the recency of margin expansion.'},
+  {t:'NVO',  n:'Novo Nordisk',                cat:'Healthcare',             col:'#1e3a8a',pe:18, roic:55,wacc:7, spread:48,gm:83,gt:'flat',moat:[88,72,55,80],fwdG:18,fcfG:18,fcfY:3.5, peg:1.0, reg:65,cc:0,    vint:1.00,
+   note:'Co-leader with Eli Lilly in the GLP-1 market through Wegovy and Ozempic. Decades of diabetes franchise predates the obesity inflection. Forward P/E of 18 makes this dramatically cheaper than Lilly on similar fundamentals.'},
+  {t:'NOW',  n:'ServiceNow',                  cat:'Enterprise Software',    col:'#16a34a',pe:55, roic:25,wacc:10,spread:15,gm:79,gt:'flat',moat:[78,90,68,55],fwdG:22,fcfG:25,fcfY:1.6, peg:2.5, reg:65,cc:0,    vint:1.00,
+   note:'Workflow automation platform with deep enterprise switching costs. Decade of consistent 20+ percent growth. P/E of 55 prices in the durability of the franchise.'},
+  {t:'CRM',  n:'Salesforce',                  cat:'Enterprise Software',    col:'#0891b2',pe:25, roic:14,wacc:9, spread:5, gm:77,gt:'up',  moat:[68,85,55,55],fwdG:11,fcfG:15,fcfY:4.0, peg:2.27,reg:65,cc:0,    vint:1.00,
+   note:'CRM market leader pivoting toward AI agents. Forward P/E of 25 with 4 percent FCF yield is reasonable. The Data Cloud and Agentforce thesis is the forward catalyst.'},
+  {t:'NKE',  n:'Nike Inc.',                   cat:'Consumer Brands',        col:'#000000',pe:24, roic:18,wacc:9, spread:9, gm:44,gt:'dn',  moat:[78,55,55,55],fwdG:7, fcfG:5, fcfY:3.8, peg:3.43,reg:70,cc:0,    vint:0.70,
+   note:'Brand moat tested by competition from Hoka, On, and direct-to-consumer disruption. Gross margin compressing. Vintage of 0.70 reflects the deterioration narrative since 2023.'},
+  {t:'SBUX', n:'Starbucks',                   cat:'Consumer Brands',        col:'#1d4d3a',pe:25, roic:25,wacc:8, spread:17,gm:27,gt:'flat',moat:[80,72,55,55],fwdG:9, fcfG:10,fcfY:3.2, peg:2.78,reg:72,cc:0,    vint:1.00,
+   note:'Global coffee brand with rewards program switching cost. Same-store sales pressure in China and competition in US challenge the growth profile.'},
+  {t:'NESN', n:'Nestle SA',                   cat:'Consumer Brands',        col:'#7c2d12',pe:18, roic:14,wacc:6, spread:8, gm:48,gt:'flat',moat:[78,68,45,68],fwdG:5, fcfG:6, fcfY:5.0, peg:3.6, reg:75,cc:0,    vint:1.00,
+   note:'Largest food company globally. Defensive consumer staple with brand portfolio depth. Forward P/E of 18 with 5 percent FCF yield is unusual for a slow-growing staple.'},
+  {t:'ADBE', n:'Adobe Inc.',                  cat:'Enterprise Software',    col:'#dc2626',pe:18, roic:32,wacc:9, spread:23,gm:88,gt:'flat',moat:[85,90,55,55],fwdG:11,fcfG:13,fcfY:5.5, peg:1.64,reg:65,cc:0,    vint:1.00,
+   note:'Creative software monopoly under threat from generative AI competition. Forward P/E of 18 with 5.5 percent FCF yield reflects the AI disruption discount. Gross margin of 88 percent remains industry-leading.'},
+  {t:'TXN',  n:'Texas Instruments',           cat:'Semiconductor Foundry',  col:'#cc0000',pe:29, roic:20,wacc:10,spread:10,gm:57,gt:'flat',moat:[78,72,55,60],fwdG:21,fcfG:8, fcfY:1.8, peg:1.91,reg:65,cc:0,    vint:1.00,
+   note:'World leader in analog and embedded processing chips with decade-plus dividend reliability. Spread of plus ten percent is moderate, suppressed near-term by an aggressive 35 billion dollar capex cycle to expand 300mm fabs in Texas and Utah. Free cash flow margin compressed from 35 percent in 2022 to under 15 percent today as those investments hit the income statement. Forward earnings growth of 21 percent reflects the expected return once capex normalises. The PEG of 1.91 and FCF yield of 1.8 percent place valuation in the watch zone — paying ahead of the recovery.'},
+];
+
+function scoreQ(s, vint=1.0){
+  if(s===null)return null;
+  let base;
+  if(s<=0)base=Math.max(0,1+s*.1);
+  else if(s<=10)base=1+(s/10)*3;
+  else if(s<=25)base=4+((s-10)/15)*3;
+  else if(s<=50)base=7+((s-25)/25)*2;
+  else base=Math.min(10,9+((s-50)/50));
+  return base * vint;
+}
+function scoreD(gm,gt,moat,vint=1.0){
+  const g=Math.min(10,(gm/85)*10),t=gt==='up'?9:gt==='flat'?6:2;
+  const m=moat.reduce((a,b)=>a+b,0)/moat.length/10;
+  const base=g*.35+t*.3+m*.35;
+  return base * (0.5 + 0.5*vint);
+}
+function scoreG(fwd,fcf){if(fwd===null||fwd===undefined)return 0;return Math.min(10,((fwd+fcf)/2/100)*10);}
+function scoreV(peg,fcfY){if(peg===null||peg===undefined)return 0;return Math.max(0,Math.min(10,(5-peg)/4*10))*.5+Math.min(10,(fcfY/5)*10)*.5;}
+function scoreR(reg,cc){return Math.max(0,reg/10-cc*.3);}
+function impliedGrowthRequired(pe, targetPe=20, years=5){
+  if(pe===null||pe===undefined||pe<=0) return null;
+  return (Math.pow(pe/targetPe, 1/years) - 1) * 100;
+}
+function marketGapV2(pe, fwdG, fcfG){
+  if(pe===null||pe===undefined||fwdG===null||fwdG===undefined) return null;
+  const implied = impliedGrowthRequired(pe);
+  const actual = (fwdG + (fcfG||fwdG)) / 2;
+  const gap = actual - implied;
+  return {score: Math.max(-5, Math.min(5, gap/5)), implied, actual, gap};
+}
+function pillarColor(s){if(s>=8)return 'var(--bull)';if(s>=6.5)return 'var(--ink)';if(s>=4.5)return 'var(--watch)';return 'var(--bear)';}
+function totalColor(s){if(s>=7)return 'var(--bull)';if(s>=5.5)return 'var(--ink)';if(s>=4)return 'var(--watch)';return 'var(--bear)';}
+function verdict(s,c){
+  if(c.override!==undefined)return{l:'Treasury Vehicle',cls:'v-watch'};
+  if(s>=7)return{l:'Strong',cls:'v-strong'};
+  if(s>=6)return{l:'Solid',cls:'v-fair'};
+  if(s>=5)return{l:'Watch',cls:'v-watch'};
+  if(s>=4)return{l:'Elevated Risk',cls:'v-risk'};
+  return{l:'Speculative',cls:'v-risk'};
+}
+function vintageClass(vint){
+  if(vint===null||vint===undefined)return 'vint-mature';
+  if(vint>=1.0)return 'vint-aged';
+  if(vint>=0.85)return 'vint-mature';
+  if(vint>=0.70)return 'vint-young';
+  return 'vint-fresh';
+}
+function vintageLabel(vint){
+  if(vint===null||vint===undefined)return 'N/A';
+  if(vint>=1.0)return 'Aged';
+  if(vint>=0.85)return 'Mature';
+  if(vint>=0.70)return 'Young';
+  return 'Fresh';
+}
+function allS(c){
+  if(c.override!==undefined)return{q:2,d:1.5,g:4,v:1,r:3.5,tot:c.override,gap:null,qBase:null,dBase:null};
+  const qBase=scoreQ(c.spread,1.0),dBase=scoreD(c.gm,c.gt,c.moat,1.0);
+  const q=scoreQ(c.spread,c.vint),d=scoreD(c.gm,c.gt,c.moat,c.vint);
+  const g=scoreG(c.fwdG,c.fcfG),v=scoreV(c.peg,c.fcfY),r=scoreR(c.reg,c.cc);
+  const tot=q*W.quality+d*W.durability+g*W.growth+v*W.valuation+r*W.regulatory;
+  const gap=marketGapV2(c.pe,c.fwdG,c.fcfG);
+  return{q,d,g,v,r,tot,gap,qBase,dBase};
+}
+
+const PILLAR_KEYS=[{k:'q',l:'Quality'},{k:'d',l:'Durability'},{k:'g',l:'Growth'},{k:'v',l:'Valuation'},{k:'r',l:'Regulatory'}];
+const PILLAR_DEFS=[{k:'q',l:'Quality',w:'30%',adj:true},{k:'d',l:'Durability',w:'20%',adj:true},{k:'g',l:'Growth',w:'20%',adj:false},{k:'v',l:'Valuation',w:'20%',adj:false},{k:'r',l:'Regulatory',w:'10%',adj:false}];
+
+const ranked = COMPANIES.map(c=>({c,s:allS(c)})).sort((a,b)=>b.s.tot-a.s.tot);
+const cats = [...new Set(COMPANIES.map(c=>c.cat))].sort();
+let activeCats = new Set(cats);
+
+const fcontainer = document.getElementById('filters');
+const allBtn = document.createElement('button');
+allBtn.className = 'fchip on';
+allBtn.textContent = 'All';
+allBtn.onclick = () => {
+  activeCats = new Set(cats);
+  fcontainer.querySelectorAll('.fchip').forEach(b => b.classList.add('on'));
+  applyFilter();
+};
+fcontainer.appendChild(allBtn);
+cats.forEach(cat => {
+  const b = document.createElement('button');
+  b.className = 'fchip on';
+  b.textContent = cat;
+  b.onclick = () => {
+    if(activeCats.has(cat) && activeCats.size > 1) {
+      activeCats.delete(cat);
+      b.classList.remove('on');
+    } else if(!activeCats.has(cat)) {
+      activeCats.add(cat);
+      b.classList.add('on');
+    }
+    allBtn.classList.toggle('on', activeCats.size === cats.length);
+    applyFilter();
+  };
+  fcontainer.appendChild(b);
+});
+
+function applyFilter() {
+  document.querySelectorAll('[data-cat]').forEach(el => {
+    el.classList.toggle('hidden', !activeCats.has(el.dataset.cat));
+  });
+}
+
+const tbody = document.getElementById('tbody');
+ranked.forEach(({c,s}, i) => {
+  const rank = i+1;
+  const rankCls = rank===1?'gold':rank===2?'silver':rank===3?'bronze':'';
+  const totCol = totalColor(s.tot);
+  const v = verdict(s.tot, c);
+  const dots = PILLAR_KEYS.map(p => {
+    const pv = s[p.k], pc = pillarColor(pv);
+    return `<div class="pp" style="color:${pc}" data-tip="${p.l} · ${pv.toFixed(1)}/10">${pv.toFixed(1)}</div>`;
+  }).join('');
+  
+  let gapCellHtml = '<td><span class="gap-tag gap-flat">—</span></td>';
+  if(s.gap !== null) {
+    const sign = s.gap.score > 0 ? '+' : '';
+    const gapTxt = sign + s.gap.score.toFixed(2);
+    const gapCls = s.gap.score > 1 ? 'gap-up' : s.gap.score < -1 ? 'gap-down' : 'gap-flat';
+    const detail = `Need ${s.gap.implied.toFixed(0)}% · Got ${s.gap.actual.toFixed(0)}%`;
+    gapCellHtml = `<td><div class="gap-cell"><span class="gap-tag ${gapCls}">${gapTxt}</span><span class="gap-detail">${detail}</span></div></td>`;
+  }
+  
+  const vintCls = vintageClass(c.vint);
+  const vintTxt = c.vint === null || c.vint === undefined ? 'N/A' : `${vintageLabel(c.vint)} · ${c.vint.toFixed(2)}×`;
+  
+  const tr = document.createElement('tr');
+  tr.dataset.cat = c.cat;
+  tr.innerHTML = `
+    <td><span class="rank-num ${rankCls}">${String(rank).padStart(2,'0')}</span></td>
+    <td><div class="co-name-cell"><span class="co-ticker">${c.t}</span><span class="co-name">${c.n}</span></div></td>
+    <td><span class="cat-tag">${c.cat}</span></td>
+    <td><span class="vintage-stamp ${vintCls}">${vintTxt}</span></td>
+    <td><span class="composite" style="color:${totCol}">${s.tot.toFixed(2)}</span></td>
+    <td><div class="pillar-pills">${dots}</div></td>
+    <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${(s.tot/10)*100}%;background:${totCol};"></div></div></div></td>
+    ${gapCellHtml}
+    <td><span class="verdict-tag ${v.cls}">${v.l}</span></td>
+  `;
+  tbody.appendChild(tr);
+});
+
+const dgrid = document.getElementById('dossiers');
+ranked.forEach(({c,s}, i) => {
+  const totCol = totalColor(s.tot);
+  const v = verdict(s.tot, c);
+  const card = document.createElement('article');
+  card.className = 'dossier';
+  card.dataset.cat = c.cat;
+  card.style.setProperty('--cc', c.col);
+  
+  const pillars = PILLAR_DEFS.map(p => {
+    const val = s[p.k];
+    const pc = pillarColor(val);
+    let adjusted = '';
+    if(p.adj && c.vint && c.vint < 1.0 && p.k === 'q' && s.qBase) {
+      adjusted = `<span class="pillar-adjusted">↓ ${s.qBase.toFixed(1)}</span>`;
+    }
+    if(p.adj && c.vint && c.vint < 1.0 && p.k === 'd' && s.dBase) {
+      adjusted = `<span class="pillar-adjusted">↓ ${s.dBase.toFixed(1)}</span>`;
+    }
+    return `
+      <div class="pillar-line">
+        <div class="pillar-name-block">
+          <span class="pillar-name">${p.l}${adjusted}</span>
+          <span class="pillar-weight">${p.w}</span>
+        </div>
+        <div class="pillar-bar-block"><div class="pillar-bar-fill" style="width:${(val/10)*100}%;background:${pc};"></div></div>
+        <span class="pillar-score" style="color:${pc}">${val.toFixed(1)}</span>
+      </div>
+    `;
+  }).join('');
+  
+  const info = c.spread !== null
+    ? `ROIC ${c.roic}% &middot; WACC ${c.wacc}% &middot; Spread ${c.spread>=0?'+':''}${c.spread}% &middot; P/E ${c.pe}×`
+    : 'Bitcoin treasury structure &mdash; traditional operating metrics not applicable';
+  
+  let gapBlock = '';
+  if(s.gap !== null) {
+    let cls = 'flat', label = 'At consensus', msg = 'Market and fundamentals broadly aligned.';
+    if(s.gap.score > 1) { cls = 'up'; label = `+${s.gap.score.toFixed(2)} · undervalued`; msg = `Price requires only ${s.gap.implied.toFixed(0)}% growth. Delivering ${s.gap.actual.toFixed(0)}%.`; }
+    else if(s.gap.score < -1) { cls = 'down'; label = `${s.gap.score.toFixed(2)} · overpriced`; msg = `Price requires ${s.gap.implied.toFixed(0)}% growth for 5 years. Delivering ${s.gap.actual.toFixed(0)}%.`; }
+    else { msg = `Price requires ${s.gap.implied.toFixed(0)}% growth, delivering ${s.gap.actual.toFixed(0)}%.`; }
+    gapBlock = `<div class="gap-callout ${cls}"><strong>Market Gap · ${label}</strong><br>${msg}<div class="gap-callout-detail">Implied: ${s.gap.implied.toFixed(1)}% &middot; Actual: ${s.gap.actual.toFixed(1)}% &middot; Gap: ${s.gap.gap>=0?'+':''}${s.gap.gap.toFixed(1)}pp</div></div>`;
+  }
+  
+  const dossierNumber = String(i+1).padStart(2, '0');
+  const vintCls = vintageClass(c.vint);
+  const vintLine = c.vint === null || c.vint === undefined ? '' : `<div class="dossier-vintage-line">Vintage · <span class="vintage-stamp ${vintCls}" style="margin-left:4px;">${vintageLabel(c.vint)} ${c.vint.toFixed(2)}×</span></div>`;
+  
+  card.innerHTML = `
+    <div class="dossier-rule"></div>
+    <div class="dossier-header">
+      <div>
+        <div class="dossier-id">№ ${dossierNumber} · ${c.cat}</div>
+        <div class="dossier-ticker">${c.t}</div>
+        <div class="dossier-name">${c.n}</div>
+        ${vintLine}
+      </div>
+      <div class="dossier-score-block">
+        <div class="dossier-score" style="color:${totCol}">${s.tot.toFixed(2)}</div>
+        <div class="dossier-score-label">Composite</div>
+        <div class="dossier-verdict ${v.cls}">${v.l}</div>
+      </div>
+    </div>
+    <div class="dossier-info-strip">${info}</div>
+    <div class="pillar-readout">${pillars}</div>
+    ${gapBlock}
+    <div class="dossier-body">${c.note}</div>
+  `;
+  dgrid.appendChild(card);
+});
+</script>
+</body>
+</html>
