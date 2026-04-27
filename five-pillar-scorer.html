@@ -19,6 +19,10 @@
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html { scroll-behavior: smooth; }
+.back-link { display: inline-flex; align-items: center; gap: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-mute); text-decoration: none; padding: 4px 0; margin-bottom: 24px; border-bottom: 1px solid transparent; transition: color .2s ease, border-color .2s ease; }
+.back-link .arrow { font-family: 'Fraunces', serif; font-style: italic; font-size: 16px; letter-spacing: 0; color: var(--accent); transition: transform .2s ease; line-height: 1; }
+.back-link:hover { color: var(--ink); border-bottom-color: var(--ink); }
+.back-link:hover .arrow { transform: translateX(-3px); }
 body { background: var(--paper); color: var(--ink); font-family: 'Fraunces', Georgia, serif; font-size: 16px; line-height: 1.55; -webkit-font-smoothing: antialiased; font-optical-sizing: auto; font-variation-settings: "SOFT" 50, "WONK" 0; print-color-adjust: exact; -webkit-print-color-adjust: exact; }
 body::before { content: ''; position: fixed; inset: 0; background-image: radial-gradient(circle at 13% 27%, rgba(184,39,13,.015) 0%, transparent 40%), radial-gradient(circle at 87% 73%, rgba(184,39,13,.015) 0%, transparent 40%); pointer-events: none; z-index: 0; }
 body::after { content: ''; position: fixed; inset: 0; background-image: repeating-linear-gradient(0deg, transparent 0, transparent 2px, rgba(0,0,0,.005) 2px, rgba(0,0,0,.005) 3px); pointer-events: none; z-index: 1; mix-blend-mode: multiply; }
@@ -303,6 +307,8 @@ body::after { content: ''; position: fixed; inset: 0; background-image: repeatin
 </head>
 <body>
 <div class="broadsheet">
+
+<a class="back-link" href="index.html"><span class="arrow">←</span>Back to The Compendium</a>
 
 <header class="masthead">
   <div class="masthead-bar">
@@ -657,27 +663,4 @@ ranked.forEach(({c,s}, i) => {
   const vintLine = c.vint === null || c.vint === undefined ? '' : `<div class="dossier-vintage-line">Vintage · <span class="vintage-stamp ${vintCls}" style="margin-left:4px;">${vintageLabel(c.vint)} ${c.vint.toFixed(2)}×</span></div>`;
   
   card.innerHTML = `
-    <div class="dossier-rule"></div>
-    <div class="dossier-header">
-      <div>
-        <div class="dossier-id">№ ${dossierNumber} · ${c.cat}</div>
-        <div class="dossier-ticker">${c.t}</div>
-        <div class="dossier-name">${c.n}</div>
-        ${vintLine}
-      </div>
-      <div class="dossier-score-block">
-        <div class="dossier-score" style="color:${totCol}">${s.tot.toFixed(2)}</div>
-        <div class="dossier-score-label">Composite</div>
-        <div class="dossier-verdict ${v.cls}">${v.l}</div>
-      </div>
-    </div>
-    <div class="dossier-info-strip">${info}</div>
-    <div class="pillar-readout">${pillars}</div>
-    ${gapBlock}
-    <div class="dossier-body">${c.note}</div>
-  `;
-  dgrid.appendChild(card);
-});
-</script>
-</body>
-</html>
+    <div cla
