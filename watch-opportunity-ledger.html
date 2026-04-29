@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/tooltip.css">
 <style>
 :root {
   --paper: #131210; --paper-warm: #1c1a17;
@@ -250,13 +251,13 @@ body::after { content: ''; position: fixed; inset: 0; background-image: repeatin
     <div class="lede-byline">A Working Framework · Educational Use Only · Not Investment Counsel</div>
   </div>
   <aside class="weights-panel">
-    <div class="weights-title">Asymmetric Pillars · v3</div>
-    <div class="weight-row"><div class="weight-name">Market Expansion <span>TAM</span></div><div class="weight-value">20%</div></div>
-    <div class="weight-row"><div class="weight-name">Revenue Trajectory <span>growth</span></div><div class="weight-value">20%</div></div>
-    <div class="weight-row"><div class="weight-name">Edge & Moat <span>forming</span></div><div class="weight-value">15%</div></div>
-    <div class="weight-row"><div class="weight-name">Capital Efficiency <span>burn</span></div><div class="weight-value">15%</div></div>
-    <div class="weight-row"><div class="weight-name">Asymmetry Setup <span>payoff</span></div><div class="weight-value">15%</div></div>
-    <div class="weight-row"><div class="weight-name">Valuation <span>price discipline</span></div><div class="weight-value">15%</div></div>
+    <div class="weights-title"><span class="info" data-glossary="pillar-weights">Asymmetric Pillars · v3</span></div>
+    <div class="weight-row"><div class="weight-name"><span class="info" data-glossary="market">Market Expansion</span> <span>TAM</span></div><div class="weight-value">20%</div></div>
+    <div class="weight-row"><div class="weight-name"><span class="info" data-glossary="trajectory">Revenue Trajectory</span> <span>growth</span></div><div class="weight-value">20%</div></div>
+    <div class="weight-row"><div class="weight-name"><span class="info" data-glossary="edge">Edge & Moat</span> <span>forming</span></div><div class="weight-value">15%</div></div>
+    <div class="weight-row"><div class="weight-name"><span class="info" data-glossary="capital">Capital Efficiency</span> <span>burn</span></div><div class="weight-value">15%</div></div>
+    <div class="weight-row"><div class="weight-name"><span class="info" data-glossary="asymmetry">Asymmetry Setup</span> <span>payoff</span></div><div class="weight-value">15%</div></div>
+    <div class="weight-row"><div class="weight-name"><span class="info" data-glossary="valuation-watch">Valuation</span> <span>price discipline</span></div><div class="weight-value">15%</div></div>
   </aside>
 </div>
 
@@ -305,11 +306,11 @@ body::after { content: ''; position: fixed; inset: 0; background-image: repeatin
   <th style="width:46px;">№</th>
   <th>Enterprise</th>
   <th>Category</th>
-  <th>Correlation</th>
-  <th>Composite</th>
+  <th><span class="info" data-glossary="correlation">Correlation</span></th>
+  <th><span class="info" data-glossary="composite">Composite</span></th>
   <th>Pillars</th>
   <th style="width:82px;">Strength</th>
-  <th>Upside</th>
+  <th><span class="info" data-glossary="upside">Upside</span></th>
   <th>Reading</th>
 </tr></thead><tbody id="tbody"></tbody></table></div>
 
@@ -722,21 +723,21 @@ const COMPANIES = [
 ];
 
 const PILLAR_KEYS = [
-  {k:'market', l:'M'},
-  {k:'trajectory', l:'R'},
-  {k:'edge', l:'E'},
-  {k:'capital', l:'C'},
-  {k:'asymmetry', l:'A'},
-  {k:'valuation', l:'V', isNew:true},
+  {k:'market', l:'M', gk:'market'},
+  {k:'trajectory', l:'R', gk:'trajectory'},
+  {k:'edge', l:'E', gk:'edge'},
+  {k:'capital', l:'C', gk:'capital'},
+  {k:'asymmetry', l:'A', gk:'asymmetry'},
+  {k:'valuation', l:'V', gk:'valuation-watch', isNew:true},
 ];
 
 const PILLAR_DEFS = [
-  {k:'market', l:'Market Expansion', w:'20%'},
-  {k:'trajectory', l:'Revenue Trajectory', w:'20%'},
-  {k:'edge', l:'Edge & Moat', w:'15%'},
-  {k:'capital', l:'Capital Efficiency', w:'15%'},
-  {k:'asymmetry', l:'Asymmetry Setup', w:'15%'},
-  {k:'valuation', l:'Valuation Reasonableness', w:'15%', isNew:true},
+  {k:'market', l:'Market Expansion', w:'20%', gk:'market'},
+  {k:'trajectory', l:'Revenue Trajectory', w:'20%', gk:'trajectory'},
+  {k:'edge', l:'Edge & Moat', w:'15%', gk:'edge'},
+  {k:'capital', l:'Capital Efficiency', w:'15%', gk:'capital'},
+  {k:'asymmetry', l:'Asymmetry Setup', w:'15%', gk:'asymmetry'},
+  {k:'valuation', l:'Valuation Reasonableness', w:'15%', gk:'valuation-watch', isNew:true},
 ];
 
 const CORR_LABELS = {
@@ -769,10 +770,10 @@ function totalColor(s) {
 }
 
 function verdict(s) {
-  if(s>=8.0) return {l:'Conviction Bet', cls:'v-conviction'};
-  if(s>=6.5) return {l:'Watch Position', cls:'v-watch'};
-  if(s>=5.0) return {l:'Early Stage', cls:'v-early'};
-  return {l:'Lottery Ticket', cls:'v-lottery'};
+  if(s>=8.0) return {l:'Conviction Bet', cls:'v-conviction', gk:'verdict-conviction'};
+  if(s>=6.5) return {l:'Watch Position', cls:'v-watch', gk:'verdict-watch-pos'};
+  if(s>=5.0) return {l:'Early Stage', cls:'v-early', gk:'verdict-early'};
+  return {l:'Lottery Ticket', cls:'v-lottery', gk:'verdict-lottery'};
 }
 
 function upsideEstimate(c) {
@@ -829,22 +830,24 @@ ranked.forEach(({c, score}, i) => {
   const v = verdict(score);
   const dots = PILLAR_KEYS.map(p => {
     const pv = c[p.k], pc = pillarColor(pv);
-    const cls = p.isNew ? 'pp new-pillar' : 'pp';
-    return `<div class="${cls}" style="color:${pc}" data-tip="${p.l} · ${pv.toFixed(1)}/10">${pv.toFixed(1)}</div>`;
+    const cls = p.isNew ? 'pp new-pillar info' : 'pp info';
+    return `<div class="${cls}" style="color:${pc}" data-glossary="${p.gk}">${pv.toFixed(1)}</div>`;
   }).join('');
   
   const tr = document.createElement('tr');
   tr.dataset.corr = c.corr;
+  tr.dataset.href = `company.html?t=${encodeURIComponent(c.t)}&l=watch`;
+  tr.addEventListener('click', () => { window.location.href = tr.dataset.href; });
   tr.innerHTML = `
     <td><span class="rank-num ${rankCls}">${String(rank).padStart(2,'0')}</span></td>
     <td><div class="co-name-cell"><span class="co-ticker">${c.t}</span><span class="co-name">${c.n}</span></div></td>
     <td><span class="cat-tag">${c.cat}</span></td>
-    <td><span class="corr-tag corr-${c.corr}">${CORR_LABELS[c.corr]}</span></td>
-    <td><span class="composite" style="color:${totCol}">${score.toFixed(2)}</span></td>
+    <td><span class="corr-tag info corr-${c.corr}" data-glossary="correlation">${CORR_LABELS[c.corr]}</span></td>
+    <td><span class="composite info" style="color:${totCol}" data-glossary="composite">${score.toFixed(2)}</span></td>
     <td><div class="pillar-pills">${dots}</div></td>
     <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${(score/10)*100}%;background:${totCol};"></div></div></div></td>
-    <td><span class="upside-tag">${upsideEstimate(c)}</span></td>
-    <td><span class="verdict-tag ${v.cls}">${v.l}</span></td>
+    <td><span class="upside-tag info" data-glossary="upside">${upsideEstimate(c)}</span></td>
+    <td><span class="verdict-tag info ${v.cls}" data-glossary="${v.gk}">${v.l}</span></td>
   `;
   tbody.appendChild(tr);
 });
@@ -854,9 +857,12 @@ const dgrid = document.getElementById('dossiers');
 ranked.slice(0, 12).forEach(({c, score}, i) => {
   const totCol = totalColor(score);
   const v = verdict(score);
+  const wrapper = document.createElement('a');
+  wrapper.className = 'dossier-link';
+  wrapper.href = `company.html?t=${encodeURIComponent(c.t)}&l=watch`;
+  wrapper.dataset.corr = c.corr;
   const card = document.createElement('article');
   card.className = 'dossier';
-  card.dataset.corr = c.corr;
   card.style.setProperty('--cc', c.col);
   
   const pillars = PILLAR_DEFS.map(p => {
@@ -866,7 +872,7 @@ ranked.slice(0, 12).forEach(({c, score}, i) => {
     return `
       <div class="pillar-line">
         <div class="pillar-name-block">
-          <span class="pillar-name">${p.l}${newTag}</span>
+          <span class="pillar-name info" data-glossary="${p.gk}">${p.l}${newTag}</span>
           <span class="pillar-weight">${p.w}</span>
         </div>
         <div class="pillar-bar-block"><div class="pillar-bar-fill" style="width:${(val/10)*100}%;background:${pc};"></div></div>
@@ -874,11 +880,11 @@ ranked.slice(0, 12).forEach(({c, score}, i) => {
       </div>
     `;
   }).join('');
-  
-  const info = `Revenue ~$${c.revenue}B &middot; Growth ${c.growth}% &middot; GM ${c.gm}% &middot; TAM $${c.tam}B`;
-  const valInfo = `<strong>EV ~$${c.ev}B</strong> &middot; EV/Rev ${c.evRev}× &middot; EV/Rev/Growth ${c.evRevGrowth} &middot; ${c.marginPath}`;
+
+  const info = `Revenue ~$${c.revenue}B &middot; Growth ${c.growth}% &middot; <span class="info" data-glossary="gm">GM</span> ${c.gm}% &middot; <span class="info" data-glossary="tam">TAM</span> $${c.tam}B`;
+  const valInfo = `<strong><span class="info" data-glossary="ev">EV</span> ~$${c.ev}B</strong> &middot; <span class="info" data-glossary="evrev">EV/Rev</span> ${c.evRev}× &middot; <span class="info" data-glossary="evrevgrowth">EV/Rev/Growth</span> ${c.evRevGrowth} &middot; ${c.marginPath}`;
   const dossierNumber = String(i+1).padStart(2, '0');
-  const confTag = `<span class="confidence-tag conf-${c.confidence}">${c.confidence === 'high' ? 'High Conf' : c.confidence === 'medium' ? 'Med Conf' : 'Low Conf'}</span>`;
+  const confTag = `<span class="confidence-tag info conf-${c.confidence}" data-glossary="conf-${c.confidence}">${c.confidence === 'high' ? 'High Conf' : c.confidence === 'medium' ? 'Med Conf' : 'Low Conf'}</span>`;
   
   card.innerHTML = `
     <div class="dossier-rule"></div>
@@ -888,12 +894,12 @@ ranked.slice(0, 12).forEach(({c, score}, i) => {
         <div class="dossier-ticker">${c.t}${confTag}</div>
         <div class="dossier-name">${c.n}</div>
         <div class="dossier-thesis-line">${c.thesis}</div>
-        <div class="dossier-corr"><span class="corr-tag corr-${c.corr}">${CORR_LABELS[c.corr]}</span></div>
+        <div class="dossier-corr"><span class="corr-tag info corr-${c.corr}" data-glossary="correlation">${CORR_LABELS[c.corr]}</span></div>
       </div>
       <div class="dossier-score-block">
-        <div class="dossier-score" style="color:${totCol}">${score.toFixed(2)}</div>
+        <div class="dossier-score info" style="color:${totCol}" data-glossary="composite">${score.toFixed(2)}</div>
         <div class="dossier-score-label">Composite</div>
-        <div class="dossier-verdict ${v.cls}">${v.l}</div>
+        <div class="dossier-verdict info ${v.cls}" data-glossary="${v.gk}">${v.l}</div>
       </div>
     </div>
     <div class="dossier-info-strip">${info}</div>
@@ -901,18 +907,21 @@ ranked.slice(0, 12).forEach(({c, score}, i) => {
     <div class="pillar-readout">${pillars}</div>
     <div class="bull-bear-block">
       <div class="bull-cell">
-        <div class="bb-label bull">Bull Thesis</div>
+        <div class="bb-label bull info" data-glossary="bull-thesis">Bull Thesis</div>
         <div class="bb-text">${c.bull}</div>
       </div>
       <div class="bear-cell-box">
-        <div class="bb-label bear">Bear Thesis</div>
+        <div class="bb-label bear info" data-glossary="bear-thesis">Bear Thesis</div>
         <div class="bb-text">${c.bear}</div>
       </div>
     </div>
     <div class="dossier-body">${c.body}</div>
   `;
-  dgrid.appendChild(card);
+  wrapper.appendChild(card);
+  dgrid.appendChild(wrapper);
 });
 </script>
+<script src="assets/glossary.js"></script>
+<script src="assets/tooltip.js"></script>
 </body>
 </html>

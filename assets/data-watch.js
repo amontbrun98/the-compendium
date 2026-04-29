@@ -1,0 +1,423 @@
+// Watch Opportunity Ledger data + scoring functions
+// Mirrors the inline script in watch-opportunity-ledger.html. Exposed as window.WATCH.
+(function () {
+  const W = { market:.20, trajectory:.20, edge:.15, capital:.15, asymmetry:.15, valuation:.15 };
+
+  const COMPANIES = [
+    {t:'NET', n:'Cloudflare', cat:'Edge AI Infrastructure', corr:'tech', col:'#f48120',
+     thesis:'The control plane for the agentic internet',
+     market:9.0, trajectory:8.5, edge:8.5, capital:8.0, asymmetry:7.5, valuation:5.5,
+     revenue:2.79, growth:28, gm:75, tam:196,
+     ev:40, evRev:14.3, evRevGrowth:0.51, marginPath:'Plausible at 75% GM but premium multiple prices in execution',
+     confidence:'high',
+     bull:'TAM expanding to $231B by 2028 with AI inference at the edge. Already 20% of web behind Cloudflare. Workers AI launching as edge inference platform. Net retention 120%. Management targets $5B revenue by 2028.',
+     bear:'Hyperscalers bundling competitive offerings. Margin pressure from inference costs. Valuation pillar score reduced from 7.0 to 5.5 per board consensus — premium multiple prices in execution that has not happened.',
+     body:'Real infrastructure moat with accelerating growth. The board correctly flagged that the previous valuation score was generous. At 14x revenue the multiple is defensible on growth-adjusted basis but the margin path assumption requires execution.'},
+
+    {t:'HIMS', n:'Hims & Hers Health', cat:'Direct Consumer Health', corr:'consumer', col:'#16a34a',
+     thesis:'Vertically integrated telehealth at scale',
+     market:8.0, trajectory:9.0, edge:7.0, capital:8.5, asymmetry:8.0, valuation:8.5,
+     revenue:1.79, growth:69, gm:79, tam:120,
+     ev:7, evRev:3.9, evRevGrowth:0.06, marginPath:'High credibility: 79% GM, adj. EBITDA positive, 20% op margin reachable',
+     confidence:'high',
+     bull:'69% revenue growth on 2.2M subscribers growing 45%. GLP-1 platform monetises supply gap. Already adj. EBITDA positive. Management guides $2.3B revenue 2026.',
+     bear:'Compounded GLP-1 access could be regulated away — concentration risk. Acquisition costs rising. Direct competition from Lilly and Novo.',
+     body:'The cleanest GARP setup in the dataset. EV/Rev/Growth of 0.06 is genuinely cheap. 79% gross margin makes 20% op margins credible. Lynch was right — this is what asymmetric investing should look like.'},
+
+    {t:'IOT', n:'Samsara', cat:'Industrial IoT', corr:'industrial', col:'#6366f1',
+     thesis:'Connected operations for the physical economy',
+     market:8.5, trajectory:8.5, edge:8.0, capital:8.0, asymmetry:7.0, valuation:6.5,
+     revenue:1.46, growth:33, gm:75, tam:120,
+     ev:25, evRev:17.1, evRevGrowth:0.52, marginPath:'Plausible: 75% GM with FCF positive already',
+     confidence:'high',
+     bull:'33% revenue growth. Net retention 115%. Platform spans fleet, equipment, video safety, AI workflow.',
+     bear:'Hardware-attached SaaS slower upgrade cycles. Legacy fleet management competition. Long sales cycles.',
+     body:'Solid but unspectacular. The board noted upside is bounded — there is no scenario where Samsara becomes a 100x company. Lower asymmetry, lower probability of zero. Trade-off worth understanding.'},
+
+    {t:'CRSP', n:'CRISPR Therapeutics', cat:'Gene Editing', corr:'bio', col:'#1e40af',
+     thesis:'First commercial CRISPR — sickle cell and beyond',
+     market:9.5, trajectory:6.0, edge:8.5, capital:5.0, asymmetry:9.5, valuation:5.5,
+     revenue:0.05, growth:120, gm:65, tam:60,
+     ev:4, evRev:80, evRevGrowth:'N/A', marginPath:'Binary: profitable if pipeline delivers, otherwise ongoing burn',
+     confidence:'high',
+     bull:'Casgevy approved by FDA — first commercial CRISPR therapy. Vertex partnership provides commercial infrastructure. Pipeline includes type 1 diabetes, beta thalassemia, oncology programs.',
+     bear:'Casgevy launch slow due to one-time treatment complexity. Hundreds of millions in annual burn. Revenue depends on small number of binary clinical readouts. Reflexive risk: needs continued capital access.',
+     body:'Per board feedback, scored more honestly as Lottery Ticket than Watch Position. The capital pillar reduced from 5.5 to 5.0 reflecting Soros\'s reflexivity point — clinical-stage biotech needs continued financing access tied to share price.'},
+
+    {t:'RKLB', n:'Rocket Lab USA', cat:'Space Infrastructure', corr:'space', col:'#000000',
+     thesis:'Vertically integrated space — second mover after SpaceX',
+     market:9.0, trajectory:7.5, edge:7.5, capital:6.5, asymmetry:8.5, valuation:4.5,
+     revenue:0.44, growth:55, gm:25, tam:1500,
+     ev:14, evRev:31.8, evRevGrowth:0.58, marginPath:'Difficult: 25% GM caps long-term op margin near 10-15%',
+     confidence:'high',
+     bull:'Only profitable launch services company outside SpaceX. Neutron rocket targeting first launch 2026. Space systems business profitable and growing 80%+. Defense Department prioritising SpaceX alternatives.',
+     bear:'Neutron development risk. Operating losses significant. Heavy capex required. SpaceX dominates pricing.',
+     body:'Wood disagreed with the low valuation score, arguing space is at a 1996 internet inflection. The framework keeps the discipline — 25% gross margins structurally cap operating margins. Thesis can work but you are paying for execution.'},
+
+    {t:'DDOG', n:'Datadog', cat:'Observability Platform', corr:'tech', col:'#632ca6',
+     thesis:'Observability becomes mandatory as AI workloads multiply',
+     market:8.5, trajectory:8.0, edge:8.5, capital:9.0, asymmetry:6.5, valuation:6.0,
+     revenue:2.68, growth:25, gm:81, tam:65,
+     ev:42, evRev:15.7, evRevGrowth:0.63, marginPath:'Strong: already at 24% GAAP op margin, expanding',
+     confidence:'high',
+     bull:'AI workload monitoring is a structural new tailwind. 81% gross margins. Net retention 115%. Already cash flow positive at scale.',
+     bear:'Competition from open-source alternatives and hyperscaler-native tools. Customer cost optimization in 2024 demonstrated demand sensitivity.',
+     body:'Profitable, growing, premium-priced. The asymmetry score is moderate because the company is already large. Conviction comes from quality of the business not from upside multiple.'},
+
+    {t:'SNOW', n:'Snowflake', cat:'Data Cloud', corr:'tech', col:'#29b5e8',
+     thesis:'Data layer for the AI economy',
+     market:8.5, trajectory:7.5, edge:8.0, capital:6.5, asymmetry:6.5, valuation:5.0,
+     revenue:3.6, growth:28, gm:67, tam:300,
+     ev:55, evRev:15.3, evRevGrowth:0.55, marginPath:'Challenging: lower GM than peers, op margins lag',
+     confidence:'high',
+     bull:'Data infrastructure for AI is structural. Net retention has stabilized after decline. New AI products (Cortex) gaining traction. Massive TAM.',
+     bear:'Gross margin lower than software peers due to compute pass-through. Databricks competitive pressure. Cost optimization narrative continues.',
+     body:'Once a Wood favourite. The framework treats it more cautiously. Real platform but the unit economics are weaker than pure SaaS, which the valuation should reflect.'},
+
+    {t:'SHOP', n:'Shopify', cat:'Commerce Infrastructure', corr:'tech', col:'#95bf47',
+     thesis:'Default commerce stack for digital-native brands',
+     market:8.0, trajectory:7.5, edge:8.0, capital:8.5, asymmetry:6.0, valuation:6.0,
+     revenue:8.9, growth:26, gm:51, tam:180,
+     ev:140, evRev:15.7, evRevGrowth:0.6, marginPath:'Operating leverage emerging post-fulfillment divestiture',
+     confidence:'high',
+     bull:'Re-accelerated to 26% growth after refocusing. Free cash flow margin expanding. International growth strong. Shopify Capital and Payments services compounding.',
+     bear:'Amazon competition intensifying. Multiple still elevated. Has been a market darling for so long the easy gains may be behind.',
+     body:'Profitable, durable, but already large. Categorically a quality compounder rather than asymmetric bet. Included for completeness but unlikely to top the rankings.'},
+
+    {t:'BEAM', n:'Beam Therapeutics', cat:'Base Editing', corr:'bio', col:'#7c3aed',
+     thesis:'Next-generation precision gene editing — base editing without double-strand breaks',
+     market:9.0, trajectory:5.5, edge:9.0, capital:4.5, asymmetry:9.5, valuation:5.5,
+     revenue:0.04, growth:80, gm:60, tam:50,
+     ev:2, evRev:50, evRevGrowth:'N/A', marginPath:'Pre-revenue; profitability binary on clinical outcomes',
+     confidence:'medium',
+     bull:'Base editing is technically more precise than CRISPR — fewer off-target effects. Pipeline includes sickle cell (BEAM-101) and severe immune disorders. Platform applicable across genetic diseases.',
+     bear:'Earlier stage than CRISPR. Burn rate high. Multiple competing technologies. Clinical readout dependence.',
+     body:'Pure platform technology bet. Higher edge score than CRISPR but earlier stage and weaker capital position. Sized as lottery ticket only.'},
+
+    {t:'RXRX', n:'Recursion Pharmaceuticals', cat:'AI Drug Discovery', corr:'bio', col:'#0891b2',
+     thesis:'Industrialised AI-driven drug discovery platform',
+     market:8.5, trajectory:7.5, edge:8.0, capital:5.5, asymmetry:8.5, valuation:6.5,
+     revenue:0.075, growth:30, gm:50, tam:80,
+     ev:1.5, evRev:20, evRevGrowth:0.66, marginPath:'Pre-profit; depends on partnership economics not drug sales',
+     confidence:'high',
+     bull:'Roche/Genentech and Sanofi partnerships generating real milestone revenue. Platform approach reduces single-asset risk. Q4 2025 revenue grew 7x year-over-year due to milestone achievement. Exscientia merger added pipeline.',
+     bear:'Partnership-dependent revenue is lumpy and binary. Pure platform bet on AI delivering drugs faster — yet to be proven at scale. Burns hundreds of millions.',
+     body:'AI drug discovery thesis is compelling but unproven. Platform partnerships provide some revenue floor. The Q4 2025 milestone proves the business model can generate cash but the question is whether it can compound.'},
+
+    {t:'SDGR', n:'Schrödinger', cat:'Computational Drug Design', corr:'bio', col:'#dc2626',
+     thesis:'Physics-based simulation as the foundation of drug design',
+     market:8.0, trajectory:7.0, edge:8.5, capital:6.5, asymmetry:8.0, valuation:7.0,
+     revenue:0.21, growth:18, gm:65, tam:50,
+     ev:1.8, evRev:8.6, evRevGrowth:0.48, marginPath:'Software business profitable; pipeline burning',
+     confidence:'medium',
+     bull:'Hybrid model — software business already profitable, pipeline programs offer optionality. Deep technical moat in physics-based simulation. Used by majority of large pharma.',
+     bear:'Pipeline programs years from approval. Software growth slowing. Competing with AI-first approaches like Recursion.',
+     body:'The most balanced biotech-adjacent name. Software business provides cash flow stability while pipeline gives asymmetric upside. Less binary than pure biotech.'},
+
+    {t:'CCJ', n:'Cameco Corporation', cat:'Uranium Mining', corr:'resource', col:'#d97b35',
+     thesis:'Nuclear renaissance fed by AI data center power demand',
+     market:8.5, trajectory:7.5, edge:7.5, capital:7.5, asymmetry:7.5, valuation:6.5,
+     revenue:2.54, growth:11, gm:35, tam:80,
+     ev:55, evRev:21.7, evRevGrowth:0.85, marginPath:'Improving: EPS growing 47% in 2026, 33% in 2027 per analyst consensus',
+     confidence:'high',
+     bull:'Second-largest uranium producer globally. EPS growing 47% in 2026 and 33% in 2027 on consensus. Westinghouse 49% stake provides nuclear services exposure. AI data center power demand structural.',
+     bear:'Uranium spot price volatility. Commodity-linked earnings. 2026 revenue guidance implies 7% decline at midpoint. Already heavily appreciated.',
+     body:'The cleanest AI-tangential commodity play. Different correlation profile from tech entirely — driven by uranium spot price and nuclear policy rather than software sentiment. Adds genuine diversification.'},
+
+    {t:'NXE', n:'NexGen Energy', cat:'Pre-production Uranium', corr:'resource', col:'#92400e',
+     thesis:'Highest-grade uranium deposit in development',
+     market:9.0, trajectory:6.0, edge:8.0, capital:5.0, asymmetry:9.0, valuation:5.5,
+     revenue:0.0, growth:'N/A', gm:'N/A', tam:80,
+     ev:5, evRev:'N/A', evRevGrowth:'N/A', marginPath:'Pre-production: profitability years away',
+     confidence:'medium',
+     bull:'Arrow deposit in Saskatchewan is among highest-grade uranium reserves globally. First production targeted late 2027. Premium grade means lowest cost producer when online. Strategic importance to Western uranium supply.',
+     bear:'Pre-production company with no revenue. Permitting risk. Construction cost inflation. Years from cash flow.',
+     body:'The pure-play asymmetric uranium bet. CCJ is the established producer; NXE is the leveraged option on uranium prices through a development-stage asset. Sized small because pre-production stocks can drop 50% in a single permitting setback.'},
+
+    {t:'WPM', n:'Wheaton Precious Metals', cat:'Precious Metals Royalty', corr:'resource', col:'#fbbf24',
+     thesis:'Diversified gold/silver royalty with low-risk exposure to commodity prices',
+     market:7.5, trajectory:6.5, edge:7.0, capital:9.0, asymmetry:6.5, valuation:7.5,
+     revenue:1.4, growth:28, gm:90, tam:50,
+     ev:36, evRev:25.7, evRevGrowth:0.92, marginPath:'Already 70% net margin — royalty model is structurally profitable',
+     confidence:'high',
+     bull:'Royalty model means costs are fixed while revenue scales with metal prices. 90% gross margins. No operational risk — collects from mining partners. Inflation hedge.',
+     bear:'Precious metals are not always inflation hedges. Royalty stream depends on mine operators continuing production. Less leverage to gold price than miners.',
+     body:'Different correlation profile entirely — driven by gold and silver prices and inflation expectations. Adds genuine diversification to a tech-heavy sleeve. Lower upside but lower risk than pure miners.'},
+
+    {t:'ALB', n:'Albemarle Corporation', cat:'Lithium', corr:'resource', col:'#0891b2',
+     thesis:'Lithium price recovery as EV demand normalises',
+     market:8.0, trajectory:5.0, edge:7.0, capital:6.0, asymmetry:8.0, valuation:6.5,
+     revenue:5.4, growth:-15, gm:25, tam:120,
+     ev:13, evRev:2.4, evRevGrowth:'N/A', marginPath:'Cyclical: profitable when lithium prices recover',
+     confidence:'medium',
+     bull:'Lithium prices crashed 80% from 2022 peak. Albemarle largest US lithium producer. EV demand still growing structurally despite slowdown. Mean reversion in commodity supply/demand.',
+     bear:'Operating at breakeven or loss at current lithium prices. Chinese supply continues to flood market. Energy transition timing uncertain.',
+     body:'Distressed commodity play. Different bet entirely from tech — works if lithium prices revert toward historical norms. The asymmetry is symmetric — large gain if cycle turns, further losses if it does not.'},
+
+    {t:'NU', n:'Nu Holdings', cat:'Latin America Fintech', corr:'em', col:'#820ad1',
+     thesis:'Largest digital banking platform in Latin America',
+     market:9.0, trajectory:9.0, edge:8.5, capital:8.5, asymmetry:8.5, valuation:7.5,
+     revenue:14.4, growth:45, gm:80, tam:200,
+     ev:80, evRev:5.6, evRevGrowth:0.12, marginPath:'Already profitable: 19.9% efficiency ratio record',
+     confidence:'high',
+     bull:'Serves 60% of Brazilian adults. Expanding to Mexico and Colombia. 45% revenue growth with record efficiency ratio. Already highly profitable. EM banking digitisation story.',
+     bear:'Brazilian credit cycle risk. Currency volatility. Political risk. Competition from incumbent banks responding.',
+     body:'The strongest case in the dataset for emerging market financial disruption. Real profits, real scale, real growth. Different correlation profile from US tech entirely.'},
+
+    {t:'MELI', n:'MercadoLibre', cat:'LatAm E-commerce + Fintech', corr:'em', col:'#fff159',
+     thesis:'Amazon plus PayPal plus Affirm rolled into one for Latin America',
+     market:9.5, trajectory:9.0, edge:9.0, capital:7.5, asymmetry:8.0, valuation:7.0,
+     revenue:28.9, growth:45, gm:45, tam:500,
+     ev:130, evRev:4.5, evRevGrowth:0.10, marginPath:'Margins compressing temporarily due to investment',
+     confidence:'high',
+     bull:'28 consecutive quarters of 30%+ revenue growth — unprecedented for company at this scale. Mercado Pago has 78M monthly active users. Credit portfolio grew 90% YoY. LatAm e-commerce penetration only 14% vs 30%+ developed markets.',
+     bear:'Margin compression from credit and logistics investments. FX volatility. Political risk in Argentina. Already $130B EV.',
+     body:'Possibly the highest-quality compounder in this entire dataset. Already large but the runway in Latin America is genuinely enormous. The framework slightly underweights it because of size — but Lynch would call this a category error.'},
+
+    {t:'COIN', n:'Coinbase', cat:'Crypto Infrastructure', corr:'tech', col:'#0052ff',
+     thesis:'Regulated US crypto rails — financial infrastructure not just trading',
+     market:8.0, trajectory:7.5, edge:8.5, capital:7.0, asymmetry:8.5, valuation:5.5,
+     revenue:6.5, growth:38, gm:85, tam:150,
+     ev:75, evRev:11.5, evRevGrowth:0.30, marginPath:'Cyclical with crypto prices but moving toward subscription model',
+     confidence:'medium',
+     bull:'Stablecoin infrastructure (USDC partnership) provides recurring revenue floor. Base Layer 2 network has product-market fit. International expansion underway. Regulatory clarity improving.',
+     bear:'Crypto trading revenue still cyclical. Competition from Binance and Robinhood. Regulatory environment can shift quickly.',
+     body:'Less correlated with tech than appears — actually moves more with crypto cycles than software stocks. The subscription transition matters because it would smooth the cyclicality. Treat as crypto exposure not tech exposure.'},
+
+    {t:'HOOD', n:'Robinhood', cat:'Retail Trading', corr:'consumer', col:'#00c805',
+     thesis:'Default brokerage for under-40 investors',
+     market:7.5, trajectory:8.5, edge:7.0, capital:8.0, asymmetry:7.0, valuation:7.0,
+     revenue:2.7, growth:50, gm:80, tam:80,
+     ev:35, evRev:13.0, evRevGrowth:0.26, marginPath:'Already profitable, expanding margins',
+     confidence:'high',
+     bull:'50% revenue growth with crypto trading recovery. Retirement product (IRA) gaining real traction. Net deposit growth strong. Cash management economics improving with rates.',
+     bear:'Heavily dependent on crypto trading volume — cyclical. Younger user base may not be sticky. Competition from incumbents lowering fees.',
+     body:'Better than Coinbase for crypto exposure if you also want broader retail finance trends. The retirement product is what could turn this from cyclical broker to durable franchise.'},
+
+    {t:'CELH', n:'Celsius Holdings', cat:'Energy Drinks', corr:'consumer', col:'#16a34a',
+     thesis:'Better-for-you energy drink taking share from Monster and Red Bull',
+     market:7.5, trajectory:6.0, edge:7.5, capital:8.0, asymmetry:7.0, valuation:6.5,
+     revenue:1.4, growth:5, gm:50, tam:60,
+     ev:7, evRev:5.0, evRevGrowth:'N/A', marginPath:'Profitable but growth has decelerated significantly',
+     confidence:'medium',
+     bull:'Pepsi distribution agreement de-risks logistics. International expansion underway. Brand resonates with health-conscious consumers. Margin profile attractive.',
+     bear:'Growth has decelerated from 100%+ in 2023 to single digits in 2025. Stock has corrected 80% from peak. Competition from Monster Bang Energy and others intensifying.',
+     body:'A cautionary tale that became a possible second-chance setup. The post-correction valuation is reasonable. The question is whether this is a temporary growth pause or a permanent slowdown. Asymmetric setup either way.'},
+
+    {t:'CAVA', n:'CAVA Group', cat:'Mediterranean Fast Casual', corr:'consumer', col:'#d97b35',
+     thesis:'The Chipotle of Mediterranean food',
+     market:8.0, trajectory:8.5, edge:7.0, capital:7.5, asymmetry:7.5, valuation:5.5,
+     revenue:1.16, growth:35, gm:25, tam:25,
+     ev:11, evRev:9.5, evRevGrowth:0.27, marginPath:'Restaurant unit economics strong but multiple is steep',
+     confidence:'medium',
+     bull:'Same-store sales growing 17%. Restaurant-level margins 25%. Unit growth runway from 320 stores to potentially 1,000+. Demographic and category tailwinds.',
+     bear:'Premium multiple already prices in dramatic store growth. Restaurant industry historically unforgiving. Labour cost pressure.',
+     body:'Real story but steep valuation. The question is whether this becomes Chipotle (10x from here) or another middling chain. The unit economics support the bull case but the entry price requires perfect execution.'},
+
+    {t:'ELF', n:'e.l.f. Beauty', cat:'Cosmetics Disruptor', corr:'consumer', col:'#ec4899',
+     thesis:'Mass-market cosmetics taking share from prestige brands through social media',
+     market:7.0, trajectory:8.0, edge:7.0, capital:8.5, asymmetry:7.0, valuation:6.5,
+     revenue:1.3, growth:25, gm:71, tam:50,
+     ev:6, evRev:4.6, evRevGrowth:0.18, marginPath:'Already profitable with expanding margins',
+     confidence:'medium',
+     bull:'71% gross margins for mass-market cosmetics is exceptional. Direct-to-consumer plus retail expansion working. Gen Z brand resonance. International runway.',
+     bear:'Stock corrected 60% from peak as growth decelerates. Competitive pressure from new social-media-native brands. Beauty category trends shift quickly.',
+     body:'Post-correction setup. The fundamental moat is real — gross margins prove pricing power. The question is whether the growth deceleration is cyclical or structural.'},
+
+    {t:'SYM', n:'Symbotic', cat:'Warehouse Automation Robotics', corr:'industrial', col:'#1e40af',
+     thesis:'AI-powered warehouse robots reshaping logistics',
+     market:8.5, trajectory:8.0, edge:7.5, capital:6.5, asymmetry:8.0, valuation:5.5,
+     revenue:1.8, growth:35, gm:18, tam:200,
+     ev:18, evRev:10.0, evRevGrowth:0.29, marginPath:'Improving: 18% GM toward target 25%+ at scale',
+     confidence:'medium',
+     bull:'Walmart anchor customer with massive backlog. Albertsons and Target also customers. Backlog of $22B provides revenue visibility. Robotics-as-a-service model emerging.',
+     bear:'Customer concentration with Walmart (heavy concentration penalty in core ledger). Hardware businesses traditionally compress margins. Backlog conversion timing uncertain.',
+     body:'High-conviction operational story with real customers but customer concentration is the risk. Different exposure entirely from tech — driven by capex cycles and warehouse automation.'},
+
+    {t:'ROK', n:'Rockwell Automation', cat:'Factory Automation', corr:'industrial', col:'#dc2626',
+     thesis:'Beneficiary of US manufacturing reshoring',
+     market:7.0, trajectory:5.5, edge:8.0, capital:8.0, asymmetry:6.0, valuation:6.0,
+     revenue:8.3, growth:0, gm:39, tam:60,
+     ev:32, evRev:3.9, evRevGrowth:'N/A', marginPath:'Mature business with steady margins',
+     confidence:'medium',
+     bull:'Reshoring tailwind structural. Industrial automation underinvested for decades. Software (FactoryTalk) growing faster than hardware.',
+     bear:'Revenue currently flat as customers pause large capex. Cyclical business. Asia competition.',
+     body:'The boring industrial pick. Lower upside but reshoring is a multi-decade theme. Diversifies sleeve away from software entirely.'},
+
+    {t:'AVAV', n:'AeroVironment', cat:'Defense Drones', corr:'space', col:'#dc2626',
+     thesis:'Unmanned systems for modern warfare',
+     market:8.0, trajectory:7.0, edge:7.5, capital:7.0, asymmetry:7.5, valuation:6.0,
+     revenue:0.85, growth:35, gm:40, tam:50,
+     ev:5, evRev:5.9, evRevGrowth:0.17, marginPath:'Profitable; margins improving with scale',
+     confidence:'medium',
+     bull:'Switchblade loitering munitions proven in Ukraine. Major defense contracts ramping. International demand structural. Defense Department prioritising attritable systems.',
+     bear:'Defense contracts cyclical. Lumpy quarterly revenue. Competition from larger defense primes.',
+     body:'Pure play on the shift toward unmanned warfare. Different correlation profile entirely — driven by defense budgets and geopolitical events. Real asymmetric setup.'},
+
+    {t:'KTOS', n:'Kratos Defense', cat:'Unmanned Combat Systems', corr:'space', col:'#000000',
+     thesis:'Low-cost unmanned aircraft and missile systems',
+     market:8.0, trajectory:6.5, edge:7.0, capital:6.0, asymmetry:8.0, valuation:5.5,
+     revenue:1.2, growth:13, gm:25, tam:80,
+     ev:6, evRev:5.0, evRevGrowth:0.38, marginPath:'Improving: 25% GM, scaling toward profitability',
+     confidence:'medium',
+     bull:'Valkyrie unmanned aircraft Air Force CCA program could be transformational. Hypersonic targets business growing. Defense Department wants low-cost attritable systems.',
+     bear:'Long sales cycles in defense. Profitability still lumpy. Multiple is elevated for a defense contractor.',
+     body:'Higher asymmetry than AVAV but earlier stage. CCA program is the catalyst — if Valkyrie wins meaningful share, this is a 5x. If Boeing or Lockheed entries dominate, growth disappoints.'},
+
+    {t:'BABA', n:'Alibaba Group', cat:'Chinese Tech', corr:'em', col:'#f97316',
+     thesis:'The maximum narrative discount case',
+     market:7.0, trajectory:5.0, edge:7.5, capital:7.0, asymmetry:8.0, valuation:8.5,
+     revenue:130, growth:8, gm:40, tam:1000,
+     ev:175, evRev:1.3, evRevGrowth:0.16, marginPath:'Cash flow positive at scale',
+     confidence:'high',
+     bull:'Trades at 1.3x revenue — among cheapest large-cap globally. Cloud business growing 18%. International commerce platforms growing. Massive cash position. Buybacks accelerating.',
+     bear:'Chinese government intervention risk continues. Geopolitical tension with US. Domestic competition from PDD and ByteDance.',
+     body:'Soros\'s reflexive narrative case. The fundamentals are not what they were but the price has overcorrected far below where pure financials suggest. Asymmetric upside if narrative shifts.'},
+
+    {t:'PDD', n:'PDD Holdings', cat:'Chinese E-commerce', corr:'em', col:'#dc2626',
+     thesis:'Temu international expansion + dominant Chinese discount platform',
+     market:8.5, trajectory:8.0, edge:7.5, capital:8.0, asymmetry:8.0, valuation:7.5,
+     revenue:55, growth:55, gm:60, tam:600,
+     ev:160, evRev:2.9, evRevGrowth:0.05, marginPath:'Already highly profitable',
+     confidence:'medium',
+     bull:'55% revenue growth at $55B base. Temu disrupting Western e-commerce. PDD app dominant in Chinese discount segment. Capital-light marketplace model.',
+     bear:'Temu losing money at scale. Regulatory risk in US (de minimis rule changes). Chinese government risk. Competition from JD and Alibaba intensifying domestically.',
+     body:'Higher growth than BABA at slightly higher multiple. The Temu international story is compelling but US regulatory action could meaningfully impact economics.'},
+
+    {t:'CRWD', n:'CrowdStrike', cat:'Cybersecurity Platform', corr:'tech', col:'#fc1d2c',
+     thesis:'AI-native security platform consolidating point solutions',
+     market:8.0, trajectory:7.5, edge:8.5, capital:8.5, asymmetry:6.5, valuation:5.0,
+     revenue:4.0, growth:28, gm:78, tam:225,
+     ev:90, evRev:22.5, evRevGrowth:0.80, marginPath:'Profitable; recovering from July 2024 outage damage',
+     confidence:'high',
+     bull:'Falcon platform consolidates 28+ modules. Real network effects in threat detection. Security spending defensive even in recession.',
+     bear:'July 2024 outage damaged trust. Competition from Microsoft Defender bundling. Premium multiple prices in continued execution.',
+     body:'Quality compounder more than asymmetric bet. Already too large for true asymmetric upside but real moat. Lower upside but lower probability of zero.'},
+
+    {t:'NBIS', n:'Nebius Group', cat:'AI Infrastructure / GPU Cloud', corr:'tech', col:'#22c55e',
+     thesis:'Pure-play GPU cloud serving AI training and inference',
+     market:9.0, trajectory:9.0, edge:7.0, capital:6.0, asymmetry:9.0, valuation:6.0,
+     revenue:0.20, growth:200, gm:30, tam:200,
+     ev:8, evRev:40, evRevGrowth:0.20, marginPath:'Pre-profit; capex-intensive build-out phase',
+     confidence:'medium',
+     bull:'200%+ revenue growth as GPU capacity comes online. Yandex pedigree in cloud infrastructure. NVIDIA partnership. Demand for non-hyperscaler GPU access growing.',
+     bear:'Capex-intensive. Competition from CoreWeave (private), Lambda, hyperscalers. Energy costs and GPU supply constraints. Russian heritage creates investor concerns.',
+     body:'Pure asymmetric AI infrastructure bet. Higher upside than Cloudflare because earlier stage and smaller. Risk profile is fundamentally different from established SaaS — capex cycle dependent.'},
+
+    {t:'ESTC', n:'Elastic NV', cat:'Search & Observability', corr:'tech', col:'#005571',
+     thesis:'Enterprise search infrastructure becomes AI infrastructure',
+     market:7.5, trajectory:6.5, edge:7.5, capital:8.0, asymmetry:6.5, valuation:7.0,
+     revenue:1.4, growth:18, gm:75, tam:50,
+     ev:8, evRev:5.7, evRevGrowth:0.32, marginPath:'Already cash flow positive',
+     confidence:'medium',
+     bull:'Vector search capabilities for AI/RAG applications. Enterprise customers using Elastic for AI deployments. Reasonable valuation relative to growth.',
+     bear:'Slower growth than peers. Open-source competition. Cloud transition still incomplete.',
+     body:'Reasonable price for a real platform. Lower asymmetry but lower risk than NBIS.'},
+
+    {t:'SE', n:'Sea Limited', cat:'SE Asia Tech Conglomerate', corr:'em', col:'#ee4d2d',
+     thesis:'Triple-engine: gaming, e-commerce, fintech across Southeast Asia',
+     market:8.5, trajectory:8.0, edge:7.5, capital:7.5, asymmetry:8.0, valuation:7.0,
+     revenue:16.0, growth:22, gm:42, tam:200,
+     ev:60, evRev:3.75, evRevGrowth:0.17, marginPath:'Free cash flow positive across all segments',
+     confidence:'medium',
+     bull:'Shopee dominant SE Asian e-commerce. SeaMoney scaling. Garena gaming returning to growth. Region structurally underbanked and underdigitised.',
+     bear:'TikTok Shop competitive pressure. Indonesian regulatory risk. Currency volatility across markets.',
+     body:'Excellent diversification candidate. Different correlation profile from US tech entirely. Real businesses with real growth across three categories.'},
+
+    {t:'7203', n:'Toyota Motor (TM ADR)', cat:'Hybrid + Solid State Battery', corr:'industrial', col:'#dc2626',
+     thesis:'Hybrid sales surge plus solid-state battery breakthrough',
+     market:7.5, trajectory:5.5, edge:8.0, capital:9.0, asymmetry:7.0, valuation:7.5,
+     revenue:310, growth:5, gm:18, tam:2000,
+     ev:280, evRev:0.9, evRevGrowth:0.18, marginPath:'Already 8% net margins, scaling',
+     confidence:'high',
+     bull:'Hybrid sales accelerating as pure EV demand pauses. Solid-state battery production target 2027. Trades at 0.9x revenue — extraordinary for a company of this scale and quality.',
+     bear:'Slow EV transition could become permanent disadvantage. Currency exposure. Japan-specific governance issues, though improving.',
+     body:'Different category entirely. Toyota at this multiple, with this balance sheet, is genuinely cheap. The hybrid plus solid-state battery thesis is the upside catalyst.'},
+
+    {t:'SFTBY', n:'SoftBank Group', cat:'Tech Conglomerate / Vision Fund', corr:'tech', col:'#000000',
+     thesis:'Arm Holdings stake plus AI portfolio at sum-of-parts discount',
+     market:8.5, trajectory:6.5, edge:7.0, capital:7.0, asymmetry:8.5, valuation:7.0,
+     revenue:50, growth:5, gm:30, tam:'N/A',
+     ev:120, evRev:2.4, evRevGrowth:'N/A', marginPath:'NAV-driven; underlying portfolio drives returns',
+     confidence:'medium',
+     bull:'Arm Holdings stake worth $80B+. OpenAI investment positions. Vision Fund portfolio includes major AI players. Stock often trades at significant discount to NAV.',
+     bear:'Vision Fund track record poor. Masayoshi Son\'s capital allocation has been volatile. Arm valuation itself elevated.',
+     body:'Another reflexive narrative case. Trades like a sum-of-parts but the parts include some of the highest-asymmetry AI exposures available publicly.'},
+
+    {t:'MDGL', n:'Madrigal Pharmaceuticals', cat:'Liver Disease (NASH)', corr:'bio', col:'#16a34a',
+     thesis:'First and currently only approved NASH therapy',
+     market:8.5, trajectory:9.0, edge:8.5, capital:6.0, asymmetry:8.0, valuation:6.5,
+     revenue:0.18, growth:'>1000', gm:80, tam:25,
+     ev:6, evRev:33, evRevGrowth:'N/A', marginPath:'Pre-profit; depends on Rezdiffra adoption',
+     confidence:'medium',
+     bull:'Rezdiffra approved March 2024 — first NASH therapy. Disease affects 1.5M+ Americans with liver biopsy-confirmed NASH. No approved competitors. Premium pricing.',
+     bear:'Adoption ramping slower than initial estimates. Competition coming from GLP-1 manufacturers. Insurance coverage challenges.',
+     body:'Single-product biotech with monopoly position. The asymmetry is genuine — if adoption hits forecasts this is multi-billion in annual sales. If GLP-1s solve NASH first, the moat erodes.'},
+
+    {t:'OKLO', n:'Oklo Inc.', cat:'Small Modular Reactors', corr:'space', col:'#dc2626',
+     thesis:'Small modular nuclear reactors for AI data center power',
+     market:9.5, trajectory:5.0, edge:8.5, capital:4.0, asymmetry:9.5, valuation:4.0,
+     revenue:0.0, growth:'N/A', gm:'N/A', tam:500,
+     ev:8, evRev:'N/A', evRevGrowth:'N/A', marginPath:'Pre-revenue; first reactor target 2027+',
+     confidence:'low',
+     bull:'Sam Altman backed. Microsoft partnership. SMRs theoretically could power data centers more reliably than grid. NRC has approved fuel design. Market interest immense.',
+     bear:'Pre-revenue. NRC approval timeline uncertain. Construction cost overruns endemic to nuclear. Competition from larger SMR developers.',
+     body:'The most extreme asymmetric bet in the dataset. Pre-revenue, pre-product, but addressing genuinely massive market. The valuation pillar correctly scores this 4.0 — no current revenue to anchor against. Sized as lottery ticket only.'},
+  ];
+
+  const PILLAR_DEFS = [
+    {k:'market',     l:'Market Expansion',       w:0.20, weightLabel:'20%', glossKey:'market'},
+    {k:'trajectory', l:'Revenue Trajectory',     w:0.20, weightLabel:'20%', glossKey:'trajectory'},
+    {k:'edge',       l:'Edge & Moat',            w:0.15, weightLabel:'15%', glossKey:'edge'},
+    {k:'capital',    l:'Capital Efficiency',     w:0.15, weightLabel:'15%', glossKey:'capital'},
+    {k:'asymmetry',  l:'Asymmetry Setup',        w:0.15, weightLabel:'15%', glossKey:'asymmetry'},
+    {k:'valuation',  l:'Valuation Reasonableness',w:0.15,weightLabel:'15%', glossKey:'valuation-watch'},
+  ];
+
+  const CORR_LABELS = {
+    tech: 'Tech Growth',
+    bio: 'Biotech',
+    resource: 'Resources',
+    financial: 'Financial',
+    consumer: 'Consumer',
+    industrial: 'Industrial',
+    space: 'Space/Defense',
+    em: 'Emerging Markets',
+  };
+
+  function composite(c) {
+    return c.market * W.market + c.trajectory * W.trajectory + c.edge * W.edge + c.capital * W.capital + c.asymmetry * W.asymmetry + c.valuation * W.valuation;
+  }
+  function pillarColor(s) {
+    if (s>=8.5) return 'var(--conviction)';
+    if (s>=7) return 'var(--accent)';
+    if (s>=5.5) return 'var(--early)';
+    return 'var(--lottery)';
+  }
+  function totalColor(s) {
+    if (s>=8) return 'var(--conviction)';
+    if (s>=6.5) return 'var(--accent)';
+    if (s>=5) return 'var(--early)';
+    return 'var(--lottery)';
+  }
+  function verdict(s) {
+    if (s>=8.0) return {l:'Conviction Bet', cls:'v-conviction', key:'verdict-conviction'};
+    if (s>=6.5) return {l:'Watch Position', cls:'v-watch',      key:'verdict-watch-pos'};
+    if (s>=5.0) return {l:'Early Stage',    cls:'v-early',      key:'verdict-early'};
+    return        {l:'Lottery Ticket',      cls:'v-lottery',    key:'verdict-lottery'};
+  }
+  function upsideEstimate(c) {
+    const upside = (c.market + c.asymmetry) / 2;
+    const discount = (c.valuation - 5) / 5;
+    const adjusted = upside + discount;
+    if (adjusted >= 8.5) return '5-10×';
+    if (adjusted >= 7.5) return '3-7×';
+    if (adjusted >= 6.5) return '2-5×';
+    return '2-3×';
+  }
+
+  window.WATCH = {
+    W, COMPANIES, PILLAR_DEFS, CORR_LABELS,
+    composite, pillarColor, totalColor, verdict, upsideEstimate,
+  };
+})();

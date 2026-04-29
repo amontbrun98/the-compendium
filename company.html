@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Company Dossier — The Compendium</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/tooltip.css">
+<style>
+:root {
+  --paper: #131210; --paper-warm: #1c1a17; --paper-deep: #0a0908;
+  --ink: #f0ebe2; --ink-soft: #c4bdb0; --ink-mute: #8a8278; --ink-faint: #4a4540;
+  --rule: #2c2824; --rule-strong: #f0ebe2;
+  --accent: #e85d3d; --accent-deep: #b8270d;
+  --gold: #d4a335;
+  --bull: #6db83d; --bear: #e85d3d; --watch: #d4a335;
+  --conviction: #6db83d; --early: #5b9bb8; --lottery: #b8270d;
+  --tech: #5b9bb8; --bio: #b864cc; --resource: #d97b35; --financial: #6db83d;
+  --consumer: #e85d3d; --industrial: #8a8278; --space: #4a4540;
+  --highlight: #1f1c18;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--paper);
+  color: var(--ink);
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 16px;
+  line-height: 1.55;
+  -webkit-font-smoothing: antialiased;
+  font-optical-sizing: auto;
+}
+body.ledger-watch { --accent: #d4a335; --accent-deep: #8a6510; }
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image:
+    radial-gradient(circle at 13% 27%, rgba(232,93,61,.025) 0%, transparent 40%),
+    radial-gradient(circle at 87% 73%, rgba(212,163,53,.025) 0%, transparent 40%);
+  pointer-events: none; z-index: 0;
+}
+
+.broadsheet { position: relative; z-index: 2; max-width: 980px; margin: 0 auto; padding: 40px 28px 100px; }
+
+/* HEADER */
+.back-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: .22em; text-transform: uppercase;
+  color: var(--ink-mute); text-decoration: none; padding: 4px 0;
+  margin-bottom: 28px; border-bottom: 1px solid transparent;
+  transition: color .2s ease, border-color .2s ease;
+}
+.back-link .arrow { font-family: 'Fraunces', serif; font-style: italic; font-size: 16px; color: var(--accent); transition: transform .2s ease; }
+.back-link:hover { color: var(--ink); border-bottom-color: var(--ink); }
+.back-link:hover .arrow { transform: translateX(-3px); }
+
+/* HERO */
+.hero {
+  border-top: 4px double var(--ink);
+  border-bottom: 1px solid var(--rule);
+  padding: 28px 0 28px;
+  margin-bottom: 32px;
+  display: grid;
+  grid-template-columns: 1fr auto;
+  gap: 28px;
+  align-items: end;
+}
+.hero-id {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .25em; text-transform: uppercase;
+  color: var(--accent); margin-bottom: 10px; font-weight: 600;
+}
+.hero-ticker {
+  font-family: 'Fraunces', serif; font-weight: 900;
+  font-size: clamp(56px, 9vw, 96px); line-height: .9;
+  letter-spacing: -.04em; color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 144;
+  margin-bottom: 6px;
+}
+.hero-name {
+  font-family: 'Fraunces', serif; font-style: italic; font-weight: 400;
+  font-size: clamp(16px, 2vw, 22px); color: var(--ink-soft);
+  margin-bottom: 12px;
+}
+.hero-tags { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.cat-tag {
+  display: inline-block; font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  padding: 4px 10px; background: var(--paper-warm); border: 1px solid var(--rule);
+  color: var(--ink-soft);
+}
+.corr-tag {
+  display: inline-block; font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .12em; padding: 3px 9px;
+  font-weight: 600; text-transform: uppercase;
+}
+.corr-tech { background: rgba(91,155,184,.12); color: var(--tech); border: 1px solid var(--tech); }
+.corr-bio { background: rgba(184,100,204,.12); color: var(--bio); border: 1px solid var(--bio); }
+.corr-resource { background: rgba(217,123,53,.12); color: var(--resource); border: 1px solid var(--resource); }
+.corr-financial { background: rgba(109,184,61,.12); color: var(--financial); border: 1px solid var(--financial); }
+.corr-consumer { background: rgba(232,93,61,.12); color: var(--consumer); border: 1px solid var(--consumer); }
+.corr-industrial { background: rgba(138,130,120,.18); color: var(--ink-soft); border: 1px solid var(--ink-mute); }
+.corr-space { background: rgba(74,69,64,.18); color: var(--ink-soft); border: 1px solid var(--ink-faint); }
+.corr-em { background: rgba(212,163,53,.12); color: var(--gold); border: 1px solid var(--gold); }
+.confidence-tag {
+  display: inline-block; font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .12em; padding: 3px 8px;
+  font-weight: 600; text-transform: uppercase;
+}
+.conf-high { background: rgba(109,184,61,.12); color: var(--conviction); border: 1px solid var(--conviction); }
+.conf-medium { background: rgba(212,163,53,.12); color: var(--gold); border: 1px solid var(--gold); }
+.conf-low { background: rgba(232,93,61,.08); color: var(--bear); border: 1px solid var(--bear); }
+.vintage-stamp {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .1em; padding: 3px 7px; border-radius: 3px;
+  font-weight: 600;
+}
+.vint-aged { background: rgba(45,80,22,.08); color: var(--bull); border: 1px solid var(--bull); }
+.vint-mature { background: rgba(184,39,13,.04); color: var(--ink); border: 1px solid var(--rule-strong); }
+.vint-young { background: rgba(138,101,16,.08); color: var(--watch); border: 1px solid var(--watch); }
+.vint-fresh { background: rgba(139,29,24,.08); color: var(--bear); border: 1px solid var(--bear); }
+
+.hero-score {
+  text-align: right;
+  display: flex; flex-direction: column; align-items: flex-end; gap: 4px;
+}
+.hero-score-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--ink-mute);
+}
+.hero-score-value {
+  font-family: 'Fraunces', serif; font-weight: 700;
+  font-size: clamp(48px, 7vw, 76px); line-height: .9;
+  letter-spacing: -.04em; font-feature-settings: "tnum";
+}
+.hero-score-out { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-mute); letter-spacing: .12em; }
+.hero-verdict {
+  font-family: 'Fraunces', serif; font-style: italic; font-weight: 500;
+  font-size: 16px; margin-top: 6px;
+}
+.v-strong, .v-conviction { color: var(--bull); }
+.v-fair { color: var(--ink); }
+.v-watch { color: var(--watch); }
+.v-risk, .v-lottery { color: var(--bear); }
+.v-early { color: var(--early); }
+
+/* THESIS LINE */
+.thesis-banner {
+  background: var(--paper-warm);
+  border-left: 4px solid var(--accent);
+  padding: 16px 20px;
+  margin-bottom: 36px;
+  font-family: 'Fraunces', serif; font-style: italic;
+  font-size: 17px; line-height: 1.5;
+  color: var(--ink-soft);
+}
+.thesis-banner strong {
+  font-style: normal;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .2em; text-transform: uppercase;
+  color: var(--accent); display: block; margin-bottom: 6px; font-weight: 600;
+}
+
+/* SECTION MARKER */
+.section-marker {
+  display: flex; align-items: center; gap: 14px;
+  margin: 48px 0 22px;
+}
+.section-marker-num {
+  font-family: 'Fraunces', serif; font-style: italic;
+  font-size: 14px; color: var(--accent); font-weight: 500;
+}
+.section-marker-text {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: .3em; text-transform: uppercase;
+  color: var(--ink); font-weight: 500;
+}
+.section-marker-line { flex: 1; height: 1px; background: var(--rule-strong); }
+
+/* METRICS GRID */
+.metrics-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+  gap: 0;
+  border: 1px solid var(--rule);
+  margin-bottom: 36px;
+  background: var(--paper-warm);
+}
+.metric {
+  padding: 16px 18px;
+  border-right: 1px solid var(--rule);
+  border-bottom: 1px solid var(--rule);
+}
+.metric:last-child { border-right: none; }
+.metric-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 8px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-mute); margin-bottom: 4px; font-weight: 500;
+}
+.metric-value {
+  font-family: 'Fraunces', serif; font-weight: 700;
+  font-size: 22px; color: var(--ink); font-feature-settings: "tnum";
+  line-height: 1.1;
+}
+.metric-value .small {
+  font-family: 'IBM Plex Mono', monospace; font-weight: 400;
+  font-size: 9px; color: var(--ink-mute); letter-spacing: .08em;
+  text-transform: uppercase; margin-left: 4px;
+}
+
+/* PILLAR BREAKDOWN — vertical, expanded */
+.pillar-block {
+  border: 1px solid var(--rule);
+  margin-bottom: 16px;
+  background: var(--paper);
+  transition: border-color .2s ease;
+}
+.pillar-block:hover { border-color: var(--rule-strong); }
+.pillar-head {
+  display: grid;
+  grid-template-columns: 1fr auto auto;
+  gap: 16px;
+  align-items: center;
+  padding: 16px 22px;
+  border-bottom: 1px dotted var(--rule);
+}
+.pillar-head-name {
+  font-family: 'Fraunces', serif; font-weight: 600;
+  font-size: 18px; color: var(--ink);
+  display: flex; align-items: center; gap: 6px;
+}
+.pillar-head-meta {
+  display: flex; gap: 14px; align-items: baseline;
+}
+.pillar-weight-pill {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-mute); font-weight: 500;
+}
+.pillar-score-big {
+  font-family: 'Fraunces', serif; font-weight: 700;
+  font-size: 28px; font-feature-settings: "tnum"; line-height: 1;
+  letter-spacing: -.02em;
+}
+.pillar-bar-wrap {
+  width: 130px; height: 4px; background: var(--rule); position: relative;
+}
+.pillar-bar-wrap-fill { height: 100%; }
+.pillar-contribution {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  color: var(--ink-mute); letter-spacing: .08em; text-transform: uppercase;
+  margin-top: 4px;
+}
+.pillar-body { padding: 14px 22px 18px; }
+.pillar-inputs {
+  display: flex; flex-wrap: wrap; gap: 8px 14px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 11px;
+  color: var(--ink-soft); letter-spacing: .04em; line-height: 1.6;
+  margin-bottom: 10px;
+}
+.pillar-inputs strong { color: var(--ink); font-weight: 600; }
+.pillar-explain {
+  font-family: 'Fraunces', serif; font-style: italic; font-size: 14px;
+  line-height: 1.6; color: var(--ink-soft);
+}
+.pillar-adjusted-note {
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px;
+  color: var(--accent); letter-spacing: .08em;
+  margin-top: 6px; padding-top: 6px; border-top: 1px dotted var(--rule);
+}
+
+/* GAP CALLOUT */
+.gap-callout {
+  padding: 18px 22px; margin-bottom: 32px;
+  font-family: 'Fraunces', serif; font-size: 15px;
+  line-height: 1.55; border-left: 4px solid;
+}
+.gap-callout.up { background: rgba(45,80,22,.05); border-color: var(--bull); color: var(--ink); }
+.gap-callout.down { background: rgba(139,29,24,.05); border-color: var(--bear); color: var(--ink); }
+.gap-callout.flat { background: var(--paper-warm); border-color: var(--ink-mute); color: var(--ink-soft); }
+.gap-callout-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px; letter-spacing: .15em; text-transform: uppercase;
+  font-weight: 600; margin-bottom: 8px; color: var(--accent);
+}
+.gap-callout-detail {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; color: var(--ink-soft); margin-top: 10px;
+  padding-top: 10px; border-top: 1px solid var(--rule); letter-spacing: .04em;
+}
+
+/* BULL/BEAR GRID */
+.bull-bear-block {
+  display: grid; grid-template-columns: 1fr 1fr;
+  gap: 0; margin-bottom: 36px; border: 1px solid var(--rule);
+}
+.bull-cell, .bear-cell-box { padding: 18px 20px; }
+.bull-cell { background: rgba(109,184,61,.05); border-right: 1px solid var(--rule); }
+.bear-cell-box { background: rgba(232,93,61,.05); }
+.bb-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  margin-bottom: 8px; font-weight: 600;
+}
+.bb-label.bull { color: var(--conviction); }
+.bb-label.bear { color: var(--bear); }
+.bb-text {
+  font-family: 'Fraunces', serif; font-style: italic;
+  font-size: 14px; line-height: 1.55; color: var(--ink-soft);
+}
+
+/* NOTE BLOCK */
+.framework-note {
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  padding: 22px 26px;
+  margin-bottom: 36px;
+  position: relative;
+}
+.framework-note::before {
+  content: 'Framework Reading';
+  position: absolute; top: -10px; left: 16px; background: var(--paper);
+  padding: 0 10px; font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .2em; color: var(--ink-mute);
+}
+.framework-note p {
+  font-family: 'Fraunces', serif; font-size: 15px; line-height: 1.65;
+  color: var(--ink-soft);
+}
+.framework-note p::first-letter {
+  font-family: 'Fraunces', serif; font-weight: 700;
+  font-size: 36px; line-height: 1; float: left;
+  padding: 4px 8px 0 0; color: var(--accent);
+}
+
+/* DATA SOURCES */
+.sources {
+  background: var(--paper-warm);
+  border: 1px solid var(--rule);
+  padding: 24px 28px;
+  margin-bottom: 28px;
+}
+.sources h3 {
+  font-family: 'Fraunces', serif; font-weight: 600; font-style: italic;
+  font-size: 16px; color: var(--ink); margin-bottom: 14px;
+}
+.sources ul {
+  list-style: none; padding: 0;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 11px; line-height: 1.9;
+  color: var(--ink-soft); letter-spacing: .03em;
+}
+.sources ul li {
+  padding-left: 16px; position: relative;
+}
+.sources ul li::before {
+  content: '·'; position: absolute; left: 0;
+  color: var(--accent); font-weight: 700;
+}
+.sources .source-meta {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-mute); margin-top: 14px; padding-top: 14px;
+  border-top: 1px dotted var(--rule);
+}
+
+/* DISCLAIMER */
+.disclaimer {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px; letter-spacing: .14em; text-transform: uppercase;
+  color: var(--ink-mute); text-align: center;
+  padding: 24px 0; border-top: 1px solid var(--rule);
+  margin-top: 24px;
+}
+
+/* ERROR STATE */
+.error-state { padding: 80px 24px; text-align: center; }
+.error-state h2 { font-family: 'Fraunces', serif; font-style: italic; font-size: 28px; margin-bottom: 12px; }
+.error-state p { color: var(--ink-soft); margin-bottom: 18px; }
+.error-state a { color: var(--accent); text-decoration: none; border-bottom: 1px solid currentColor; }
+
+@media (max-width: 720px) {
+  .broadsheet { padding: 28px 18px 80px; }
+  .hero { grid-template-columns: 1fr; gap: 18px; }
+  .hero-score { text-align: left; align-items: flex-start; }
+  .pillar-head { grid-template-columns: 1fr; gap: 8px; }
+  .pillar-bar-wrap { width: 100%; }
+  .pillar-head-meta { width: 100%; justify-content: space-between; }
+  .bull-bear-block { grid-template-columns: 1fr; }
+  .bull-cell { border-right: none; border-bottom: 1px solid var(--rule); }
+}
+</style>
+</head>
+<body>
+<div class="broadsheet" id="root">
+  <div class="error-state" id="loading">
+    <h2>Loading dossier…</h2>
+    <p>If this persists, return to <a href="index.html">The Compendium</a>.</p>
+  </div>
+</div>
+
+<script src="assets/data-core.js"></script>
+<script src="assets/data-watch.js"></script>
+<script src="assets/glossary.js"></script>
+<script>
+(function () {
+  const params = new URLSearchParams(location.search);
+  const ticker = (params.get('t') || '').toUpperCase();
+  const ledger = (params.get('l') || '').toLowerCase();
+  const root = document.getElementById('root');
+
+  function escapeHtml(str) {
+    return String(str).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  function renderError(msg, backHref) {
+    root.innerHTML = `
+      <a class="back-link" href="${backHref || 'index.html'}"><span class="arrow">←</span>Back</a>
+      <div class="error-state">
+        <h2>Company not found</h2>
+        <p>${escapeHtml(msg)}</p>
+        <a href="${backHref || 'index.html'}">Return to the ledger</a>
+      </div>`;
+  }
+
+  if (!ticker || (ledger !== 'core' && ledger !== 'watch')) {
+    renderError('Missing or invalid ticker / ledger parameter.');
+    return;
+  }
+
+  if (ledger === 'core') {
+    if (!window.CORE) { renderError('Core ledger data failed to load.'); return; }
+    const company = window.CORE.COMPANIES.find(c => c.t.toUpperCase() === ticker);
+    if (!company) { renderError(`Ticker "${ticker}" is not in the Core Ledger.`, 'five-pillar-scorer.html'); return; }
+    renderCore(company);
+  } else {
+    document.body.classList.add('ledger-watch');
+    if (!window.WATCH) { renderError('Watch ledger data failed to load.'); return; }
+    const company = window.WATCH.COMPANIES.find(c => c.t.toUpperCase() === ticker);
+    if (!company) { renderError(`Ticker "${ticker}" is not in the Watch Ledger.`, 'watch-opportunity-ledger.html'); return; }
+    renderWatch(company);
+  }
+
+  // ============================================================
+  // CORE LEDGER RENDERING
+  // ============================================================
+  function renderCore(c) {
+    const CORE = window.CORE;
+    const s = CORE.allS(c);
+    const v = CORE.verdict(s.tot, c);
+    const totCol = CORE.totalColor(s.tot);
+    const isOverride = c.override !== undefined;
+
+    const vintCls = CORE.vintageClass(c.vint);
+    const vintLabel = CORE.vintageLabel(c.vint);
+    const vintKey = CORE.vintageKey(c.vint);
+    const vintTxt = c.vint == null ? 'N/A' : `${vintLabel} · ${c.vint.toFixed(2)}×`;
+
+    document.title = `${c.t} — ${c.n} | The Compendium`;
+
+    const metricCells = [];
+    if (c.spread !== null && c.spread !== undefined) {
+      metricCells.push(metricCell('ROIC', c.roic + '%', 'roic'));
+      metricCells.push(metricCell('WACC', c.wacc + '%', 'wacc'));
+      metricCells.push(metricCell('ROIC – WACC Spread', (c.spread >= 0 ? '+' : '') + c.spread + '%', 'spread'));
+      metricCells.push(metricCell('P/E', c.pe + '×', 'pe'));
+      metricCells.push(metricCell('Forward Growth', c.fwdG + '%', 'growth'));
+      metricCells.push(metricCell('FCF Yield', c.fcfY + '%', 'fcfy'));
+      metricCells.push(metricCell('PEG', c.peg, 'peg'));
+      metricCells.push(metricCell('Gross Margin', c.gm + '%', 'gm'));
+    } else {
+      metricCells.push(`<div class="metric"><div class="metric-label">Type</div><div class="metric-value">Treasury Vehicle</div></div>`);
+    }
+
+    const pillarBlocks = CORE.PILLAR_DEFS.map(p => {
+      const score = s[p.k];
+      const color = CORE.pillarColor(score);
+      const contribution = (score * p.w).toFixed(2);
+      const baseScore = p.k === 'q' ? s.qBase : (p.k === 'd' ? s.dBase : null);
+      const adjusted = p.adj && c.vint && c.vint < 1.0 && baseScore != null
+        ? `<div class="pillar-adjusted-note">Vintage adjustment: ${baseScore.toFixed(2)} × ${c.vint.toFixed(2)} = ${score.toFixed(2)} (penalises companies whose excellence is recent)</div>`
+        : '';
+
+      const inputs = pillarInputsCore(p.k, c, s);
+      const explain = pillarExplainCore(p.k, c, s, score);
+
+      return `
+        <div class="pillar-block">
+          <div class="pillar-head">
+            <div class="pillar-head-name"><span class="info" data-glossary="${p.glossKey}">${p.l}</span></div>
+            <div class="pillar-head-meta">
+              <span class="pillar-weight-pill">Weight ${p.weightLabel}</span>
+              <span class="pillar-bar-wrap"><span class="pillar-bar-wrap-fill" style="width:${(score/10)*100}%;background:${color};"></span></span>
+              <span>
+                <span class="pillar-score-big" style="color:${color}">${score.toFixed(2)}</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-mute);letter-spacing:.08em;"> / 10</span>
+              </span>
+            </div>
+            <div class="pillar-contribution">+${contribution} to composite</div>
+          </div>
+          <div class="pillar-body">
+            ${inputs ? `<div class="pillar-inputs">${inputs}</div>` : ''}
+            <div class="pillar-explain">${explain}</div>
+            ${adjusted}
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    let gapBlock = '';
+    if (s.gap !== null) {
+      let cls = 'flat', label = 'Market gap · at consensus', msg = 'The price the market is paying broadly aligns with what the company is delivering.';
+      if (s.gap.score > 1) {
+        cls = 'up';
+        label = `Market gap · undervalued (+${s.gap.score.toFixed(2)})`;
+        msg = `The current price implies the company only needs to grow at ${s.gap.implied.toFixed(0)}% to be fairly valued. The company is actually delivering ${s.gap.actual.toFixed(0)}%. The market is paying for less growth than is happening.`;
+      } else if (s.gap.score < -1) {
+        cls = 'down';
+        label = `Market gap · overpriced (${s.gap.score.toFixed(2)})`;
+        msg = `The price requires the company to grow ${s.gap.implied.toFixed(0)}% per year for 5 years to justify itself. The company is delivering ${s.gap.actual.toFixed(0)}%. The price assumes more growth than is realistic.`;
+      } else {
+        msg = `Implied required growth: ${s.gap.implied.toFixed(0)}%. Actual blended growth: ${s.gap.actual.toFixed(0)}%. Roughly in line.`;
+      }
+      gapBlock = `
+        <div class="gap-callout ${cls}">
+          <div class="gap-callout-label">${label}</div>
+          ${msg}
+          <div class="gap-callout-detail">Formula: implied required growth = (P/E ÷ 20)^(1/5) − 1, capped between −5 and +5.<br>Implied: ${s.gap.implied.toFixed(1)}% &middot; Actual: ${s.gap.actual.toFixed(1)}% &middot; Gap: ${s.gap.gap >= 0 ? '+' : ''}${s.gap.gap.toFixed(1)}pp</div>
+        </div>
+      `;
+    }
+
+    root.innerHTML = `
+      <a class="back-link" href="five-pillar-scorer.html"><span class="arrow">←</span>Back to the Core Ledger</a>
+
+      <header class="hero">
+        <div>
+          <div class="hero-id">№ Dossier · Core Ledger · ${escapeHtml(c.cat)}</div>
+          <h1 class="hero-ticker">${escapeHtml(c.t)}</h1>
+          <div class="hero-name">${escapeHtml(c.n)}</div>
+          <div class="hero-tags">
+            <span class="cat-tag">${escapeHtml(c.cat)}</span>
+            ${c.vint == null ? '' : `<span class="vintage-stamp ${vintCls}"><span class="info" data-glossary="${vintKey}">${vintLabel} · ${c.vint.toFixed(2)}×</span></span>`}
+          </div>
+        </div>
+        <div class="hero-score">
+          <div class="hero-score-label"><span class="info" data-glossary="composite">Composite</span></div>
+          <div class="hero-score-value" style="color:${totCol}">${s.tot.toFixed(2)}<span class="hero-score-out"> / 10</span></div>
+          <div class="hero-verdict ${v.cls}"><span class="info" data-glossary="${v.key}">${v.l}</span></div>
+        </div>
+      </header>
+
+      ${metricCells.length ? `
+      <div class="section-marker">
+        <div class="section-marker-num">I.</div>
+        <div class="section-marker-text">Underlying Metrics</div>
+        <div class="section-marker-line"></div>
+      </div>
+      <div class="metrics-grid">${metricCells.join('')}</div>
+      ` : ''}
+
+      <div class="section-marker">
+        <div class="section-marker-num">II.</div>
+        <div class="section-marker-text">Pillar Breakdown · How the Score is Built</div>
+        <div class="section-marker-line"></div>
+      </div>
+      ${pillarBlocks}
+
+      ${gapBlock ? `
+      <div class="section-marker">
+        <div class="section-marker-num">III.</div>
+        <div class="section-marker-text">Market Gap · Price vs. Reality</div>
+        <div class="section-marker-line"></div>
+      </div>
+      ${gapBlock}
+      ` : ''}
+
+      <div class="section-marker">
+        <div class="section-marker-num">${gapBlock ? 'IV' : 'III'}.</div>
+        <div class="section-marker-text">Framework Reading</div>
+        <div class="section-marker-line"></div>
+      </div>
+      <div class="framework-note">
+        <p>${escapeHtml(c.note)}</p>
+      </div>
+
+      ${sourcesBlock()}
+      ${disclaimerBlock()}
+    `;
+  }
+
+  function metricCell(label, value, glossKey) {
+    return `<div class="metric"><div class="metric-label">${glossKey ? `<span class="info" data-glossary="${glossKey}">${label}</span>` : label}</div><div class="metric-value">${value}</div></div>`;
+  }
+
+  function pillarInputsCore(key, c, s) {
+    if (key === 'q') {
+      if (c.spread == null) return '';
+      return `<span><strong>ROIC:</strong> ${c.roic}%</span><span><strong>WACC:</strong> ${c.wacc}%</span><span><strong>Spread:</strong> ${c.spread >= 0 ? '+' : ''}${c.spread}%</span>`;
+    }
+    if (key === 'd') {
+      if (c.gm == null) return '';
+      const moatAvg = (c.moat.reduce((a,b)=>a+b,0)/c.moat.length).toFixed(0);
+      const trendLabel = c.gt === 'up' ? 'Rising' : c.gt === 'flat' ? 'Flat' : c.gt === 'dn' ? 'Falling' : 'N/A';
+      return `<span><strong>Gross margin:</strong> ${c.gm}%</span><span><strong>Trend:</strong> ${trendLabel}</span><span><strong>Moat avg:</strong> ${moatAvg}/100</span>`;
+    }
+    if (key === 'g') {
+      if (c.fwdG == null) return '';
+      return `<span><strong>Forward EPS growth:</strong> ${c.fwdG}%</span><span><strong>FCF growth:</strong> ${c.fcfG}%</span>`;
+    }
+    if (key === 'v') {
+      if (c.peg == null) return '';
+      return `<span><strong>PEG:</strong> ${c.peg}</span><span><strong>FCF yield:</strong> ${c.fcfY}%</span><span><strong>P/E:</strong> ${c.pe}×</span>`;
+    }
+    if (key === 'r') {
+      return `<span><strong>Regulatory score:</strong> ${(c.reg/10).toFixed(1)}/10</span>${c.cc > 0 ? `<span><strong>Capital concentration penalty:</strong> ${(c.cc*0.3).toFixed(2)}</span>` : ''}`;
+    }
+    return '';
+  }
+
+  function pillarExplainCore(key, c, s, score) {
+    if (c.override !== undefined) return 'Treasury vehicle: standard pillars do not apply. Score is an override that reflects the underlying asset thesis rather than business fundamentals.';
+    if (key === 'q') {
+      const sp = c.spread;
+      let line;
+      if (sp == null) line = 'Quality spread is not measurable for this structure.';
+      else if (sp <= 0) line = `Negative ROIC–WACC spread of ${sp}% means the business is destroying value at its current cost of capital — every dollar invested earns less than it costs to fund.`;
+      else if (sp < 10) line = `Modest ROIC–WACC spread of ${sp}% — the business creates value but not the kind of compounding spread that drives long-term outperformance.`;
+      else if (sp < 25) line = `Healthy ROIC–WACC spread of ${sp}% indicates a real moat translating into above-cost-of-capital returns.`;
+      else line = `Outstanding ROIC–WACC spread of ${sp}% — the business is creating substantial economic value year after year.`;
+      if (c.vint && c.vint < 1.0) line += ` The score is then multiplied by the vintage adjustment (${c.vint.toFixed(2)}×) because this level of quality is recent — ${score.toFixed(2)} is what stands after that discount.`;
+      return line;
+    }
+    if (key === 'd') {
+      const trend = c.gt === 'up' ? 'rising margins' : c.gt === 'flat' ? 'stable margins' : 'compressing margins';
+      const moatAvg = c.moat ? (c.moat.reduce((a,b)=>a+b,0)/c.moat.length) : 0;
+      const moatLabel = moatAvg > 80 ? 'an exceptionally deep moat' : moatAvg > 65 ? 'a real moat' : moatAvg > 50 ? 'a moderate moat' : 'a thin moat';
+      return `Combines a ${c.gm}% gross margin with ${trend} and ${moatLabel} (brand, switching costs, network effects, scale). ${c.vint && c.vint < 1.0 ? 'A partial vintage discount is applied because the durability hasn\'t been tested across enough cycles yet.' : 'Full credit because the durability has held up across decades.'}`;
+    }
+    if (key === 'g') {
+      const blended = ((c.fwdG||0) + (c.fcfG||c.fwdG||0)) / 2;
+      if (c.fwdG == null) return 'Growth rate not measurable for this structure.';
+      if (blended < 8) return `Single-digit blended growth (${blended.toFixed(0)}%) — the business compounds slowly. The growth pillar will be a drag unless valuation is already low.`;
+      if (blended < 18) return `Moderate blended growth (${blended.toFixed(0)}%) — solid mid-teens compounding consistent with mature high-quality businesses.`;
+      if (blended < 30) return `Strong blended growth (${blended.toFixed(0)}%) — the business is scaling meaningfully. Growth pillar adds significant lift.`;
+      return `Exceptional blended growth (${blended.toFixed(0)}%) — high-velocity compounding that the framework rewards heavily.`;
+    }
+    if (key === 'v') {
+      if (c.peg == null) return 'Valuation not measurable for this structure.';
+      if (c.peg < 1) return `PEG of ${c.peg} means you are paying less than fair value for the growth being delivered. The cheapest tier of the framework — pure GARP territory.`;
+      if (c.peg < 2) return `PEG of ${c.peg} is in the reasonable range. Combined with a ${c.fcfY}% free cash flow yield, the price is defensible relative to what the business produces.`;
+      if (c.peg < 3) return `PEG of ${c.peg} is in the watch zone — paying ahead of the growth curve. Needs the bull case to play out to justify the multiple.`;
+      return `PEG of ${c.peg} is structurally expensive. The growth has to be perfect or accelerate to justify what the market is asking.`;
+    }
+    if (key === 'r') {
+      const reg10 = (c.reg/10).toFixed(1);
+      const ccLine = c.cc > 0 ? ` A capital concentration penalty of ${(c.cc*0.3).toFixed(2)} points is applied because customer or supplier reliance is meaningful.` : '';
+      if (c.reg < 30) return `Regulatory score of ${reg10}/10 — heavy external risk (geopolitical, antitrust, government dependence). Even a perfect operating business gets discounted here.${ccLine}`;
+      if (c.reg < 60) return `Regulatory score of ${reg10}/10 — moderate external risk that the framework partially discounts.${ccLine}`;
+      return `Regulatory score of ${reg10}/10 — relatively clean external exposure. Few governmental, geopolitical, or antitrust concerns.${ccLine}`;
+    }
+    return '';
+  }
+
+  // ============================================================
+  // WATCH LEDGER RENDERING
+  // ============================================================
+  function renderWatch(c) {
+    const W = window.WATCH;
+    const score = W.composite(c);
+    const v = W.verdict(score);
+    const totCol = W.totalColor(score);
+    const corrLabel = W.CORR_LABELS[c.corr] || c.corr;
+
+    document.title = `${c.t} — ${c.n} | The Compendium`;
+
+    const metricCells = [
+      metricCell('Revenue', '$' + c.revenue + 'B'),
+      metricCell('Growth', c.growth + '%'),
+      metricCell('Gross Margin', c.gm + '%', 'gm'),
+      metricCell('TAM', '$' + c.tam + 'B', 'tam'),
+      metricCell('EV', '$' + c.ev + 'B', 'ev'),
+      metricCell('EV / Revenue', c.evRev + '×', 'evrev'),
+      metricCell('EV/Rev ÷ Growth', c.evRevGrowth, 'evrevgrowth'),
+      metricCell('Upside Estimate', W.upsideEstimate(c), 'upside'),
+    ];
+
+    const pillarBlocks = W.PILLAR_DEFS.map(p => {
+      const ps = c[p.k];
+      const color = W.pillarColor(ps);
+      const contribution = (ps * p.w).toFixed(2);
+      const inputs = pillarInputsWatch(p.k, c);
+      const explain = pillarExplainWatch(p.k, c, ps);
+
+      return `
+        <div class="pillar-block">
+          <div class="pillar-head">
+            <div class="pillar-head-name"><span class="info" data-glossary="${p.glossKey}">${p.l}</span></div>
+            <div class="pillar-head-meta">
+              <span class="pillar-weight-pill">Weight ${p.weightLabel}</span>
+              <span class="pillar-bar-wrap"><span class="pillar-bar-wrap-fill" style="width:${(ps/10)*100}%;background:${color};"></span></span>
+              <span>
+                <span class="pillar-score-big" style="color:${color}">${ps.toFixed(2)}</span>
+                <span style="font-family:'IBM Plex Mono',monospace;font-size:10px;color:var(--ink-mute);letter-spacing:.08em;"> / 10</span>
+              </span>
+            </div>
+            <div class="pillar-contribution">+${contribution} to composite</div>
+          </div>
+          <div class="pillar-body">
+            ${inputs ? `<div class="pillar-inputs">${inputs}</div>` : ''}
+            <div class="pillar-explain">${explain}</div>
+          </div>
+        </div>
+      `;
+    }).join('');
+
+    const confKey = c.confidence === 'high' ? 'conf-high' : (c.confidence === 'medium' ? 'conf-medium' : 'conf-low');
+    const confLabel = c.confidence === 'high' ? 'High Confidence' : (c.confidence === 'medium' ? 'Medium Confidence' : 'Low Confidence');
+
+    root.innerHTML = `
+      <a class="back-link" href="watch-opportunity-ledger.html"><span class="arrow">←</span>Back to the Watch Ledger</a>
+
+      <header class="hero">
+        <div>
+          <div class="hero-id">№ Dossier · Watch Ledger · ${escapeHtml(c.cat)}</div>
+          <h1 class="hero-ticker">${escapeHtml(c.t)}</h1>
+          <div class="hero-name">${escapeHtml(c.n)}</div>
+          <div class="hero-tags">
+            <span class="cat-tag">${escapeHtml(c.cat)}</span>
+            <span class="corr-tag corr-${escapeHtml(c.corr)}"><span class="info" data-glossary="correlation">${escapeHtml(corrLabel)}</span></span>
+            <span class="confidence-tag conf-${escapeHtml(c.confidence)}"><span class="info" data-glossary="${confKey}">${confLabel}</span></span>
+          </div>
+        </div>
+        <div class="hero-score">
+          <div class="hero-score-label"><span class="info" data-glossary="composite">Composite</span></div>
+          <div class="hero-score-value" style="color:${totCol}">${score.toFixed(2)}<span class="hero-score-out"> / 10</span></div>
+          <div class="hero-verdict ${v.cls}"><span class="info" data-glossary="${v.key}">${v.l}</span></div>
+        </div>
+      </header>
+
+      <div class="thesis-banner">
+        <strong>Thesis</strong>
+        ${escapeHtml(c.thesis)}
+      </div>
+
+      <div class="section-marker">
+        <div class="section-marker-num">I.</div>
+        <div class="section-marker-text">Underlying Metrics</div>
+        <div class="section-marker-line"></div>
+      </div>
+      <div class="metrics-grid">${metricCells.join('')}</div>
+
+      <div class="section-marker">
+        <div class="section-marker-num">II.</div>
+        <div class="section-marker-text">Pillar Breakdown · How the Score is Built</div>
+        <div class="section-marker-line"></div>
+      </div>
+      ${pillarBlocks}
+
+      <div class="section-marker">
+        <div class="section-marker-num">III.</div>
+        <div class="section-marker-text">Bull vs. Bear</div>
+        <div class="section-marker-line"></div>
+      </div>
+      <div class="bull-bear-block">
+        <div class="bull-cell">
+          <div class="bb-label bull">Bull Thesis</div>
+          <div class="bb-text">${escapeHtml(c.bull)}</div>
+        </div>
+        <div class="bear-cell-box">
+          <div class="bb-label bear">Bear Thesis</div>
+          <div class="bb-text">${escapeHtml(c.bear)}</div>
+        </div>
+      </div>
+
+      <div class="section-marker">
+        <div class="section-marker-num">IV.</div>
+        <div class="section-marker-text">Framework Reading</div>
+        <div class="section-marker-line"></div>
+      </div>
+      <div class="framework-note">
+        <p>${escapeHtml(c.body)}</p>
+      </div>
+
+      ${sourcesBlock()}
+      ${disclaimerBlock()}
+    `;
+  }
+
+  function pillarInputsWatch(key, c) {
+    if (key === 'market') {
+      return `<span><strong>TAM:</strong> $${c.tam}B</span>`;
+    }
+    if (key === 'trajectory') {
+      return `<span><strong>Revenue:</strong> $${c.revenue}B</span><span><strong>Growth:</strong> ${c.growth}%</span>`;
+    }
+    if (key === 'edge') {
+      return `<span><strong>Gross margin:</strong> ${c.gm}%</span>`;
+    }
+    if (key === 'capital') {
+      return `<span><strong>Margin path:</strong> ${escapeHtml(c.marginPath)}</span>`;
+    }
+    if (key === 'asymmetry') {
+      return '';
+    }
+    if (key === 'valuation') {
+      return `<span><strong>EV:</strong> $${c.ev}B</span><span><strong>EV/Rev:</strong> ${c.evRev}×</span><span><strong>EV/Rev/Growth:</strong> ${c.evRevGrowth}</span>`;
+    }
+    return '';
+  }
+
+  function pillarExplainWatch(key, c, score) {
+    if (key === 'market') {
+      const tamStr = '$' + c.tam + 'B';
+      if (score >= 9) return `Massive TAM of ${tamStr}. The runway is one of the largest in the dataset — even modest market share would imply huge absolute revenue.`;
+      if (score >= 7.5) return `Large TAM of ${tamStr} with structural tailwinds. Plenty of room to grow into without saturating the category.`;
+      if (score >= 6) return `TAM of ${tamStr} is meaningful. Growth is constrained more by execution than by market size.`;
+      return `TAM of ${tamStr} is the limiting factor. Even high market share caps the absolute size this can become.`;
+    }
+    if (key === 'trajectory') {
+      if (score >= 9) return `${c.growth}% growth at $${c.revenue}B revenue is exceptional — high velocity compounding at meaningful scale.`;
+      if (score >= 7.5) return `${c.growth}% growth at $${c.revenue}B is strong, especially if it can sustain through the next phase of scale.`;
+      if (score >= 6) return `${c.growth}% growth is moderate. Trajectory is real but not the central reason to own this.`;
+      return `${c.growth}% growth (or recent deceleration) is the principal weakness. Either the cycle has paused or the structural growth narrative is breaking.`;
+    }
+    if (key === 'edge') {
+      if (score >= 9) return `Deep, hardening edge — proprietary technology, data, distribution, or network effects that competitors cannot easily replicate. ${c.gm}% gross margins are evidence the moat is real.`;
+      if (score >= 7) return `Real edge forming. ${c.gm}% gross margin is consistent with a defensible position, though competitive pressure remains a watch item.`;
+      if (score >= 5.5) return `Moderate edge. ${c.gm}% gross margin suggests pricing power exists but is not unbreakable.`;
+      return `Edge is unproven or eroding. ${c.gm}% gross margin reflects a competitive setup more than a moat.`;
+    }
+    if (key === 'capital') {
+      if (score >= 9) return `Capital-efficient business that does not depend on capital markets to keep operating. ${escapeHtml(c.marginPath)}`;
+      if (score >= 7) return `Reasonable capital efficiency — either already profitable or close to it. ${escapeHtml(c.marginPath)}`;
+      if (score >= 5.5) return `Capital efficiency is the watch item. The business needs continued financing access. ${escapeHtml(c.marginPath)}`;
+      return `Capital is the binding constraint. The business is dependent on continued market access at favorable terms. ${escapeHtml(c.marginPath)}`;
+    }
+    if (key === 'asymmetry') {
+      if (score >= 9) return `Extreme asymmetric setup. The bull case is a multi-multiple return; the bear case is a binary loss. Size very small if owned at all.`;
+      if (score >= 7.5) return `Strong asymmetric upside relative to a knowable downside. The shape of the payoff is the principal reason this is in the watch sleeve.`;
+      if (score >= 6) return `Moderate asymmetry. Real upside but the company is large enough that 5–10× from here would require category-defining outcomes.`;
+      return `Limited asymmetry. The upside is bounded by size or by the maturity of the opportunity.`;
+    }
+    if (key === 'valuation') {
+      const evRev = c.evRev;
+      if (score >= 8) return `Genuinely cheap relative to the asymmetric setup. EV/Revenue of ${evRev}× combined with the growth rate makes this one of the better-priced names in the universe.`;
+      if (score >= 7) return `Reasonable valuation given the trajectory. EV/Revenue of ${evRev}× is defensible if the bull case plays out.`;
+      if (score >= 5.5) return `Valuation is the principal watch item. EV/Revenue of ${evRev}× requires execution to materialize — paying ahead of the curve.`;
+      return `Valuation pillar is the weakness. EV/Revenue of ${evRev}× embeds an expensive assumption. Even with the asymmetric upside, the price has to be respected.`;
+    }
+    return '';
+  }
+
+  function sourcesBlock() {
+    return `
+      <div class="section-marker">
+        <div class="section-marker-num">V.</div>
+        <div class="section-marker-text">Data Sources & Methodology</div>
+        <div class="section-marker-line"></div>
+      </div>
+      <div class="sources">
+        <h3>Where the inputs come from</h3>
+        <ul>
+          <li>Annual and quarterly reports filed with the SEC (10-K, 10-Q) — read directly via EDGAR</li>
+          <li>Company investor-relations decks and earnings call transcripts (latest available through April 2026)</li>
+          <li>Forward consensus estimates from FactSet, Bloomberg, and analyst aggregates</li>
+          <li>ROIC and WACC calculations cross-referenced against GuruFocus, FinanceCharts, and Alpha Spread</li>
+          <li>Moat scoring and vintage classifications involve framework judgement — not pulled from a single data provider</li>
+        </ul>
+        <div class="source-meta">Snapshot dated April 2026. Educational framework only — verify everything against current filings before acting.</div>
+      </div>
+    `;
+  }
+
+  function disclaimerBlock() {
+    return `<div class="disclaimer">Educational use only. Not investment advice, recommendation, or solicitation. Verify all data independently.</div>`;
+  }
+})();
+</script>
+<script src="assets/tooltip.js"></script>
+</body>
+</html>

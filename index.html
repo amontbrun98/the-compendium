@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500;1,9..144,700&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/tooltip.css">
 <style>
 :root {
   --paper: #131210;
@@ -581,9 +582,9 @@ body::after {
     </div>
 
     <div class="card-pillars">
-      <div class="pillars-label">Pillar Weights</div>
+      <div class="pillars-label"><span class="info" data-glossary="pillar-weights">Pillar Weights</span></div>
       <div class="pillars-list">
-        <strong>Quality 30%</strong> · <strong>Durability 20%</strong> · <strong>Growth 20%</strong> · <strong>Valuation 20%</strong> · <strong>Regulatory 10%</strong>
+        <strong class="info" data-glossary="quality">Quality 30%</strong> · <strong class="info" data-glossary="durability">Durability 20%</strong> · <strong class="info" data-glossary="growth">Growth 20%</strong> · <strong class="info" data-glossary="valuation">Valuation 20%</strong> · <strong class="info" data-glossary="regulatory">Regulatory 10%</strong>
       </div>
     </div>
 
@@ -625,9 +626,9 @@ body::after {
     </div>
 
     <div class="card-pillars">
-      <div class="pillars-label">Pillar Weights</div>
+      <div class="pillars-label"><span class="info" data-glossary="pillar-weights">Pillar Weights</span></div>
       <div class="pillars-list">
-        <strong>Market 20%</strong> · <strong>Revenue 20%</strong> · <strong>Edge 15%</strong> · <strong>Capital 15%</strong> · <strong>Asymmetry 15%</strong> · <strong>Valuation 15%</strong>
+        <strong class="info" data-glossary="market">Market 20%</strong> · <strong class="info" data-glossary="trajectory">Revenue 20%</strong> · <strong class="info" data-glossary="edge">Edge 15%</strong> · <strong class="info" data-glossary="capital">Capital 15%</strong> · <strong class="info" data-glossary="asymmetry">Asymmetry 15%</strong> · <strong class="info" data-glossary="valuation-watch">Valuation 15%</strong>
       </div>
     </div>
 
@@ -644,5 +645,7 @@ body::after {
 </footer>
 
 </div>
+<script src="assets/glossary.js"></script>
+<script src="assets/tooltip.js"></script>
 </body>
 </html>

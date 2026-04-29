@@ -7,6 +7,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600;1,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/tooltip.css">
 <style>
 
 :root {
@@ -334,18 +335,18 @@ body::after { content: ''; position: fixed; inset: 0; background-image: repeatin
     <div class="lede-byline">A Working Framework · Educational Use Only · Not Investment Counsel</div>
   </div>
   <aside class="weights-panel">
-    <div class="weights-title">Pillar Weighting</div>
-    <div class="weight-row"><div class="weight-name">Quality <span>spread</span></div><div class="weight-value">30%</div></div>
-    <div class="weight-row"><div class="weight-name">Durability <span>moat</span></div><div class="weight-value">20%</div></div>
-    <div class="weight-row"><div class="weight-name">Growth <span>trajectory</span></div><div class="weight-value">20%</div></div>
-    <div class="weight-row"><div class="weight-name">Valuation <span>price paid</span></div><div class="weight-value">20%</div></div>
-    <div class="weight-row"><div class="weight-name">Regulatory <span>external</span></div><div class="weight-value">10%</div></div>
+    <div class="weights-title"><span class="info" data-glossary="pillar-weights">Pillar Weighting</span></div>
+    <div class="weight-row"><div class="weight-name"><span class="info" data-glossary="quality">Quality</span> <span>spread</span></div><div class="weight-value">30%</div></div>
+    <div class="weight-row"><div class="weight-name"><span class="info" data-glossary="durability">Durability</span> <span>moat</span></div><div class="weight-value">20%</div></div>
+    <div class="weight-row"><div class="weight-name"><span class="info" data-glossary="growth">Growth</span> <span>trajectory</span></div><div class="weight-value">20%</div></div>
+    <div class="weight-row"><div class="weight-name"><span class="info" data-glossary="valuation">Valuation</span> <span>price paid</span></div><div class="weight-value">20%</div></div>
+    <div class="weight-row"><div class="weight-name"><span class="info" data-glossary="regulatory">Regulatory</span> <span>external</span></div><div class="weight-value">10%</div></div>
   </aside>
 </div>
 
 <div class="formula-box">
-  <div class="formula-tag">The Market Gap Formula</div>
-  <div class="formula-line"><strong>Implied required growth =</strong> ( current P/E ÷ 20 ) ^ (1/5) − 1</div>
+  <div class="formula-tag">The <span class="info" data-glossary="gap">Market Gap</span> Formula</div>
+  <div class="formula-line"><strong>Implied required growth =</strong> ( current <span class="info" data-glossary="pe">P/E</span> ÷ 20 ) ^ (1/5) − 1</div>
   <div class="formula-line"><strong>Market gap =</strong> actual blended growth − implied required growth, capped between −5 and +5</div>
   <div class="formula-explainer">
     A positive gap means the market is paying for less growth than the company delivers. A negative gap means the price requires more growth than is realistically achievable. The formula does not break at extreme P/E levels.
@@ -367,11 +368,11 @@ body::after { content: ''; position: fixed; inset: 0; background-image: repeatin
   <th style="width:50px;">№</th>
   <th>Enterprise</th>
   <th>Sector</th>
-  <th>Vintage</th>
-  <th>Composite</th>
+  <th><span class="info" data-glossary="vintage">Vintage</span></th>
+  <th><span class="info" data-glossary="composite">Composite</span></th>
   <th>Pillars · Q · D · G · V · R</th>
   <th style="width:90px;">Strength</th>
-  <th>Market Gap</th>
+  <th><span class="info" data-glossary="gap">Market Gap</span></th>
   <th>Reading</th>
 </tr></thead><tbody id="tbody"></tbody></table></div>
 
@@ -503,12 +504,12 @@ function marketGapV2(pe, fwdG, fcfG){
 function pillarColor(s){if(s>=8)return 'var(--bull)';if(s>=6.5)return 'var(--ink)';if(s>=4.5)return 'var(--watch)';return 'var(--bear)';}
 function totalColor(s){if(s>=7)return 'var(--bull)';if(s>=5.5)return 'var(--ink)';if(s>=4)return 'var(--watch)';return 'var(--bear)';}
 function verdict(s,c){
-  if(c.override!==undefined)return{l:'Treasury Vehicle',cls:'v-watch'};
-  if(s>=7)return{l:'Strong',cls:'v-strong'};
-  if(s>=6)return{l:'Solid',cls:'v-fair'};
-  if(s>=5)return{l:'Watch',cls:'v-watch'};
-  if(s>=4)return{l:'Elevated Risk',cls:'v-risk'};
-  return{l:'Speculative',cls:'v-risk'};
+  if(c.override!==undefined)return{l:'Treasury Vehicle',cls:'v-watch',gk:'verdict-treasury'};
+  if(s>=7)return{l:'Strong',cls:'v-strong',gk:'verdict-strong'};
+  if(s>=6)return{l:'Solid',cls:'v-fair',gk:'verdict-solid'};
+  if(s>=5)return{l:'Watch',cls:'v-watch',gk:'verdict-watch'};
+  if(s>=4)return{l:'Elevated Risk',cls:'v-risk',gk:'verdict-risk'};
+  return{l:'Speculative',cls:'v-risk',gk:'verdict-speculative'};
 }
 function vintageClass(vint){
   if(vint===null||vint===undefined)return 'vint-mature';
@@ -534,8 +535,8 @@ function allS(c){
   return{q,d,g,v,r,tot,gap,qBase,dBase};
 }
 
-const PILLAR_KEYS=[{k:'q',l:'Quality'},{k:'d',l:'Durability'},{k:'g',l:'Growth'},{k:'v',l:'Valuation'},{k:'r',l:'Regulatory'}];
-const PILLAR_DEFS=[{k:'q',l:'Quality',w:'30%',adj:true},{k:'d',l:'Durability',w:'20%',adj:true},{k:'g',l:'Growth',w:'20%',adj:false},{k:'v',l:'Valuation',w:'20%',adj:false},{k:'r',l:'Regulatory',w:'10%',adj:false}];
+const PILLAR_KEYS=[{k:'q',l:'Quality',gk:'quality'},{k:'d',l:'Durability',gk:'durability'},{k:'g',l:'Growth',gk:'growth'},{k:'v',l:'Valuation',gk:'valuation'},{k:'r',l:'Regulatory',gk:'regulatory'}];
+const PILLAR_DEFS=[{k:'q',l:'Quality',w:'30%',adj:true,gk:'quality'},{k:'d',l:'Durability',w:'20%',adj:true,gk:'durability'},{k:'g',l:'Growth',w:'20%',adj:false,gk:'growth'},{k:'v',l:'Valuation',w:'20%',adj:false,gk:'valuation'},{k:'r',l:'Regulatory',w:'10%',adj:false,gk:'regulatory'}];
 
 const ranked = COMPANIES.map(c=>({c,s:allS(c)})).sort((a,b)=>b.s.tot-a.s.tot);
 const cats = [...new Set(COMPANIES.map(c=>c.cat))].sort();
@@ -583,7 +584,7 @@ ranked.forEach(({c,s}, i) => {
   const v = verdict(s.tot, c);
   const dots = PILLAR_KEYS.map(p => {
     const pv = s[p.k], pc = pillarColor(pv);
-    return `<div class="pp" style="color:${pc}" data-tip="${p.l} · ${pv.toFixed(1)}/10">${pv.toFixed(1)}</div>`;
+    return `<div class="pp info" style="color:${pc}" data-glossary="${p.gk}">${pv.toFixed(1)}</div>`;
   }).join('');
   
   let gapCellHtml = '<td><span class="gap-tag gap-flat">—</span></td>';
@@ -592,7 +593,7 @@ ranked.forEach(({c,s}, i) => {
     const gapTxt = sign + s.gap.score.toFixed(2);
     const gapCls = s.gap.score > 1 ? 'gap-up' : s.gap.score < -1 ? 'gap-down' : 'gap-flat';
     const detail = `Need ${s.gap.implied.toFixed(0)}% · Got ${s.gap.actual.toFixed(0)}%`;
-    gapCellHtml = `<td><div class="gap-cell"><span class="gap-tag ${gapCls}">${gapTxt}</span><span class="gap-detail">${detail}</span></div></td>`;
+    gapCellHtml = `<td><div class="gap-cell"><span class="gap-tag info ${gapCls}" data-glossary="gap">${gapTxt}</span><span class="gap-detail">${detail}</span></div></td>`;
   }
   
   const vintCls = vintageClass(c.vint);
@@ -600,16 +601,18 @@ ranked.forEach(({c,s}, i) => {
   
   const tr = document.createElement('tr');
   tr.dataset.cat = c.cat;
+  tr.dataset.href = `company.html?t=${encodeURIComponent(c.t)}&l=core`;
+  tr.addEventListener('click', () => { window.location.href = tr.dataset.href; });
   tr.innerHTML = `
     <td><span class="rank-num ${rankCls}">${String(rank).padStart(2,'0')}</span></td>
     <td><div class="co-name-cell"><span class="co-ticker">${c.t}</span><span class="co-name">${c.n}</span></div></td>
     <td><span class="cat-tag">${c.cat}</span></td>
-    <td><span class="vintage-stamp ${vintCls}">${vintTxt}</span></td>
-    <td><span class="composite" style="color:${totCol}">${s.tot.toFixed(2)}</span></td>
+    <td><span class="vintage-stamp info ${vintCls}" data-glossary="${vintCls}">${vintTxt}</span></td>
+    <td><span class="composite info" style="color:${totCol}" data-glossary="composite">${s.tot.toFixed(2)}</span></td>
     <td><div class="pillar-pills">${dots}</div></td>
     <td><div class="bar-cell"><div class="bar-track"><div class="bar-fill" style="width:${(s.tot/10)*100}%;background:${totCol};"></div></div></div></td>
     ${gapCellHtml}
-    <td><span class="verdict-tag ${v.cls}">${v.l}</span></td>
+    <td><span class="verdict-tag info ${v.cls}" data-glossary="${v.gk}">${v.l}</span></td>
   `;
   tbody.appendChild(tr);
 });
@@ -618,9 +621,12 @@ const dgrid = document.getElementById('dossiers');
 ranked.forEach(({c,s}, i) => {
   const totCol = totalColor(s.tot);
   const v = verdict(s.tot, c);
+  const wrapper = document.createElement('a');
+  wrapper.className = 'dossier-link';
+  wrapper.href = `company.html?t=${encodeURIComponent(c.t)}&l=core`;
+  wrapper.dataset.cat = c.cat;
   const card = document.createElement('article');
   card.className = 'dossier';
-  card.dataset.cat = c.cat;
   card.style.setProperty('--cc', c.col);
   
   const pillars = PILLAR_DEFS.map(p => {
@@ -636,7 +642,7 @@ ranked.forEach(({c,s}, i) => {
     return `
       <div class="pillar-line">
         <div class="pillar-name-block">
-          <span class="pillar-name">${p.l}${adjusted}</span>
+          <span class="pillar-name info" data-glossary="${p.gk}">${p.l}${adjusted}</span>
           <span class="pillar-weight">${p.w}</span>
         </div>
         <div class="pillar-bar-block"><div class="pillar-bar-fill" style="width:${(val/10)*100}%;background:${pc};"></div></div>
@@ -646,7 +652,7 @@ ranked.forEach(({c,s}, i) => {
   }).join('');
   
   const info = c.spread !== null
-    ? `ROIC ${c.roic}% &middot; WACC ${c.wacc}% &middot; Spread ${c.spread>=0?'+':''}${c.spread}% &middot; P/E ${c.pe}×`
+    ? `<span class="info" data-glossary="roic">ROIC</span> ${c.roic}% &middot; <span class="info" data-glossary="wacc">WACC</span> ${c.wacc}% &middot; <span class="info" data-glossary="spread">Spread</span> ${c.spread>=0?'+':''}${c.spread}% &middot; <span class="info" data-glossary="pe">P/E</span> ${c.pe}×`
     : 'Bitcoin treasury structure &mdash; traditional operating metrics not applicable';
   
   let gapBlock = '';
@@ -660,7 +666,7 @@ ranked.forEach(({c,s}, i) => {
   
   const dossierNumber = String(i+1).padStart(2, '0');
   const vintCls = vintageClass(c.vint);
-  const vintLine = c.vint === null || c.vint === undefined ? '' : `<div class="dossier-vintage-line">Vintage · <span class="vintage-stamp ${vintCls}" style="margin-left:4px;">${vintageLabel(c.vint)} ${c.vint.toFixed(2)}×</span></div>`;
+  const vintLine = c.vint === null || c.vint === undefined ? '' : `<div class="dossier-vintage-line"><span class="info" data-glossary="vintage">Vintage</span> · <span class="vintage-stamp info ${vintCls}" data-glossary="${vintCls}" style="margin-left:4px;">${vintageLabel(c.vint)} ${c.vint.toFixed(2)}×</span></div>`;
   
   card.innerHTML = `
     <div class="dossier-rule"></div>
@@ -672,9 +678,9 @@ ranked.forEach(({c,s}, i) => {
         ${vintLine}
       </div>
       <div class="dossier-score-block">
-        <div class="dossier-score" style="color:${totCol}">${s.tot.toFixed(2)}</div>
+        <div class="dossier-score info" style="color:${totCol}" data-glossary="composite">${s.tot.toFixed(2)}</div>
         <div class="dossier-score-label">Composite</div>
-        <div class="dossier-verdict ${v.cls}">${v.l}</div>
+        <div class="dossier-verdict info ${v.cls}" data-glossary="${v.gk}">${v.l}</div>
       </div>
     </div>
     <div class="dossier-info-strip">${info}</div>
@@ -682,8 +688,11 @@ ranked.forEach(({c,s}, i) => {
     ${gapBlock}
     <div class="dossier-body">${c.note}</div>
   `;
-  dgrid.appendChild(card);
+  wrapper.appendChild(card);
+  dgrid.appendChild(wrapper);
 });
 </script>
+<script src="assets/glossary.js"></script>
+<script src="assets/tooltip.js"></script>
 </body>
 </html>

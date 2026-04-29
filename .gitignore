@@ -1,0 +1,14 @@
+# Local Claude Code session state
+.claude/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Editor
+.vscode/
+.idea/
+*.swp
+
+# Node (just in case)
+node_modules/

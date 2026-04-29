@@ -1,0 +1,118 @@
+/* The Compendium — Tooltip system */
+.info {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  cursor: help;
+  position: relative;
+}
+.info::after {
+  content: 'i';
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 13px;
+  height: 13px;
+  border-radius: 50%;
+  border: 1px solid currentColor;
+  font-family: 'IBM Plex Mono', monospace;
+  font-style: italic;
+  font-weight: 500;
+  font-size: 9px;
+  line-height: 1;
+  color: var(--accent, #e85d3d);
+  opacity: 0.55;
+  transition: opacity .15s ease;
+  flex-shrink: 0;
+  margin-left: 2px;
+}
+.info:hover::after,
+.info.is-active::after {
+  opacity: 1;
+}
+
+/* Floating tooltip element (single, pooled) */
+#cmp-tooltip {
+  position: fixed;
+  z-index: 9999;
+  max-width: 320px;
+  background: var(--paper, #131210);
+  color: var(--ink, #f0ebe2);
+  border: 1px solid var(--accent, #e85d3d);
+  padding: 14px 16px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 13px;
+  line-height: 1.5;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.6), 0 2px 8px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+  opacity: 0;
+  transform: translateY(4px);
+  transition: opacity .15s ease, transform .15s ease;
+}
+#cmp-tooltip.is-visible {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: auto;
+}
+#cmp-tooltip .tt-title {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .14em;
+  text-transform: uppercase;
+  color: var(--accent, #e85d3d);
+  font-weight: 600;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px dotted rgba(232, 93, 61, 0.35);
+}
+#cmp-tooltip .tt-body {
+  font-family: 'Fraunces', Georgia, serif;
+  font-style: italic;
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--ink-soft, #c4bdb0);
+  font-weight: 400;
+}
+
+/* Mobile: tooltips become bottom sheets */
+@media (max-width: 600px) {
+  #cmp-tooltip {
+    position: fixed;
+    left: 12px !important;
+    right: 12px;
+    bottom: 12px !important;
+    top: auto !important;
+    max-width: none;
+    transform: translateY(8px);
+  }
+  #cmp-tooltip.is-visible {
+    transform: translateY(0);
+  }
+}
+
+/* Print: hide tooltip system entirely */
+@media print {
+  .info::after { display: none !important; }
+  #cmp-tooltip { display: none !important; }
+}
+
+/* Make ledger rows visibly clickable */
+.ledger tbody tr[data-href] {
+  cursor: pointer;
+}
+.ledger tbody tr[data-href]:hover {
+  background: var(--highlight, #1f1c18) !important;
+}
+
+/* Make dossier wrapper-as-link inherit color */
+a.dossier-link {
+  text-decoration: none;
+  color: inherit;
+  display: block;
+}
+a.dossier-link:hover .dossier {
+  background: var(--paper-warm, #1c1a17);
+}
+a.dossier-link:hover .dossier-ticker {
+  color: var(--accent, #e85d3d);
+}
