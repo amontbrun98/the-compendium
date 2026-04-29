@@ -487,7 +487,15 @@ function scoreD(gm,gt,moat,vint=1.0){
   const base=g*.35+t*.3+m*.35;
   return base * (0.5 + 0.5*vint);
 }
-function scoreG(fwd,fcf){if(fwd===null||fwd===undefined)return 0;return Math.min(10,((fwd+fcf)/2/100)*10);}
+function scoreG(fwd,fcf,gt){
+  if(fwd===null||fwd===undefined)return 0;
+  const fcfVal=(fcf===null||fcf===undefined)?fwd:fcf;
+  const blend=(fwd+fcfVal)/2;
+  if(blend<=0)return 0;
+  const base=Math.min(10,Math.sqrt(blend/60)*10);
+  const trend=gt==='up'?1.05:gt==='dn'?0.85:1.0;
+  return Math.max(0,Math.min(10,base*trend));
+}
 function scoreV(peg,fcfY){if(peg===null||peg===undefined)return 0;return Math.max(0,Math.min(10,(5-peg)/4*10))*.5+Math.min(10,(fcfY/5)*10)*.5;}
 function scoreR(reg,cc){return Math.max(0,reg/10-cc*.3);}
 function impliedGrowthRequired(pe, targetPe=20, years=5){
@@ -529,7 +537,7 @@ function allS(c){
   if(c.override!==undefined)return{q:2,d:1.5,g:4,v:1,r:3.5,tot:c.override,gap:null,qBase:null,dBase:null};
   const qBase=scoreQ(c.spread,1.0),dBase=scoreD(c.gm,c.gt,c.moat,1.0);
   const q=scoreQ(c.spread,c.vint),d=scoreD(c.gm,c.gt,c.moat,c.vint);
-  const g=scoreG(c.fwdG,c.fcfG),v=scoreV(c.peg,c.fcfY),r=scoreR(c.reg,c.cc);
+  const g=scoreG(c.fwdG,c.fcfG,c.gt),v=scoreV(c.peg,c.fcfY),r=scoreR(c.reg,c.cc);
   const tot=q*W.quality+d*W.durability+g*W.growth+v*W.valuation+r*W.regulatory;
   const gap=marketGapV2(c.pe,c.fwdG,c.fcfG);
   return{q,d,g,v,r,tot,gap,qBase,dBase};
