@@ -404,9 +404,10 @@ body::before {
 
 <script src="assets/data-core.js"></script>
 <script src="assets/data-watch.js"></script>
+<script src="assets/data-loader.js"></script>
 <script src="assets/glossary.js"></script>
 <script>
-(function () {
+(async function () {
   const params = new URLSearchParams(location.search);
   const ticker = (params.get('t') || '').toUpperCase();
   const ledger = (params.get('l') || '').toLowerCase();
@@ -431,17 +432,29 @@ body::before {
     return;
   }
 
+  // Try live prices; fall through to embedded snapshot on any failure.
+  let livePayload = null;
+  if (window.COMPENDIUM) {
+    try { livePayload = await window.COMPENDIUM.loadJson('data/prices.json'); }
+    catch (_) { /* ignore */ }
+  }
+  function maybeMergeLive(company) {
+    if (!livePayload || !window.COMPENDIUM) return company;
+    const merged = window.COMPENDIUM.mergeWithPrices([company], livePayload);
+    return (merged && merged[0]) || company;
+  }
+
   if (ledger === 'core') {
     if (!window.CORE) { renderError('Core ledger data failed to load.'); return; }
-    const company = window.CORE.COMPANIES.find(c => c.t.toUpperCase() === ticker);
-    if (!company) { renderError(`Ticker "${ticker}" is not in the Core Ledger.`, 'five-pillar-scorer.html'); return; }
-    renderCore(company);
+    const base = window.CORE.COMPANIES.find(c => c.t.toUpperCase() === ticker);
+    if (!base) { renderError(`Ticker "${ticker}" is not in the Core Ledger.`, 'five-pillar-scorer.html'); return; }
+    renderCore(maybeMergeLive(base));
   } else {
     document.body.classList.add('ledger-watch');
     if (!window.WATCH) { renderError('Watch ledger data failed to load.'); return; }
-    const company = window.WATCH.COMPANIES.find(c => c.t.toUpperCase() === ticker);
-    if (!company) { renderError(`Ticker "${ticker}" is not in the Watch Ledger.`, 'watch-opportunity-ledger.html'); return; }
-    renderWatch(company);
+    const base = window.WATCH.COMPANIES.find(c => c.t.toUpperCase() === ticker);
+    if (!base) { renderError(`Ticker "${ticker}" is not in the Watch Ledger.`, 'watch-opportunity-ledger.html'); return; }
+    renderWatch(maybeMergeLive(base));
   }
 
   // ============================================================
@@ -870,13 +883,22 @@ body::before {
           <li>ROIC and WACC calculations cross-referenced against GuruFocus, FinanceCharts, and Alpha Spread</li>
           <li>Moat scoring and vintage classifications involve framework judgement — not pulled from a single data provider</li>
         </ul>
-        <div class="source-meta">Snapshot dated April 2026. Educational framework only — verify everything against current filings before acting.</div>
+        <div class="source-meta">${liveSourceLine()}</div>
       </div>
     `;
   }
 
   function disclaimerBlock() {
     return `<div class="disclaimer">Educational use only. Not investment advice, recommendation, or solicitation. Verify all data independently.</div>`;
+  }
+
+  function liveSourceLine() {
+    if (livePayload && livePayload.asof) {
+      const d = new Date(livePayload.asof);
+      const datestr = d.toLocaleDateString(undefined, { month: 'short', day: 'numeric', year: 'numeric' });
+      return `Live prices and valuation refreshed ${datestr} via yfinance. Qualitative fields (moat, vintage, regulatory, notes) are framework judgement, dated April 2026. Educational framework only — verify everything against current filings before acting.`;
+    }
+    return 'Snapshot dated April 2026. Educational framework only — verify everything against current filings before acting.';
   }
 })();
 </script>

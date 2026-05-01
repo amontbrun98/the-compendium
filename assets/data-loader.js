@@ -44,22 +44,35 @@
 
   // Merge live price snapshot into a company list. Fields from prices override
   // the embedded snapshot when present. Source-of-record fields (moat, vintage,
-  // regulatory, qualitative notes) are preserved from the embedded snapshot.
+  // regulatory, qualitative notes, TAM, thesis, bull/bear) are preserved from
+  // the embedded snapshot.
+  //
+  // Handles both Core schema (pe, peg, fcfY, fwdG) and Watch schema (ev, evRev,
+  // growth, revenue). Fields the company doesn't have are simply added as
+  // metadata; the existing render code ignores anything it doesn't read.
   function mergeWithPrices(companies, pricesPayload) {
     if (!companies || !pricesPayload || !pricesPayload.rows) return companies;
     const byTicker = Object.fromEntries(pricesPayload.rows.map(r => [r.t, r]));
     return companies.map(c => {
       const live = byTicker[c.t];
-      if (!live || live.error) return { ...c, _live: false };
-      return {
+      if (!live || live.error || (live.price == null && live.marketCap == null)) {
+        return { ...c, _live: false };
+      }
+      const merged = {
         ...c,
-        // override volatile fields where the live data has a value
-        pe:   live.pe_forward ?? live.pe_trailing ?? c.pe,
-        peg:  live.peg ?? c.peg,
-        gm:   live.gm ?? c.gm,
-        fcfY: live.fcfY ?? c.fcfY,
-        fwdG: live.fwdG_eps ?? c.fwdG,
-        // attach live-only fields
+        // CORE-schema volatile fields (no-op on Watch companies that don't have them)
+        pe:   c.pe   != null ? (live.pe_forward ?? live.pe_trailing ?? c.pe) : c.pe,
+        peg:  c.peg  != null ? (live.peg ?? c.peg) : c.peg,
+        gm:   c.gm   != null ? (live.gm ?? c.gm) : c.gm,
+        fcfY: c.fcfY != null ? (live.fcfY ?? c.fcfY) : c.fcfY,
+        fwdG: c.fwdG != null ? (live.fwdG_eps ?? c.fwdG) : c.fwdG,
+        // WATCH-schema volatile fields (no-op on Core companies)
+        ev:    c.ev    !== undefined && live.ev != null ? +(live.ev / 1e9).toFixed(2) : c.ev,
+        evRev: c.evRev !== undefined ? (live.ev_rev ?? c.evRev) : c.evRev,
+        growth: c.growth !== undefined && live.fwdG_rev != null ? Math.round(live.fwdG_rev) : c.growth,
+        // recompute EV/Rev/Growth where both values are present
+        evRevGrowth: undefined,
+        // attach live-only metadata
         _live: true,
         _price: live.price,
         _marketCap: live.marketCap,
@@ -71,6 +84,17 @@
         _shortPercent: live.shortPercent,
         _asof: live.asof,
       };
+      // Restore evRevGrowth — recomputed if both inputs are numeric, else preserved
+      if (c.evRevGrowth !== undefined) {
+        const ev = merged.evRev;
+        const g = merged.growth;
+        merged.evRevGrowth = (typeof ev === 'number' && typeof g === 'number' && g > 0)
+          ? +(ev / g).toFixed(2)
+          : c.evRevGrowth;
+      } else {
+        delete merged.evRevGrowth;
+      }
+      return merged;
     });
   }
 

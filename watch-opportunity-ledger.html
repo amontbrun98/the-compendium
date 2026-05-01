@@ -240,8 +240,8 @@ body::after { content: ''; position: fixed; inset: 0; background-image: repeatin
 
 <div class="press-line">
   <div class="press-meta">EST. 2026 · COMPILED IN MIAMI</div>
-  <div class="press-edition">Full Universe Edition</div>
-  <div class="press-meta right">THIRTY-SIX CANDIDATES · EIGHT CORRELATION GROUPS · ONE PORTFOLIO ROLE</div>
+  <div class="press-edition" id="live-status">Embedded snapshot · April 2026</div>
+  <div class="press-meta right">THIRTY-FIVE CANDIDATES · EIGHT CORRELATION GROUPS · ONE PORTFOLIO ROLE</div>
 </div>
 
 <div class="lede">
@@ -342,11 +342,12 @@ body::after { content: ''; position: fixed; inset: 0; background-image: repeatin
 
 </div>
 
+<script src="assets/data-loader.js"></script>
 <script>
 const W={market:.20, trajectory:.20, edge:.15, capital:.15, asymmetry:.15, valuation:.15};
 
-// 35 candidates: 5 originals (revised per board) + 30 new across 8 correlation groups
-const COMPANIES = [
+// 35 candidates across 8 correlation groups
+let COMPANIES = [
   // ============ TECH GROWTH (revised originals + new) ============
   {t:'NET', n:'Cloudflare', cat:'Edge AI Infrastructure', corr:'tech', col:'#f48120',
    thesis:'The control plane for the agentic internet',
@@ -776,6 +777,25 @@ function upsideEstimate(c) {
   return '2-3×';
 }
 
+// Bootstrap: try live prices, fall back to embedded snapshot, then render.
+(async function bootstrap() {
+  if (window.COMPENDIUM) {
+    try {
+      const prices = await window.COMPENDIUM.loadJson('data/prices.json');
+      if (prices && prices.rows) {
+        COMPANIES = window.COMPENDIUM.mergeWithPrices(COMPANIES, prices);
+        const status = document.getElementById('live-status');
+        if (status && prices.asof) {
+          const d = new Date(prices.asof);
+          status.textContent = `Live data · refreshed ${d.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'})}`;
+        }
+      }
+    } catch (e) { /* keep embedded snapshot */ }
+  }
+  renderAll();
+})();
+
+function renderAll() {
 const ranked = COMPANIES.map(c => ({c, score: composite(c)})).sort((a,b) => b.score - a.score);
 
 // FILTERS
@@ -910,6 +930,7 @@ ranked.slice(0, 12).forEach(({c, score}, i) => {
   wrapper.appendChild(card);
   dgrid.appendChild(wrapper);
 });
+} // end renderAll
 </script>
 <script src="assets/glossary.js"></script>
 <script src="assets/tooltip.js"></script>

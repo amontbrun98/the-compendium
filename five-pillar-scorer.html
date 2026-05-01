@@ -324,7 +324,7 @@ body::after { content: ''; position: fixed; inset: 0; background-image: repeatin
 
 <div class="press-line">
   <div class="press-meta">EST. 2026 · COMPILED IN MIAMI</div>
-  <div class="press-edition">Expanded Universe Edition</div>
+  <div class="press-edition" id="live-status">Embedded snapshot · April 2026</div>
   <div class="press-meta right">THIRTY-ONE ENTERPRISES · NINE SECTORS · ONE PAGE</div>
 </div>
 
@@ -403,10 +403,11 @@ body::after { content: ''; position: fixed; inset: 0; background-image: repeatin
 
 </div>
 
+<script src="assets/data-loader.js"></script>
 <script>
 const W={quality:.30,durability:.20,growth:.20,valuation:.20,regulatory:.10};
 
-const COMPANIES=[
+let COMPANIES=[
   {t:'NVDA', n:'Nvidia Corporation',         cat:'Magnificent 7',          col:'#76b900',pe:28, roic:94,wacc:11,spread:83,gm:74,gt:'up',  moat:[95,88,72,55],fwdG:38,fcfG:44,fcfY:2.8, peg:0.74,reg:50,cc:0,    vint:0.85,
    note:'Highest quality spread of any company discussed at plus 83 percent. The export controls to China and custom silicon from hyperscalers are present risks. Vintage of 0.85 reflects only three years at this elevated quality level.'},
   {t:'CRDO', n:'Credo Technology',            cat:'AI Infrastructure',      col:'#0d9488',pe:22, roic:77,wacc:25,spread:52,gm:68,gt:'flat',moat:[80,75,70,60],fwdG:50,fcfG:48,fcfY:1.8, peg:1.2, reg:55,cc:0.35, vint:0.55,
@@ -546,6 +547,25 @@ function allS(c){
 const PILLAR_KEYS=[{k:'q',l:'Quality',gk:'quality'},{k:'d',l:'Durability',gk:'durability'},{k:'g',l:'Growth',gk:'growth'},{k:'v',l:'Valuation',gk:'valuation'},{k:'r',l:'Regulatory',gk:'regulatory'}];
 const PILLAR_DEFS=[{k:'q',l:'Quality',w:'30%',adj:true,gk:'quality'},{k:'d',l:'Durability',w:'20%',adj:true,gk:'durability'},{k:'g',l:'Growth',w:'20%',adj:false,gk:'growth'},{k:'v',l:'Valuation',w:'20%',adj:false,gk:'valuation'},{k:'r',l:'Regulatory',w:'10%',adj:false,gk:'regulatory'}];
 
+// Bootstrap: try live prices, fall back to embedded snapshot, then render.
+(async function bootstrap() {
+  if (window.COMPENDIUM) {
+    try {
+      const prices = await window.COMPENDIUM.loadJson('data/prices.json');
+      if (prices && prices.rows) {
+        COMPANIES = window.COMPENDIUM.mergeWithPrices(COMPANIES, prices);
+        const status = document.getElementById('live-status');
+        if (status && prices.asof) {
+          const d = new Date(prices.asof);
+          status.textContent = `Live data · refreshed ${d.toLocaleDateString(undefined, {month:'short', day:'numeric', year:'numeric'})}`;
+        }
+      }
+    } catch (e) { /* keep embedded snapshot */ }
+  }
+  renderAll();
+})();
+
+function renderAll() {
 const ranked = COMPANIES.map(c=>({c,s:allS(c)})).sort((a,b)=>b.s.tot-a.s.tot);
 const cats = [...new Set(COMPANIES.map(c=>c.cat))].sort();
 let activeCats = new Set(cats);
@@ -699,6 +719,7 @@ ranked.forEach(({c,s}, i) => {
   wrapper.appendChild(card);
   dgrid.appendChild(wrapper);
 });
+} // end renderAll
 </script>
 <script src="assets/glossary.js"></script>
 <script src="assets/tooltip.js"></script>
