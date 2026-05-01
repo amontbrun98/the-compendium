@@ -213,7 +213,7 @@ body::before {
       </select>
     </div>
     <div>
-      <label for="d-input">Dollars</label>
+      <label for="d-input">Dollars <span id="d-preview" style="color: var(--accent); font-family: 'Fraunces', serif; font-style: italic; letter-spacing: 0; text-transform: none; margin-left: 6px;"></span></label>
       <input type="number" id="d-input" placeholder="0" min="0" step="100">
     </div>
     <div>
@@ -224,13 +224,12 @@ body::before {
   </div>
 </div>
 
-<div class="add-panel" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end;">
+<div class="add-panel" style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; align-items: end;">
   <div>
-    <label style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px;">Cash on hand</label>
+    <label style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px;">Cash on hand <span id="cash-preview" style="color: var(--accent); font-family: 'Fraunces', serif; font-style: italic; letter-spacing: 0; text-transform: none; margin-left: 6px;"></span></label>
     <input type="number" id="cash-input" min="0" step="500" style="background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 100%;">
   </div>
-  <div></div>
-  <button class="add-btn ghost" id="cash-save">Save cash</button>
+  <div style="font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--ink-mute); padding-bottom: 12px;">Saves automatically on blur.</div>
 </div>
 
 <div class="toolbar">
@@ -262,9 +261,41 @@ body::before {
 
 <div id="breaches-panel"></div>
 
-<!-- STRESS TEST -->
+<!-- AUTO-BALANCE -->
 <div class="section-marker">
   <span class="section-marker-num">№ 03</span>
+  <span class="section-marker-text">Auto-balance from Seed Tickers</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<div class="callout">
+  <div class="callout-title">What this does</div>
+  <div class="callout-body">Pick a handful of tickers you want exposure to. The engine sizes each one to respect every cap (per-name 8%/3%, per-cluster 25%/12%, Watch sleeve 20%, regime cash floor) and produces a balanced portfolio. It uses your sleeve assignment from the universe and weights names equally within their cap, then redistributes any clipped capital to under-weight names. Preview before committing.</div>
+</div>
+
+<div class="add-panel">
+  <h4>Seeds</h4>
+  <div style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 12px; align-items: end;">
+    <div class="suggest-box">
+      <label for="ab-input" style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px;">Add a seed ticker</label>
+      <input type="text" id="ab-input" placeholder="Type ticker or company name…" autocomplete="off" style="background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 100%;">
+      <div class="suggest-list" id="ab-suggest"></div>
+    </div>
+    <div>
+      <label for="ab-capital" style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px;">Total capital <span id="ab-cap-preview" style="color: var(--accent); font-family: 'Fraunces', serif; font-style: italic; letter-spacing: 0; text-transform: none; margin-left: 6px;"></span></label>
+      <input type="number" id="ab-capital" placeholder="100000" min="1000" step="1000" style="background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 100%;">
+    </div>
+    <button class="add-btn" id="ab-generate">Generate</button>
+  </div>
+  <div id="ab-chips" style="margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px;"></div>
+  <div style="margin-top: 8px; font-family: 'Fraunces', serif; font-style: italic; font-size: 12px; color: var(--ink-mute);">Click a chip to remove it. Empty list will use a default diversified seed (Lilly, Novo, Mag 7 anchors, MELI, GLP-1 distribution).</div>
+</div>
+
+<div id="ab-preview" style="display: none;"></div>
+
+<!-- STRESS TEST -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 04</span>
   <span class="section-marker-text">Stress Test Your Allocation</span>
   <div class="section-marker-line"></div>
 </div>
@@ -342,6 +373,28 @@ function saveState() {
 }
 function newId() { return Math.random().toString(36).slice(2, 9); }
 
+// ---------- magnitude formatter ----------
+function magShort(n) {
+  if (!n || isNaN(n)) return '';
+  const a = Math.abs(n);
+  if (a >= 1e9) return '$' + (n/1e9).toFixed(2) + 'B';
+  if (a >= 1e6) return '$' + (n/1e6).toFixed(2) + 'M';
+  if (a >= 1e3) return '$' + (n/1e3).toFixed(1) + 'K';
+  return '$' + n.toLocaleString();
+}
+function attachMagnitudePreview(inputId, previewId) {
+  const inp = document.getElementById(inputId);
+  const prev = document.getElementById(previewId);
+  if (!inp || !prev) return;
+  const update = () => {
+    const v = parseFloat(inp.value);
+    prev.textContent = v && v > 0 ? '→ ' + magShort(v) : '';
+    if (v && v >= 1e6) prev.style.color = 'var(--bear)'; else prev.style.color = 'var(--accent)';
+  };
+  inp.addEventListener('input', update);
+  update();
+}
+
 // ---------- universe ----------
 async function loadUniverse() {
   const data = await window.COMPENDIUM.loadAll();
@@ -408,11 +461,19 @@ function addPosition() {
   const dollars = parseFloat(document.getElementById('d-input').value) || 0;
   const note = document.getElementById('n-input').value.trim();
   if (!t || dollars <= 0) { alert('Need a ticker and a positive dollar amount.'); return; }
+  // Sanity check: warn if this single position would dominate the portfolio
+  const projectedTotal = state.positions.reduce((s, p) => s + p.dollars, 0) + state.cash + dollars;
+  const projectedPct = dollars / projectedTotal;
+  if (projectedPct > 0.50) {
+    const ok = confirm(`Heads up: ${t} at ${magShort(dollars)} would be ${(projectedPct*100).toFixed(1)}% of your portfolio (total ${magShort(projectedTotal)}).\n\nThat's well over the per-name cap. Did you mean to add this much?\n\nClick OK to add, Cancel to fix the dollar amount.`);
+    if (!ok) { document.getElementById('d-input').focus(); document.getElementById('d-input').select(); return; }
+  }
   state.positions.push({ id: newId(), t, sleeve, dollars, note });
   saveState();
   document.getElementById('t-input').value = '';
   document.getElementById('d-input').value = '';
   document.getElementById('n-input').value = '';
+  document.getElementById('d-preview').textContent = '';
   render();
 }
 function deletePosition(id) {
@@ -451,7 +512,7 @@ function render() {
   const cashTarget = RULES.cash_target_by_regime[regime] || 0.20;
   document.getElementById('a-cash-target').textContent = (cashTarget*100).toFixed(0) + '%';
 
-  // positions table
+  // positions table — with inline cap-violation suggestions
   const tbody = document.querySelector('#pos-table tbody');
   if (state.positions.length === 0) {
     tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 32px; color: var(--ink-mute); font-family: Fraunces, serif; font-style: italic;">No positions yet — add one above.</td></tr>';
@@ -461,13 +522,21 @@ function render() {
       const meta = universe[p.t] || { n: p.t, cluster: 'unclassified' };
       const pct = total > 0 ? (p.dollars/total*100) : 0;
       const cap = (p.sleeve === 'core' ? RULES.per_name_core : RULES.per_name_watch) * 100;
+      // inline cap-violation suggestion
+      let inlineWarn = '';
+      if (pct > cap && total > 0) {
+        const trimDollars = Math.round(p.dollars - (cap/100) * total);
+        inlineWarn = `<div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--bear); margin-top: 4px; letter-spacing: .04em;">⚠ over ${cap.toFixed(0)}% cap by ${(pct - cap).toFixed(1)}pp · trim $${trimDollars.toLocaleString()}</div>`;
+      } else if (pct > cap * 0.85 && total > 0) {
+        inlineWarn = `<div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gold); margin-top: 4px; letter-spacing: .04em;">approaching cap (${cap.toFixed(0)}%)</div>`;
+      }
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><div class="pos-t">${p.t}</div><div class="pos-n">${meta.n}</div></td>
         <td><span class="pos-cluster ${meta.cluster === 'unclassified' ? 'unclassified' : ''}">${meta.cluster.toUpperCase()}</span></td>
         <td><select class="pos-sleeve-sel pos-sleeve ${p.sleeve}" data-id="${p.id}" style="background: transparent; border: none; color: inherit; font: inherit; cursor: pointer;"><option value="core" ${p.sleeve==='core'?'selected':''}>CORE</option><option value="watch" ${p.sleeve==='watch'?'selected':''}>WATCH</option></select></td>
-        <td class="pos-dollars">$${p.dollars.toLocaleString()}</td>
-        <td class="pos-pct ${pct > cap ? 'over' : ''}">${pct.toFixed(1)}%</td>
+        <td class="pos-dollars">$${p.dollars.toLocaleString()}<div style="font-family: 'Fraunces', serif; font-style: italic; font-size: 11px; color: var(--ink-mute);">${magShort(p.dollars)}</div></td>
+        <td class="pos-pct ${pct > cap ? 'over' : ''}">${pct.toFixed(1)}%${inlineWarn}</td>
         <td class="pos-actions"><input type="number" class="pos-d-edit" data-id="${p.id}" value="${p.dollars}" step="100"><button class="pos-del" data-id="${p.id}">×</button></td>
       `;
       tbody.appendChild(tr);
@@ -628,6 +697,175 @@ function populateStressScopes() {
   });
 }
 
+// ---------- auto-balance ----------
+let abSeeds = [];
+
+function setupAbSearch() {
+  const input = document.getElementById('ab-input');
+  const list = document.getElementById('ab-suggest');
+  let activeIdx = -1, items = [];
+  function render(q) {
+    q = q.trim().toUpperCase();
+    if (!q) { list.classList.remove('show'); return; }
+    const matches = Object.entries(universe)
+      .filter(([t, m]) => !abSeeds.includes(t) && (t.includes(q) || m.n.toUpperCase().includes(q)))
+      .slice(0, 10);
+    if (matches.length === 0) {
+      list.innerHTML = `<div class="suggest-item" data-custom="${q}"><span class="t">${q}</span><span class="n">Add as custom (unclassified)</span></div>`;
+    } else {
+      list.innerHTML = matches.map(([t, m]) => `<div class="suggest-item" data-t="${t}"><span class="t">${t}</span><span class="n">${m.n}</span><span class="c">${m.cluster.toUpperCase()}</span></div>`).join('');
+    }
+    items = list.querySelectorAll('.suggest-item');
+    activeIdx = -1;
+    list.classList.add('show');
+  }
+  function pick(item) {
+    const t = item.getAttribute('data-t') || item.getAttribute('data-custom');
+    if (!abSeeds.includes(t)) abSeeds.push(t);
+    input.value = '';
+    list.classList.remove('show');
+    renderSeeds();
+    input.focus();
+  }
+  input.addEventListener('input', e => render(e.target.value));
+  input.addEventListener('focus', e => { if (e.target.value) render(e.target.value); });
+  input.addEventListener('keydown', e => {
+    if (!list.classList.contains('show')) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = Math.min(activeIdx+1, items.length-1); items.forEach((el,i)=>el.classList.toggle('active', i===activeIdx)); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = Math.max(activeIdx-1, 0); items.forEach((el,i)=>el.classList.toggle('active', i===activeIdx)); }
+    else if (e.key === 'Enter' && activeIdx >= 0) { e.preventDefault(); pick(items[activeIdx]); }
+    else if (e.key === 'Escape') list.classList.remove('show');
+  });
+  list.addEventListener('mousedown', e => { const item = e.target.closest('.suggest-item'); if (item) pick(item); });
+  document.addEventListener('click', e => { if (!input.contains(e.target) && !list.contains(e.target)) list.classList.remove('show'); });
+}
+
+function renderSeeds() {
+  const el = document.getElementById('ab-chips');
+  if (abSeeds.length === 0) { el.innerHTML = '<span style="font-family: \'Fraunces\', serif; font-style: italic; font-size: 13px; color: var(--ink-mute);">No seeds yet — using default.</span>'; return; }
+  el.innerHTML = abSeeds.map(t => {
+    const m = universe[t] || { cluster: 'unclassified' };
+    return `<span class="ab-chip" data-t="${t}" style="display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; background: var(--paper-deep); border: 1px solid var(--accent); cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink); transition: background .15s;"><strong>${t}</strong><span style="color: var(--ink-mute); font-size: 9px; letter-spacing: .1em;">${m.cluster.toUpperCase()}</span><span style="color: var(--bear); font-weight: bold;">×</span></span>`;
+  }).join('');
+  el.querySelectorAll('.ab-chip').forEach(c => c.onclick = e => {
+    const t = e.currentTarget.getAttribute('data-t');
+    abSeeds = abSeeds.filter(x => x !== t);
+    renderSeeds();
+  });
+}
+
+const DEFAULT_SEEDS = ['LLY', 'NVO', 'GOOGL', 'MSFT', 'V', 'TSM', 'BRK.B', 'NESN', 'MELI', 'NU', 'HIMS', 'CCJ', 'WPM', 'CRSP'];
+
+// Core algorithm: takes seeds + total capital, returns balanced positions array
+function generateBalancedPortfolio(seedTickers, totalCapital, regimeName) {
+  const seeds = (seedTickers && seedTickers.length > 0) ? seedTickers : DEFAULT_SEEDS;
+  const cashTarget = RULES.cash_target_by_regime[regimeName] || 0.20;
+  const investable = totalCapital * (1 - cashTarget);
+
+  // Step 1: classify each seed by sleeve and cluster
+  const candidates = seeds.map(t => {
+    const m = universe[t] || { cluster: 'unclassified', sleeve: 'core', n: t };
+    return { t, sleeve: m.sleeve || 'core', cluster: m.cluster, name: m.n, weight: 0 };
+  });
+
+  // Step 2: assign equal weight within each sleeve, capped at per-name cap
+  const coreNames = candidates.filter(c => c.sleeve === 'core');
+  const watchNames = candidates.filter(c => c.sleeve === 'watch');
+  const watchSleeveBudget = Math.min(RULES.watch_total, (watchNames.length * RULES.per_name_watch));
+  const coreSleeveBudget = 1 - cashTarget - watchSleeveBudget;
+  const coreEqualW = coreNames.length > 0 ? coreSleeveBudget / coreNames.length : 0;
+  const watchEqualW = watchNames.length > 0 ? watchSleeveBudget / watchNames.length : 0;
+  coreNames.forEach(c => c.weight = Math.min(coreEqualW, RULES.per_name_core));
+  watchNames.forEach(c => c.weight = Math.min(watchEqualW, RULES.per_name_watch));
+
+  // Step 3: enforce per-cluster caps (within each sleeve)
+  function enforceClusterCaps(group, cap) {
+    const byCluster = {};
+    group.forEach(c => { byCluster[c.cluster] = byCluster[c.cluster] || []; byCluster[c.cluster].push(c); });
+    Object.values(byCluster).forEach(items => {
+      const sum = items.reduce((s, x) => s + x.weight, 0);
+      if (sum > cap) {
+        const scale = cap / sum;
+        items.forEach(x => x.weight *= scale);
+      }
+    });
+  }
+  enforceClusterCaps(coreNames, RULES.per_cluster_core);
+  enforceClusterCaps(watchNames, RULES.per_cluster_watch);
+
+  // Step 4: redistribute any unused budget to under-cap names (one rebalance pass)
+  function redistribute(group, sleeveBudget, perNameCap, perClusterCap) {
+    const used = group.reduce((s, c) => s + c.weight, 0);
+    const slack = sleeveBudget - used;
+    if (slack <= 0.001) return;
+    const eligible = group.filter(c => c.weight < perNameCap);
+    if (eligible.length === 0) return;
+    // Try to add slack/eligibleCount to each, respecting per-name and per-cluster caps
+    const add = slack / eligible.length;
+    eligible.forEach(c => {
+      const room = perNameCap - c.weight;
+      c.weight += Math.min(add, room);
+    });
+    enforceClusterCaps(group, perClusterCap);
+  }
+  redistribute(coreNames, coreSleeveBudget, RULES.per_name_core, RULES.per_cluster_core);
+  redistribute(watchNames, watchSleeveBudget, RULES.per_name_watch, RULES.per_cluster_watch);
+
+  // Step 5: convert to dollars
+  const positions = candidates.filter(c => c.weight > 0).map(c => ({
+    t: c.t,
+    sleeve: c.sleeve,
+    cluster: c.cluster,
+    name: c.name,
+    weight: c.weight,
+    dollars: Math.round(c.weight * totalCapital),
+  }));
+
+  const positionsTotal = positions.reduce((s, p) => s + p.dollars, 0);
+  const cash = totalCapital - positionsTotal;
+
+  return { positions, cash, totalCapital, cashTarget, regimeName };
+}
+
+function renderBalancedPreview(result) {
+  const el = document.getElementById('ab-preview');
+  el.style.display = 'block';
+  const rows = result.positions.sort((a, b) => b.dollars - a.dollars).map(p => `
+    <tr>
+      <td><div class="pos-t">${p.t}</div><div class="pos-n">${p.name}</div></td>
+      <td><span class="pos-cluster ${p.cluster === 'unclassified' ? 'unclassified' : ''}">${p.cluster.toUpperCase()}</span></td>
+      <td><span class="pos-sleeve ${p.sleeve}">${p.sleeve.toUpperCase()}</span></td>
+      <td class="pos-dollars">$${p.dollars.toLocaleString()}<div style="font-family: 'Fraunces', serif; font-style: italic; font-size: 11px; color: var(--ink-mute);">${magShort(p.dollars)}</div></td>
+      <td class="pos-pct">${(p.weight*100).toFixed(2)}%</td>
+    </tr>`).join('');
+  el.innerHTML = `
+    <div class="panel" style="margin-bottom: 16px;">
+      <h4>Generated portfolio · ${magShort(result.totalCapital)} total · ${result.regimeName} regime → ${(result.cashTarget*100).toFixed(0)}% cash target</h4>
+      <table class="pos-table" style="margin-top: 14px; margin-bottom: 18px;">
+        <thead><tr><th>Ticker</th><th>Cluster</th><th>Sleeve</th><th style="text-align: right;">Dollars</th><th style="text-align: right;">Weight</th></tr></thead>
+        <tbody>${rows}<tr style="background: var(--paper-deep);"><td><strong>CASH</strong></td><td></td><td></td><td class="pos-dollars">$${result.cash.toLocaleString()}<div style="font-family: 'Fraunces', serif; font-style: italic; font-size: 11px; color: var(--ink-mute);">${magShort(result.cash)}</div></td><td class="pos-pct">${(result.cash/result.totalCapital*100).toFixed(2)}%</td></tr></tbody>
+      </table>
+      <div style="display: flex; gap: 10px;">
+        <button class="add-btn" id="ab-apply">Apply (replace current)</button>
+        <button class="add-btn ghost" id="ab-append">Append to current</button>
+        <button class="add-btn ghost" id="ab-discard">Discard</button>
+      </div>
+    </div>`;
+  document.getElementById('ab-apply').onclick = () => {
+    if (!confirm('Replace your current positions with this generated portfolio?')) return;
+    state.cash = result.cash;
+    state.positions = result.positions.map(p => ({ id: newId(), t: p.t, sleeve: p.sleeve, dollars: p.dollars, note: 'auto-balanced' }));
+    saveState(); render();
+    el.style.display = 'none';
+  };
+  document.getElementById('ab-append').onclick = () => {
+    result.positions.forEach(p => state.positions.push({ id: newId(), t: p.t, sleeve: p.sleeve, dollars: p.dollars, note: 'auto-balanced' }));
+    saveState(); render();
+    el.style.display = 'none';
+  };
+  document.getElementById('ab-discard').onclick = () => { el.style.display = 'none'; };
+}
+
 // ---------- init ----------
 (async function () {
   loadState();
@@ -636,7 +874,23 @@ function populateStressScopes() {
 
   // wire up controls
   document.getElementById('add-btn').onclick = addPosition;
-  document.getElementById('cash-save').onclick = () => { state.cash = parseFloat(document.getElementById('cash-input').value) || 0; saveState(); render(); };
+  // Auto-save cash on blur — no button needed
+  const cashInp = document.getElementById('cash-input');
+  cashInp.addEventListener('blur', () => { state.cash = parseFloat(cashInp.value) || 0; saveState(); render(); });
+  cashInp.addEventListener('keydown', e => { if (e.key === 'Enter') cashInp.blur(); });
+  // Magnitude previews on dollar inputs
+  attachMagnitudePreview('d-input', 'd-preview');
+  attachMagnitudePreview('cash-input', 'cash-preview');
+  attachMagnitudePreview('ab-capital', 'ab-cap-preview');
+  // Auto-balance UI
+  setupAbSearch();
+  renderSeeds();
+  document.getElementById('ab-generate').onclick = () => {
+    const totalCapital = parseFloat(document.getElementById('ab-capital').value) || 0;
+    if (totalCapital < 1000) { alert('Set a total capital of at least $1,000.'); return; }
+    const result = generateBalancedPortfolio(abSeeds, totalCapital, regime);
+    renderBalancedPreview(result);
+  };
   document.getElementById('export-btn').onclick = exportJson;
   document.getElementById('import-btn').onclick = () => document.getElementById('import-file').click();
   document.getElementById('import-file').onchange = e => { if (e.target.files[0]) importJson(e.target.files[0]); };
