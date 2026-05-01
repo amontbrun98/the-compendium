@@ -185,16 +185,48 @@ body::before {
   <div class="status-cell"><div class="lbl">Regime Cash Target</div><div class="val" id="a-cash-target">—</div><div class="sub" id="a-regime-note">—</div></div>
 </div>
 
-<!-- ADD POSITION -->
+<!-- AUTO-BALANCE — Step 1: generate a balanced portfolio from seeds -->
 <div class="section-marker">
   <span class="section-marker-num">№ 01</span>
-  <span class="section-marker-text">Build Your Allocation</span>
+  <span class="section-marker-text">Start: Auto-balance from Seed Tickers</span>
   <div class="section-marker-line"></div>
 </div>
 
 <div class="callout">
-  <div class="callout-title">How this works</div>
-  <div class="callout-body">Search for a ticker — the dropdown autocompletes from your Core and Watch universes. Pick a sleeve, set your dollar amount, click Add. Edit any cell inline. Your allocation persists in this browser via localStorage. Export to JSON when you want to commit it to the repo or copy elsewhere.</div>
+  <div class="callout-title">How this workflow goes</div>
+  <div class="callout-body">Step 1 (this section): pick a handful of tickers and let the engine size them so every cap is respected — per-name (8% Core / 3% Watch), per-cluster (25% / 12%), Watch sleeve total (20%), and regime cash floor. Step 2 (below): refine the result manually — add more names, trim positions, or drop entire clusters. Step 3: stress test what you built. Empty seeds will use a default diversified set (LLY, NVO, GOOGL, MSFT, V, TSM, BRK.B, NESN, MELI, NU, HIMS, CCJ, WPM, CRSP).</div>
+</div>
+
+<div class="add-panel">
+  <h4>Seeds</h4>
+  <div style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 12px; align-items: end;">
+    <div class="suggest-box">
+      <label for="ab-input" style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px;">Add a seed ticker</label>
+      <input type="text" id="ab-input" placeholder="Type ticker or company name…" autocomplete="off" style="background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 100%;">
+      <div class="suggest-list" id="ab-suggest"></div>
+    </div>
+    <div>
+      <label for="ab-capital" style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px;">Total capital <span id="ab-cap-preview" style="color: var(--accent); font-family: 'Fraunces', serif; font-style: italic; letter-spacing: 0; text-transform: none; margin-left: 6px;"></span></label>
+      <input type="number" id="ab-capital" placeholder="100000" min="1000" step="1000" style="background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 100%;">
+    </div>
+    <button class="add-btn" id="ab-generate">Generate</button>
+  </div>
+  <div id="ab-chips" style="margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px;"></div>
+  <div style="margin-top: 8px; font-family: 'Fraunces', serif; font-style: italic; font-size: 12px; color: var(--ink-mute);">Click a chip to remove it. Empty list = default diversified seed.</div>
+</div>
+
+<div id="ab-preview" style="display: none;"></div>
+
+<!-- ADD / EDIT POSITIONS — Step 2: refine the auto-balanced output -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 02</span>
+  <span class="section-marker-text">Refine: Add, Edit, or Adjust Positions</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<div class="callout">
+  <div class="callout-title">After you generate a portfolio above</div>
+  <div class="callout-body">Add tickers the engine missed, trim names you don't want, edit dollar amounts inline, or drop an entire cluster from the concentration panel below. Every change saves automatically to this browser. Use Export when you're ready to commit the file to the repo.</div>
 </div>
 
 <div class="add-panel">
@@ -239,17 +271,16 @@ body::before {
   <button id="reset-btn" class="danger">Reset all</button>
 </div>
 
-<!-- POSITIONS TABLE -->
 <table class="pos-table" id="pos-table">
   <thead>
     <tr><th>Ticker</th><th>Cluster</th><th>Sleeve</th><th style="text-align: right;">Dollars</th><th style="text-align: right;">Weight</th><th style="text-align: right; width: 180px;">Edit</th></tr>
   </thead>
-  <tbody><tr><td colspan="6" style="text-align: center; padding: 32px; color: var(--ink-mute); font-family: Fraunces, serif; font-style: italic;">No positions yet — add one above.</td></tr></tbody>
+  <tbody><tr><td colspan="6" style="text-align: center; padding: 32px; color: var(--ink-mute); font-family: Fraunces, serif; font-style: italic;">No positions yet — generate one above or add manually.</td></tr></tbody>
 </table>
 
 <!-- CONCENTRATION + BREACHES -->
 <div class="section-marker">
-  <span class="section-marker-num">№ 02</span>
+  <span class="section-marker-num">№ 03</span>
   <span class="section-marker-text">Concentration &amp; Breaches</span>
   <div class="section-marker-line"></div>
 </div>
@@ -260,38 +291,6 @@ body::before {
 </div>
 
 <div id="breaches-panel"></div>
-
-<!-- AUTO-BALANCE -->
-<div class="section-marker">
-  <span class="section-marker-num">№ 03</span>
-  <span class="section-marker-text">Auto-balance from Seed Tickers</span>
-  <div class="section-marker-line"></div>
-</div>
-
-<div class="callout">
-  <div class="callout-title">What this does</div>
-  <div class="callout-body">Pick a handful of tickers you want exposure to. The engine sizes each one to respect every cap (per-name 8%/3%, per-cluster 25%/12%, Watch sleeve 20%, regime cash floor) and produces a balanced portfolio. It uses your sleeve assignment from the universe and weights names equally within their cap, then redistributes any clipped capital to under-weight names. Preview before committing.</div>
-</div>
-
-<div class="add-panel">
-  <h4>Seeds</h4>
-  <div style="display: grid; grid-template-columns: 2fr 1fr auto; gap: 12px; align-items: end;">
-    <div class="suggest-box">
-      <label for="ab-input" style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px;">Add a seed ticker</label>
-      <input type="text" id="ab-input" placeholder="Type ticker or company name…" autocomplete="off" style="background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 100%;">
-      <div class="suggest-list" id="ab-suggest"></div>
-    </div>
-    <div>
-      <label for="ab-capital" style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px;">Total capital <span id="ab-cap-preview" style="color: var(--accent); font-family: 'Fraunces', serif; font-style: italic; letter-spacing: 0; text-transform: none; margin-left: 6px;"></span></label>
-      <input type="number" id="ab-capital" placeholder="100000" min="1000" step="1000" style="background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 100%;">
-    </div>
-    <button class="add-btn" id="ab-generate">Generate</button>
-  </div>
-  <div id="ab-chips" style="margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px;"></div>
-  <div style="margin-top: 8px; font-family: 'Fraunces', serif; font-style: italic; font-size: 12px; color: var(--ink-mute);">Click a chip to remove it. Empty list will use a default diversified seed (Lilly, Novo, Mag 7 anchors, MELI, GLP-1 distribution).</div>
-</div>
-
-<div id="ab-preview" style="display: none;"></div>
 
 <!-- STRESS TEST -->
 <div class="section-marker">
@@ -480,6 +479,18 @@ function deletePosition(id) {
   state.positions = state.positions.filter(p => p.id !== id);
   saveState(); render();
 }
+function clearCluster(cluster, sleeve) {
+  const matching = state.positions.filter(p => {
+    const m = universe[p.t] || { cluster: 'unclassified' };
+    return m.cluster === cluster && p.sleeve === sleeve;
+  });
+  if (matching.length === 0) return;
+  const tickers = matching.map(p => p.t).join(', ');
+  if (!confirm(`Drop all ${matching.length} ${sleeve} position${matching.length===1?'':'s'} in the "${cluster}" cluster?\n\n${tickers}\n\nThis cannot be undone.`)) return;
+  const removeIds = new Set(matching.map(p => p.id));
+  state.positions = state.positions.filter(p => !removeIds.has(p.id));
+  saveState(); render();
+}
 function updateDollars(id, val) {
   const p = state.positions.find(p => p.id === id);
   if (p) { p.dollars = parseFloat(val) || 0; saveState(); render(); }
@@ -567,8 +578,13 @@ function render() {
     const color = cls === 'over' ? 'bear' : cls === 'warn' ? 'gold' : 'bull';
     const row = document.createElement('div');
     row.className = 'cluster-row';
-    row.innerHTML = `<div class="cluster-label">${c.cluster.toUpperCase()}<small>${c.sleeve} · ${c.names.join(', ')}</small></div><div class="cluster-pct ${cls}">${(pct*100).toFixed(1)}% / ${(cap*100).toFixed(0)}%</div><div class="cluster-bar"><div class="cluster-bar-fill" style="width:${Math.min(100, pct/cap*100)}%; background: var(--${color});"></div></div>`;
+    row.innerHTML = `<div class="cluster-label">${c.cluster.toUpperCase()}<small>${c.sleeve} · ${c.names.join(', ')}</small> <button class="clear-cluster-btn" data-cluster="${c.cluster}" data-sleeve="${c.sleeve}" title="Drop all ${c.sleeve} positions in this cluster" style="background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); padding: 2px 7px; margin-left: 8px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .1em; text-transform: uppercase; cursor: pointer; transition: all .15s;">× clear</button></div><div class="cluster-pct ${cls}">${(pct*100).toFixed(1)}% / ${(cap*100).toFixed(0)}%</div><div class="cluster-bar"><div class="cluster-bar-fill" style="width:${Math.min(100, pct/cap*100)}%; background: var(--${color});"></div></div>`;
     clusterEl.appendChild(row);
+  });
+  document.querySelectorAll('.clear-cluster-btn').forEach(b => {
+    b.onmouseover = () => { b.style.color = 'var(--bear)'; b.style.borderColor = 'var(--bear)'; };
+    b.onmouseout  = () => { b.style.color = 'var(--ink-mute)'; b.style.borderColor = 'var(--rule)'; };
+    b.onclick = e => clearCluster(e.target.getAttribute('data-cluster'), e.target.getAttribute('data-sleeve'));
   });
 
   // sleeve breakdown
