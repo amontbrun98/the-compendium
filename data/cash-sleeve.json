@@ -1,0 +1,61 @@
+{
+  "_about": "Regime-aligned cash sleeve compositions. The allocation engine reads this to suggest where to hold the cash floor — TIPS, gold, money-market ETFs, short-duration treasuries — instead of letting cash sit idle. Each composition lists ETF tickers with target weights, an est_yield, and a one-line rationale. Yields are illustrative as of April 2026; verify on broker before acting.",
+  "_asof": "2026-05-01",
+  "compositions": {
+    "Goldilocks": {
+      "quadrant": "Q1",
+      "label": "Goldilocks · Q1 — Growth ↑ Inflation ↓",
+      "rationale": "Risk-on regime — equities are the dominant return driver. Hold the cash floor in productive, liquid yield instruments so you don't drag returns sitting in zero-yield cash.",
+      "composition": [
+        { "t": "SGOV", "n": "iShares 0-3 Month Treasury Bond ETF",  "weight": 0.60, "est_yield": "~5.0%",   "type": "money_market", "why": "Daily-liquid T-bill ETF. Yield resets with Fed Funds — a productive parking place that behaves like cash." },
+        { "t": "JAAA", "n": "Janus Henderson AAA CLO ETF",          "weight": 0.25, "est_yield": "~5.8%",   "type": "credit",       "why": "AAA-rated collateralised loan obligations. Higher yield than T-bills, floating rate, very low default history at AAA." },
+        { "t": "USFR", "n": "WisdomTree Floating Rate Treasury",    "weight": 0.15, "est_yield": "~5.0%",   "type": "floating",     "why": "Treasury floaters reset every 3 months — rate-resilient if Fed holds higher for longer." }
+      ]
+    },
+    "Reflation": {
+      "quadrant": "Q2",
+      "label": "Reflation · Q2 — Growth ↑ Inflation ↑",
+      "rationale": "Both growth and inflation rising. Real assets and commodities lead. The cash floor needs to earn the inflation premium rather than lose to it — TIPS adjust principal with CPI, gold benefits from negative real rates, commodity ETFs respond directly to price surprises.",
+      "composition": [
+        { "t": "TIP",  "n": "iShares TIPS Bond ETF",                     "weight": 0.30, "est_yield": "~5.5% real", "type": "tips",        "why": "Treasury Inflation-Protected Securities — principal adjusts with CPI. The cleanest inflation hedge in ETF form." },
+        { "t": "GLD",  "n": "SPDR Gold Trust",                           "weight": 0.20, "est_yield": "0% (price)",  "type": "gold",        "why": "Gold is the anchor hedge against negative real rates and currency debasement. No yield, but historical correlation to inflation surprises is strong." },
+        { "t": "DBC",  "n": "Invesco DB Commodity Tracking Fund",        "weight": 0.15, "est_yield": "varies",      "type": "commodity",   "why": "Diversified commodity basket (energy, metals, agriculture). Highest correlation to inflation surprises of any liquid ETF." },
+        { "t": "SGOV", "n": "iShares 0-3 Month Treasury Bond ETF",       "weight": 0.35, "est_yield": "~5.0%",       "type": "money_market","why": "Keep a daily-liquid base in Fed-Funds-tracking T-bills so you're not all in inflation-sensitive instruments." }
+      ]
+    },
+    "Deflation": {
+      "quadrant": "Q3",
+      "label": "Deflation · Q3 — Growth ↓ Inflation ↓",
+      "rationale": "Growth and inflation both rolling over. Long-duration sovereign bonds shine — falling rates lift bond prices. Stretch duration in the cash sleeve to capture price appreciation, keep some short-duration for optionality.",
+      "composition": [
+        { "t": "TLT",  "n": "iShares 20+ Year Treasury Bond ETF", "weight": 0.30, "est_yield": "~4.5%", "type": "long_duration",  "why": "20+ year Treasuries are the deflation hedge — they appreciate sharply when rates fall. Higher volatility than cash, but the ballast Vol III's All-Weather framework calls for." },
+          { "t": "IEF", "n": "iShares 7-10 Year Treasury Bond ETF", "weight": 0.25, "est_yield": "~4.3%", "type": "intermediate",   "why": "Intermediate Treasuries — duration exposure without going all the way out the curve. Smaller drawdown risk than TLT." },
+        { "t": "AGG",  "n": "iShares Core US Aggregate Bond ETF",  "weight": 0.15, "est_yield": "~4.5%", "type": "broad_ig",       "why": "Total bond market — Treasuries, agency mortgages, investment-grade corporates. Diversified credit + duration." },
+        { "t": "SGOV", "n": "iShares 0-3 Month Treasury Bond ETF", "weight": 0.30, "est_yield": "~5.0%", "type": "money_market",   "why": "Keep daily liquidity for opportunistic deployment if equities reset." }
+      ]
+    },
+    "Stagflation": {
+      "quadrant": "Q4",
+      "label": "Stagflation · Q4 — Growth ↓ Inflation ↑",
+      "rationale": "The hardest regime. Equity multiples compress while bonds underperform inflation. Hard assets and short-duration cash are the historical winners. Avoid long duration, lean into gold and commodities, keep the rest in TIPS and floating-rate.",
+      "composition": [
+        { "t": "GLD",  "n": "SPDR Gold Trust",                          "weight": 0.30, "est_yield": "0% (price)",  "type": "gold",        "why": "Gold has historically been the single best stagflation asset. No yield, but the only liquid instrument that's both inflation-hedge and growth-resilient." },
+        { "t": "TIP",  "n": "iShares TIPS Bond ETF",                    "weight": 0.20, "est_yield": "~5.5% real", "type": "tips",        "why": "Inflation-protected real yield. Holds value even when growth disappoints." },
+        { "t": "DBC",  "n": "Invesco DB Commodity Tracking Fund",       "weight": 0.15, "est_yield": "varies",      "type": "commodity",   "why": "Direct commodity exposure for the inflation side of the regime. Energy weighting helps if oil supply tightens." },
+        { "t": "USFR", "n": "WisdomTree Floating Rate Treasury",        "weight": 0.10, "est_yield": "~5.0%",       "type": "floating",    "why": "Floaters reset with Fed Funds — if the Fed has to keep rates high to fight inflation, you keep the yield without taking duration risk." },
+        { "t": "SGOV", "n": "iShares 0-3 Month Treasury Bond ETF",      "weight": 0.25, "est_yield": "~5.0%",       "type": "money_market","why": "Daily-liquid T-bills round out the sleeve and provide dry powder." }
+      ]
+    },
+    "Unclassified": {
+      "quadrant": "—",
+      "label": "Unclassified · transitioning regime",
+      "rationale": "When the regime is in transition or signals are mixed, keep the cash sleeve broadly diversified — productive yield with a small inflation hedge. Re-evaluate when growth or inflation breaks decisively.",
+      "composition": [
+        { "t": "SGOV", "n": "iShares 0-3 Month Treasury Bond ETF",  "weight": 0.50, "est_yield": "~5.0%",       "type": "money_market","why": "Default productive cash — daily liquid, Fed-Funds-tracking yield." },
+        { "t": "TIP",  "n": "iShares TIPS Bond ETF",                "weight": 0.20, "est_yield": "~5.5% real", "type": "tips",        "why": "Modest inflation-hedge anchor in case the regime turns reflationary." },
+        { "t": "USFR", "n": "WisdomTree Floating Rate Treasury",    "weight": 0.15, "est_yield": "~5.0%",       "type": "floating",    "why": "Rate-resilient base. Holds yield if Fed keeps rates higher for longer." },
+        { "t": "JAAA", "n": "Janus Henderson AAA CLO ETF",          "weight": 0.15, "est_yield": "~5.8%",       "type": "credit",       "why": "Pickup yield over T-bills with AAA credit and floating rate." }
+      ]
+    }
+  }
+}

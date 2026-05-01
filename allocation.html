@@ -99,6 +99,7 @@ body::before {
 .pos-sleeve { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; padding: 3px 8px; font-weight: 600; }
 .pos-sleeve.core { background: rgba(184,39,13,.08); color: var(--accent); border: 1px solid var(--accent); }
 .pos-sleeve.watch { background: rgba(212,163,53,.08); color: var(--gold); border: 1px solid var(--gold); }
+.pos-sleeve.cash { background: rgba(109,184,61,.08); color: var(--bull); border: 1px solid var(--bull); }
 .pos-dollars { color: var(--ink-soft); text-align: right; }
 .pos-pct { color: var(--accent); font-weight: 600; text-align: right; }
 .pos-pct.over { color: var(--bear); }
@@ -213,6 +214,17 @@ body::before {
   </div>
   <div id="ab-chips" style="margin-top: 18px; display: flex; flex-wrap: wrap; gap: 6px; min-height: 28px;"></div>
   <div style="margin-top: 8px; font-family: 'Fraunces', serif; font-style: italic; font-size: 12px; color: var(--ink-mute);">Click a chip to remove it. Empty list = default diversified seed.</div>
+</div>
+
+<!-- CASH SLEEVE — Regime-aligned ETF composition for the cash floor -->
+<div id="cash-sleeve" class="add-panel" style="margin-top: 24px; border-top: 1px solid var(--rule); padding-top: 28px;">
+  <h4 style="display: flex; align-items: center; gap: 12px; margin-bottom: 6px;"><span>Cash Sleeve · Regime-Aligned</span><span id="cs-regime-badge" style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .2em; padding: 3px 8px; background: rgba(212,163,53,.12); color: var(--gold, #d4a335); border: 1px solid var(--gold, #d4a335); font-weight: 600;">—</span></h4>
+  <div style="font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; line-height: 1.55; color: var(--ink-soft); margin-bottom: 16px; max-width: 760px;" id="cs-rationale">Loading regime-aligned cash composition…</div>
+  <div id="cs-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 12px;"></div>
+  <div style="display: flex; gap: 12px; margin-top: 18px; align-items: center; flex-wrap: wrap;">
+    <button class="add-btn" id="cs-apply-all">Apply this composition →</button>
+    <span style="font-family: 'Fraunces', serif; font-style: italic; font-size: 12px; color: var(--ink-mute);">Adds these ETFs to the seed list. Generate above sizes them within the regime cash floor.</span>
+  </div>
 </div>
 
 <div id="ab-preview" style="display: none;"></div>
@@ -395,10 +407,25 @@ function attachMagnitudePreview(inputId, previewId) {
 }
 
 // ---------- universe ----------
+let cashSleeveData = null;   // populated once data/cash-sleeve.json loads
 async function loadUniverse() {
   const data = await window.COMPENDIUM.loadAll();
   (data.core || []).forEach(c => { universe[c.t] = { n: c.n, cluster: c.cluster, sleeve: 'core' }; });
   (data.watch || []).forEach(c => { universe[c.t] = { n: c.n, cluster: c.cluster, sleeve: 'watch' }; });
+  // Cash-sleeve ETFs from data/cash-sleeve.json — load and add to universe
+  try {
+    cashSleeveData = await window.COMPENDIUM.loadJson('data/cash-sleeve.json');
+    if (cashSleeveData && cashSleeveData.compositions) {
+      Object.values(cashSleeveData.compositions).forEach(comp => {
+        (comp.composition || []).forEach(item => {
+          // Don't overwrite an existing core/watch entry — those are real holdings
+          if (!universe[item.t]) {
+            universe[item.t] = { n: item.n, cluster: 'cash_sleeve', sleeve: 'cash' };
+          }
+        });
+      });
+    }
+  } catch (_) { /* offline — cash sleeve panel just won't render */ }
   regime = (data.macro && data.macro.regime && data.macro.regime.regime_name) || 'Unclassified';
   document.getElementById('a-asof').textContent = 'Last data ' + ((data.lastUpdated && data.lastUpdated.asof) ? data.lastUpdated.asof.split('T')[0] : '—');
   document.getElementById('a-regime-note').textContent = regime + ' regime';
@@ -530,22 +557,25 @@ function render() {
   } else {
     tbody.innerHTML = '';
     state.positions.slice().sort((a,b) => b.dollars - a.dollars).forEach(p => {
-      const meta = universe[p.t] || { n: p.t, cluster: 'unclassified' };
+      const meta = universe[p.t] || { n: p.t, cluster: p.sleeve === 'cash' ? 'cash_sleeve' : 'unclassified' };
       const pct = total > 0 ? (p.dollars/total*100) : 0;
-      const cap = (p.sleeve === 'core' ? RULES.per_name_core : RULES.per_name_watch) * 100;
+      // Cash-sleeve positions are exempt from per-name caps — their job is to
+      // fill the cash floor, not compete for equity sizing
+      const isCash = p.sleeve === 'cash';
+      const cap = isCash ? null : (p.sleeve === 'core' ? RULES.per_name_core : RULES.per_name_watch) * 100;
       // inline cap-violation suggestion
       let inlineWarn = '';
-      if (pct > cap && total > 0) {
+      if (!isCash && pct > cap && total > 0) {
         const trimDollars = Math.round(p.dollars - (cap/100) * total);
         inlineWarn = `<div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--bear); margin-top: 4px; letter-spacing: .04em;">⚠ over ${cap.toFixed(0)}% cap by ${(pct - cap).toFixed(1)}pp · trim $${trimDollars.toLocaleString()}</div>`;
-      } else if (pct > cap * 0.85 && total > 0) {
+      } else if (!isCash && pct > cap * 0.85 && total > 0) {
         inlineWarn = `<div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gold); margin-top: 4px; letter-spacing: .04em;">approaching cap (${cap.toFixed(0)}%)</div>`;
       }
       const tr = document.createElement('tr');
       tr.innerHTML = `
         <td><div class="pos-t">${p.t}</div><div class="pos-n">${meta.n}</div></td>
         <td><span class="pos-cluster ${meta.cluster === 'unclassified' ? 'unclassified' : ''}">${meta.cluster.toUpperCase()}</span></td>
-        <td><select class="pos-sleeve-sel pos-sleeve ${p.sleeve}" data-id="${p.id}" style="background: transparent; border: none; color: inherit; font: inherit; cursor: pointer;"><option value="core" ${p.sleeve==='core'?'selected':''}>CORE</option><option value="watch" ${p.sleeve==='watch'?'selected':''}>WATCH</option></select></td>
+        <td><select class="pos-sleeve-sel pos-sleeve ${p.sleeve}" data-id="${p.id}" style="background: transparent; border: none; color: inherit; font: inherit; cursor: pointer;"><option value="core" ${p.sleeve==='core'?'selected':''}>CORE</option><option value="watch" ${p.sleeve==='watch'?'selected':''}>WATCH</option><option value="cash" ${p.sleeve==='cash'?'selected':''}>CASH</option></select></td>
         <td class="pos-dollars">$${p.dollars.toLocaleString()}<div style="font-family: 'Fraunces', serif; font-style: italic; font-size: 11px; color: var(--ink-mute);">${magShort(p.dollars)}</div></td>
         <td class="pos-pct ${pct > cap ? 'over' : ''}">${pct.toFixed(1)}%${inlineWarn}</td>
         <td class="pos-actions"><input type="number" class="pos-d-edit" data-id="${p.id}" value="${p.dollars}" step="100"><button class="pos-del" data-id="${p.id}">×</button></td>
@@ -609,14 +639,17 @@ function render() {
   cashRow.innerHTML = `<div class="cluster-label">CASH<small>regime target ${(cashTarget*100).toFixed(0)}%</small></div><div class="cluster-pct ${cashCls}">${(cashPct*100).toFixed(1)}%</div>`;
   sleeveEl.appendChild(cashRow);
 
-  // breaches
+  // breaches — cash-sleeve positions are exempt from per-name and per-cluster
+  // caps (their job is to fill the cash floor, not compete for equity sizing)
   const breaches = [];
   state.positions.forEach(p => {
+    if (p.sleeve === 'cash') return;
     const cap = p.sleeve === 'core' ? RULES.per_name_core : RULES.per_name_watch;
     const pct = total > 0 ? p.dollars/total : 0;
     if (pct > cap) breaches.push(`<strong>${p.t}</strong> at ${(pct*100).toFixed(1)}% exceeds ${p.sleeve} per-name cap of ${(cap*100).toFixed(0)}%. Trim by $${Math.round(p.dollars - cap*total).toLocaleString()}.`);
   });
   Object.values(clusters).forEach(c => {
+    if (c.sleeve === 'cash') return;
     const cap = c.sleeve === 'core' ? RULES.per_cluster_core : RULES.per_cluster_watch;
     const pct = total > 0 ? c.dollars/total : 0;
     if (pct > cap) breaches.push(`<strong>${c.cluster}</strong> cluster (${c.sleeve}) at ${(pct*100).toFixed(1)}% exceeds ${(cap*100).toFixed(0)}% cap.`);
@@ -624,8 +657,12 @@ function render() {
   const watchSum = state.positions.filter(p=>p.sleeve==='watch').reduce((a,p)=>a+p.dollars,0);
   const watchPct = total > 0 ? watchSum/total : 0;
   if (watchPct > RULES.watch_total) breaches.push(`<strong>Watch sleeve</strong> at ${(watchPct*100).toFixed(1)}% exceeds ${(RULES.watch_total*100).toFixed(0)}% total cap. Trim by $${Math.round(watchSum - RULES.watch_total*total).toLocaleString()}.`);
-  if (cashPct < cashTarget && total > 0) breaches.push(`<strong>Cash</strong> at ${(cashPct*100).toFixed(1)}% is below ${regime}-regime target of ${(cashTarget*100).toFixed(0)}%. Need $${Math.round((cashTarget - cashPct)*total).toLocaleString()} more in dry powder.`);
+  // Cash floor target — cash-sleeve ETF positions count toward the floor
+  const cashSleeveSum = state.positions.filter(p=>p.sleeve==='cash').reduce((a,p)=>a+p.dollars,0);
+  const effectiveCashPct = total > 0 ? (state.cash + cashSleeveSum)/total : 0;
+  if (effectiveCashPct < cashTarget && total > 0) breaches.push(`<strong>Cash floor</strong> at ${(effectiveCashPct*100).toFixed(1)}% is below ${regime}-regime target of ${(cashTarget*100).toFixed(0)}%. Need $${Math.round((cashTarget - effectiveCashPct)*total).toLocaleString()} more in cash or cash-sleeve ETFs.`);
   state.positions.forEach(p => {
+    if (p.sleeve === 'cash') return; // cash-sleeve ETFs aren't expected to be in the equity ledgers
     if (!universe[p.t]) breaches.push(`<strong>${p.t}</strong> is not in core.json or watch.json — cluster concentration cannot be tracked. Add to a ledger or accept blind exposure.`);
   });
 
@@ -714,6 +751,9 @@ function populateStressScopes() {
 }
 
 // ---------- auto-balance ----------
+// abSeeds is an array of { t, sleeve, cs_weight? } objects.
+// sleeve is one of 'core' | 'watch' | 'cash'.
+// cs_weight is the cash-sleeve composition weight (only set for sleeve='cash').
 let abSeeds = [];
 const SEEDS_KEY = 'compendium_seeds_v1';
 
@@ -721,12 +761,21 @@ function loadQueuedSeeds() {
   try {
     const raw = JSON.parse(localStorage.getItem(SEEDS_KEY) || '[]');
     if (!Array.isArray(raw)) return [];
-    return raw.filter(s => s && s.t).map(s => s.t);
+    return raw
+      .filter(s => s && s.t)
+      .map(s => ({ t: s.t, sleeve: s.sleeve || 'core', cs_weight: s.cs_weight }));
   } catch (_) { return []; }
+}
+function persistAbSeeds() {
+  try {
+    if (abSeeds.length === 0) localStorage.removeItem(SEEDS_KEY);
+    else localStorage.setItem(SEEDS_KEY, JSON.stringify(abSeeds));
+  } catch (_) { /* ignore */ }
 }
 function clearQueuedSeeds() {
   try { localStorage.removeItem(SEEDS_KEY); } catch (_) { /* ignore */ }
 }
+function seedHas(t) { return abSeeds.some(s => s.t === t); }
 
 function setupAbSearch() {
   const input = document.getElementById('ab-input');
@@ -736,7 +785,7 @@ function setupAbSearch() {
     q = q.trim().toUpperCase();
     if (!q) { list.classList.remove('show'); return; }
     const matches = Object.entries(universe)
-      .filter(([t, m]) => !abSeeds.includes(t) && (t.includes(q) || m.n.toUpperCase().includes(q)))
+      .filter(([t, m]) => !seedHas(t) && (t.includes(q) || m.n.toUpperCase().includes(q)))
       .slice(0, 10);
     if (matches.length === 0) {
       list.innerHTML = `<div class="suggest-item" data-custom="${q}"><span class="t">${q}</span><span class="n">Add as custom (unclassified)</span></div>`;
@@ -749,7 +798,11 @@ function setupAbSearch() {
   }
   function pick(item) {
     const t = item.getAttribute('data-t') || item.getAttribute('data-custom');
-    if (!abSeeds.includes(t)) abSeeds.push(t);
+    if (!seedHas(t)) {
+      const m = universe[t];
+      abSeeds.push({ t, sleeve: (m && m.sleeve) || 'core' });
+      persistAbSeeds();
+    }
     input.value = '';
     list.classList.remove('show');
     renderSeeds();
@@ -771,41 +824,125 @@ function setupAbSearch() {
 function renderSeeds() {
   const el = document.getElementById('ab-chips');
   if (abSeeds.length === 0) { el.innerHTML = '<span style="font-family: \'Fraunces\', serif; font-style: italic; font-size: 13px; color: var(--ink-mute);">No seeds yet — using default.</span>'; return; }
-  el.innerHTML = abSeeds.map(t => {
-    const m = universe[t] || { cluster: 'unclassified' };
-    return `<span class="ab-chip" data-t="${t}" style="display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; background: var(--paper-deep); border: 1px solid var(--accent); cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink); transition: background .15s;"><strong>${t}</strong><span style="color: var(--ink-mute); font-size: 9px; letter-spacing: .1em;">${m.cluster.toUpperCase()}</span><span style="color: var(--bear); font-weight: bold;">×</span></span>`;
+  el.innerHTML = abSeeds.map(seed => {
+    const m = universe[seed.t] || { cluster: seed.sleeve === 'cash' ? 'cash_sleeve' : 'unclassified' };
+    const sleeveLabel = seed.sleeve === 'cash' ? 'CASH' : (seed.sleeve === 'watch' ? 'WATCH' : 'CORE');
+    const sleeveColor = seed.sleeve === 'cash' ? 'var(--gold, #d4a335)' : (seed.sleeve === 'watch' ? 'var(--accent, #e85d3d)' : 'var(--accent, #e85d3d)');
+    return `<span class="ab-chip" data-t="${seed.t}" style="display: inline-flex; align-items: center; gap: 8px; padding: 5px 10px; background: var(--paper-deep); border: 1px solid ${sleeveColor}; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink); transition: background .15s;"><strong>${seed.t}</strong><span style="color: ${sleeveColor}; font-size: 8px; letter-spacing: .1em; font-weight: 600;">${sleeveLabel}</span><span style="color: var(--ink-mute); font-size: 9px; letter-spacing: .1em;">${m.cluster.toUpperCase()}</span><span style="color: var(--bear); font-weight: bold;">×</span></span>`;
   }).join('');
   el.querySelectorAll('.ab-chip').forEach(c => c.onclick = e => {
     const t = e.currentTarget.getAttribute('data-t');
-    abSeeds = abSeeds.filter(x => x !== t);
-    // Also drop from the cross-page seed list so the ledger button reflects it
-    try {
-      const raw = JSON.parse(localStorage.getItem(SEEDS_KEY) || '[]');
-      if (Array.isArray(raw)) {
-        const filtered = raw.filter(s => s && s.t !== t);
-        if (filtered.length === 0) localStorage.removeItem(SEEDS_KEY);
-        else localStorage.setItem(SEEDS_KEY, JSON.stringify(filtered));
-      }
-    } catch (_) { /* ignore */ }
+    abSeeds = abSeeds.filter(x => x.t !== t);
+    persistAbSeeds();
     renderSeeds();
+    if (typeof refreshCashCardStates === 'function') refreshCashCardStates();
   });
+}
+
+// ---------- cash sleeve (regime-aligned ETF composition) ----------
+function renderCashSleeve(regimeName) {
+  if (!cashSleeveData || !cashSleeveData.compositions) {
+    document.getElementById('cash-sleeve').style.display = 'none';
+    return;
+  }
+  const comp = cashSleeveData.compositions[regimeName] || cashSleeveData.compositions['Unclassified'];
+  if (!comp) { document.getElementById('cash-sleeve').style.display = 'none'; return; }
+  document.getElementById('cs-regime-badge').textContent = comp.label;
+  document.getElementById('cs-rationale').textContent = comp.rationale;
+  const grid = document.getElementById('cs-grid');
+  grid.innerHTML = comp.composition.map(item => {
+    const queued = seedHas(item.t);
+    return `
+      <div class="cs-card ${queued ? 'queued' : ''}" data-t="${item.t}" style="background: var(--paper-deep); border: 1px solid var(--rule); border-left: 3px solid ${queued ? 'var(--bull, #6db83d)' : 'var(--gold, #d4a335)'}; padding: 14px 16px; transition: border-color .15s ease, background .15s ease;${queued ? ' background: rgba(109,184,61,.04);' : ''}">
+        <div style="display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;">
+          <span style="font-family: 'Fraunces', serif; font-weight: 700; font-size: 18px; color: var(--ink); letter-spacing: -.01em;">${item.t}</span>
+          <span style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--gold, #d4a335); font-weight: 600; letter-spacing: .05em;">${(item.weight*100).toFixed(0)}% of cash</span>
+        </div>
+        <div style="font-family: 'Fraunces', serif; font-style: italic; font-size: 12px; color: var(--ink-soft); margin-bottom: 6px;">${item.n}</div>
+        <div style="font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--bull, #6db83d); margin-bottom: 8px; letter-spacing: .04em;">Yield · ${item.est_yield}</div>
+        <div style="font-family: 'Fraunces', serif; font-size: 12px; line-height: 1.5; color: var(--ink-soft); margin-bottom: 12px;">${item.why}</div>
+        <button class="cs-toggle-btn" data-t="${item.t}" style="background: ${queued ? 'rgba(109,184,61,.12)' : 'transparent'}; color: ${queued ? 'var(--bull, #6db83d)' : 'var(--gold, #d4a335)'}; border: 1px solid ${queued ? 'var(--bull, #6db83d)' : 'var(--gold, #d4a335)'}; padding: 4px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; cursor: pointer; transition: all .15s;">${queued ? '✓ in seeds' : '+ seed'}</button>
+      </div>
+    `;
+  }).join('');
+  grid.querySelectorAll('.cs-toggle-btn').forEach(b => {
+    b.onclick = () => toggleCashSeed(b.dataset.t);
+  });
+  document.getElementById('cs-apply-all').onclick = () => applyAllCash();
+}
+
+function toggleCashSeed(t) {
+  if (!cashSleeveData || !cashSleeveData.compositions) return;
+  const comp = cashSleeveData.compositions[regime] || cashSleeveData.compositions['Unclassified'];
+  if (!comp) return;
+  const item = comp.composition.find(c => c.t === t);
+  if (!item) return;
+  const idx = abSeeds.findIndex(s => s.t === t);
+  if (idx >= 0) abSeeds.splice(idx, 1);
+  else abSeeds.push({ t, sleeve: 'cash', cs_weight: item.weight });
+  persistAbSeeds();
+  renderSeeds();
+  refreshCashCardStates();
+}
+
+function applyAllCash() {
+  if (!cashSleeveData || !cashSleeveData.compositions) return;
+  const comp = cashSleeveData.compositions[regime] || cashSleeveData.compositions['Unclassified'];
+  if (!comp) return;
+  comp.composition.forEach(item => {
+    if (!seedHas(item.t)) abSeeds.push({ t: item.t, sleeve: 'cash', cs_weight: item.weight });
+  });
+  persistAbSeeds();
+  renderSeeds();
+  refreshCashCardStates();
+}
+
+function refreshCashCardStates() {
+  // Re-render to keep card visuals in sync. Cheap because the grid is small.
+  if (cashSleeveData) renderCashSleeve(regime);
 }
 
 const DEFAULT_SEEDS = ['LLY', 'NVO', 'GOOGL', 'MSFT', 'V', 'TSM', 'BRK.B', 'NESN', 'MELI', 'NU', 'HIMS', 'CCJ', 'WPM', 'CRSP'];
 
-// Core algorithm: takes seeds + total capital, returns balanced positions array
-function generateBalancedPortfolio(seedTickers, totalCapital, regimeName) {
-  const seeds = (seedTickers && seedTickers.length > 0) ? seedTickers : DEFAULT_SEEDS;
+// Core algorithm: takes seeds + total capital, returns balanced positions array.
+// Seeds may be either an array of ticker strings (legacy) or an array of
+// { t, sleeve, cs_weight? } objects. Sleeve is one of 'core' | 'watch' | 'cash'.
+// Cash-sleeve seeds fill the regime cash floor proportional to cs_weight, with
+// no equity caps applied. Equity seeds proceed through the existing flow.
+function generateBalancedPortfolio(seedInput, totalCapital, regimeName) {
+  // Normalise input to array of {t, sleeve, cs_weight?}
+  const rawSeeds = (seedInput && seedInput.length > 0)
+    ? seedInput.map(s => typeof s === 'string' ? { t: s, sleeve: (universe[s] && universe[s].sleeve) || 'core' } : s)
+    : DEFAULT_SEEDS.map(t => ({ t, sleeve: (universe[t] && universe[t].sleeve) || 'core' }));
   const cashTarget = RULES.cash_target_by_regime[regimeName] || 0.20;
-  const investable = totalCapital * (1 - cashTarget);
 
   // Step 1: classify each seed by sleeve and cluster
-  const candidates = seeds.map(t => {
-    const m = universe[t] || { cluster: 'unclassified', sleeve: 'core', n: t };
-    return { t, sleeve: m.sleeve || 'core', cluster: m.cluster, name: m.n, weight: 0 };
+  const candidates = rawSeeds.map(seed => {
+    const m = universe[seed.t] || { cluster: seed.sleeve === 'cash' ? 'cash_sleeve' : 'unclassified', sleeve: seed.sleeve || 'core', n: seed.t };
+    return {
+      t: seed.t,
+      sleeve: seed.sleeve || m.sleeve || 'core',
+      cluster: seed.sleeve === 'cash' ? 'cash_sleeve' : m.cluster,
+      name: m.n,
+      weight: 0,
+      cs_weight: seed.cs_weight || 0,
+    };
   });
 
-  // Step 2: assign equal weight within each sleeve, capped at per-name cap
+  // Step 2a: cash-sleeve seeds fill the cash floor, proportional to cs_weight
+  // (or evenly when none specified). No equity caps applied.
+  const cashNames = candidates.filter(c => c.sleeve === 'cash');
+  const totalCsWeight = cashNames.reduce((s, c) => s + (c.cs_weight || 0), 0);
+  if (cashNames.length > 0) {
+    if (totalCsWeight > 0) {
+      cashNames.forEach(c => c.weight = cashTarget * ((c.cs_weight || 0) / totalCsWeight));
+    } else {
+      const equal = cashTarget / cashNames.length;
+      cashNames.forEach(c => c.weight = equal);
+    }
+  }
+
+  // Step 2b: equity seeds (core + watch) divide the (1 - cashTarget) budget
   const coreNames = candidates.filter(c => c.sleeve === 'core');
   const watchNames = candidates.filter(c => c.sleeve === 'watch');
   const watchSleeveBudget = Math.min(RULES.watch_total, (watchNames.length * RULES.per_name_watch));
@@ -927,13 +1064,21 @@ function renderBalancedPreview(result) {
   // on the ledger pages) so the user lands here with their picks already loaded.
   const queued = loadQueuedSeeds();
   if (queued.length > 0) {
-    queued.forEach(t => { if (!abSeeds.includes(t)) abSeeds.push(t); });
+    queued.forEach(s => { if (!seedHas(s.t)) abSeeds.push(s); });
     const banner = document.createElement('div');
     banner.style.cssText = 'margin-top: 14px; padding: 10px 14px; background: rgba(212,163,53,.08); border-left: 3px solid var(--gold, #d4a335); font-family: \'Fraunces\', serif; font-style: italic; font-size: 13px; color: var(--ink-soft); line-height: 1.5;';
-    banner.innerHTML = `<strong style="color: var(--gold, #d4a335); font-style: normal; font-family: \'IBM Plex Mono\', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; font-weight: 600;">From your ledger sessions</strong><br>${queued.length} ticker${queued.length===1?'':'s'} loaded into the seed list. Set total capital, then click Generate.`;
+    const cashCount = queued.filter(s => s.sleeve === 'cash').length;
+    const equityCount = queued.length - cashCount;
+    const parts = [];
+    if (equityCount > 0) parts.push(`${equityCount} equity ticker${equityCount===1?'':'s'}`);
+    if (cashCount > 0) parts.push(`${cashCount} cash-sleeve ETF${cashCount===1?'':'s'}`);
+    banner.innerHTML = `<strong style="color: var(--gold, #d4a335); font-style: normal; font-family: \'IBM Plex Mono\', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; font-weight: 600;">From your ledger sessions</strong><br>${parts.join(' + ')} loaded into the seed list. Set total capital, then click Generate.`;
     document.getElementById('ab-chips').parentElement.appendChild(banner);
   }
   renderSeeds();
+  // Render the regime-aligned cash sleeve panel (shows ETF composition for the
+  // current Dalio quadrant — TIPS+gold for Reflation, long bonds for Deflation, etc.)
+  renderCashSleeve(regime);
   document.getElementById('ab-generate').onclick = () => {
     const totalCapital = parseFloat(document.getElementById('ab-capital').value) || 0;
     if (totalCapital < 1000) { alert('Set a total capital of at least $1,000.'); return; }

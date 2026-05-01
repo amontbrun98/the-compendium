@@ -474,7 +474,18 @@ body::before {
   // active quadrant
   if (r.quadrant) {
     const cell = document.querySelector('.q-cell[data-q="' + r.quadrant + '"]');
-    if (cell) cell.classList.add('active');
+    if (cell) {
+      cell.classList.add('active');
+      // Add a deep-link to the regime-aligned cash sleeve panel on the
+      // allocation engine — the cross-volume handoff for "apply this regime."
+      const link = document.createElement('a');
+      link.href = 'allocation.html#cash-sleeve';
+      link.style.cssText = 'display: inline-block; margin-top: 12px; padding: 6px 12px; font-family: \'IBM Plex Mono\', monospace; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--accent, #e85d3d); border: 1px solid var(--accent, #e85d3d); text-decoration: none; font-weight: 600; transition: background .15s, color .15s;';
+      link.textContent = '→ apply this regime to your allocation';
+      link.onmouseover = () => { link.style.background = 'var(--accent, #e85d3d)'; link.style.color = 'var(--paper, #131210)'; };
+      link.onmouseout  = () => { link.style.background = 'transparent';            link.style.color = 'var(--accent, #e85d3d)'; };
+      cell.appendChild(link);
+    }
   }
 
   // signal cards
