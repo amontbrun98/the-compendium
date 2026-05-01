@@ -250,7 +250,7 @@ Big Debt Crises tripwires flagged: Federal debt/GDP at 122.6%, household debt se
 
 1. **Migrate Vol I pages to live data.** Right now five-pillar-scorer, watch-opportunity-ledger, and company still render from inline embedded data. Should refactor to use `data-loader.js` so live prices flow into the score.
 2. **Catalyst calendar.** Add a `nextCatalyst` field per company (date, type, what_it_means_if_hit, what_it_means_if_missed) and an upcoming-events view. Highest value for Watch sleeve names (PDUFA dates, trial readouts).
-3. **Fix three failed tickers.** BRK.B needs to be `BRK-B`, NESN needs `NESN.SW`, the 7203 entry isn't even in the universe (Toyota, my benchmark mistake).
+3. ~~**Fix three failed tickers.** BRK.B needs to be `BRK-B`, NESN needs `NESN.SW`, the 7203 entry isn't even in the universe (Toyota, my benchmark mistake).~~ **Done 2026-05-01:** Introduced an optional `yf` field on company entries — display ticker stays human-readable (`BRK.B`, `NESN`) while the refresh script uses the override symbol (`BRK-B`, `NESN.SW`). Toyota dropped from the watch ledger. `refresh_data.py` now also flags silently-empty rows in the `failed` array so future cases don't go unnoticed.
 4. **Position-tracking on company.html.** Show how a position is performing vs. the framework's verdict at entry.
 5. **Backtester.** Replay framework scores against historical price data.
 6. **Migrate inline ledger data to JSON.** The HTML files duplicate data already in core.json/watch.json. Single source of truth would prevent drift.

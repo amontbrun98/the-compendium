@@ -49,17 +49,23 @@ def safe_get(info: dict, *keys, default=None):
     return default
 
 
-def fetch_ticker(ticker: str) -> dict:
-    """Pull the volatile fields we want refreshed daily for a single ticker."""
+def fetch_ticker(display_t: str, yf_symbol: str | None = None) -> dict:
+    """Pull the volatile fields we want refreshed daily for a single ticker.
+
+    `display_t` is the ticker shown to humans and used as the join key in
+    core.json / watch.json. `yf_symbol` is the yfinance API symbol when it
+    differs (e.g. BRK.B → BRK-B, NESN → NESN.SW). Falls back to display_t.
+    """
+    api_symbol = yf_symbol or display_t
     try:
-        t = yf.Ticker(ticker)
+        t = yf.Ticker(api_symbol)
         info = t.info or {}
     except Exception as exc:  # noqa: BLE001
-        return {"t": ticker, "error": str(exc)[:200]}
+        return {"t": display_t, "error": str(exc)[:200]}
 
     # Build a focused payload — ignore the 100+ junk fields yfinance returns
     payload = {
-        "t": ticker,
+        "t": display_t,
         "price": safe_get(info, "currentPrice", "regularMarketPrice"),
         "marketCap": safe_get(info, "marketCap"),
         "ev": safe_get(info, "enterpriseValue"),
@@ -87,15 +93,23 @@ def fetch_ticker(ticker: str) -> dict:
     return payload
 
 
-def load_universe() -> list[str]:
-    tickers = set()
+def load_universe() -> list[tuple[str, str]]:
+    """Return list of (display_ticker, yf_symbol) tuples.
+
+    Companies with a `yf` field in core.json/watch.json use that as the
+    yfinance API symbol while keeping the human-friendly ticker as the
+    display + join key (e.g. BRK.B → BRK-B, NESN → NESN.SW).
+    """
+    pairs: dict[str, str] = {}
     for fname in ("core.json", "watch.json"):
         path = DATA / fname
         if not path.exists():
             continue
         for c in json.loads(path.read_text()):
-            if c.get("t"):
-                tickers.add(c["t"])
+            t = c.get("t")
+            if not t:
+                continue
+            pairs[t] = c.get("yf") or t
     # Add macro-overlay benchmark tickers used by the All Weather + regime engines
     benchmarks = {
         "SPY", "QQQ", "DIA", "IWM",      # equities
@@ -106,18 +120,22 @@ def load_universe() -> list[str]:
         "DX-Y.NYB",                       # dollar index
         "BTC-USD",
     }
-    tickers.update(benchmarks)
-    return sorted(tickers)
+    for b in benchmarks:
+        pairs.setdefault(b, b)
+    return sorted(pairs.items(), key=lambda p: p[0])
 
 
 def refresh_prices(throttle: float = 0.4) -> dict:
     universe = load_universe()
     out: list[dict] = []
     failed: list[str] = []
-    for i, t in enumerate(universe, 1):
-        row = fetch_ticker(t)
+    for i, (display_t, yf_symbol) in enumerate(universe, 1):
+        row = fetch_ticker(display_t, yf_symbol)
         if "error" in row:
-            failed.append(t)
+            failed.append(display_t)
+        # Flag rows that came back with no usable price even if no exception
+        elif row.get("price") is None and row.get("marketCap") is None:
+            failed.append(display_t)
         out.append(row)
         # be polite to yahoo
         time.sleep(throttle)

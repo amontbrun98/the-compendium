@@ -524,6 +524,7 @@
   },
   {
     "t": "BRK.B",
+    "yf": "BRK-B",
     "n": "Berkshire Hathaway",
     "cat": "Financial Services",
     "col": "#1e40af",
@@ -814,6 +815,7 @@
   },
   {
     "t": "NESN",
+    "yf": "NESN.SW",
     "n": "Nestle SA",
     "cat": "Consumer Brands",
     "col": "#7c2d12",

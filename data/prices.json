@@ -1,32 +1,9 @@
 {
   "asof": "2026-05-01T19:39:18.614430Z",
   "source": "yfinance",
-  "count": 86,
+  "count": 85,
   "failed": [],
   "rows": [
-    {
-      "t": "7203",
-      "price": null,
-      "marketCap": null,
-      "ev": null,
-      "pe_trailing": null,
-      "pe_forward": null,
-      "ev_rev": null,
-      "ev_ebitda": null,
-      "peg": null,
-      "fcfY": null,
-      "gm": null,
-      "om": null,
-      "fwdG_eps": null,
-      "fwdG_rev": null,
-      "shortRatio": null,
-      "shortPercent": null,
-      "dy": null,
-      "beta": null,
-      "52wHigh": null,
-      "52wLow": null,
-      "asof": "2026-05-01T19:38:28.543635Z"
-    },
     {
       "t": "AAPL",
       "price": 279.9199,
