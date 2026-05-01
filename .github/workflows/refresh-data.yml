@@ -51,7 +51,18 @@ jobs:
           git add data/prices.json data/macro.json data/last_updated.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
-          else
-            git commit -m "data: refresh $(date -u +%Y-%m-%d)"
-            git push
+            exit 0
           fi
+          git commit -m "data: refresh $(date -u +%Y-%m-%d)"
+          # Race-safe push: try, and if remote moved, rebase on top and retry up to 3x.
+          for attempt in 1 2 3; do
+            if git push; then
+              echo "pushed on attempt $attempt"
+              exit 0
+            fi
+            echo "push failed (attempt $attempt) — rebasing on latest main"
+            git fetch origin main
+            git rebase origin/main || { git rebase --abort; exit 1; }
+          done
+          echo "push failed after 3 attempts"
+          exit 1
