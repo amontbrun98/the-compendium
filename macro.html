@@ -381,9 +381,53 @@ body::before {
   </div>
 </div>
 
-<!-- SECTION V — MARKET PROXY READOUT -->
+<!-- SECTION V — CAPITAL MIGRATION -->
 <div class="section-marker">
   <span class="section-marker-num">№ 05</span>
+  <span class="section-marker-text">Capital Migration &amp; Cross-Border Sovereigns</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<div class="callout">
+  <div class="callout-title">Why this matters more than the equity story</div>
+  <div class="callout-body">A thesis like "AI concentration creates fragility" doesn't transmit into actual losses through earnings misses. It transmits through the long end of the sovereign curve, term premium expansion, and rotation across G3 sovereign markets. The 30y Treasury is the price of fiscal trust. Japanese pensions own roughly $1.1T of US Treasuries — when JGB yields rise, they bring capital home, and US assets feel it within days. UK gilts proved in September 2022 that a developed sovereign can have an EM-style funding crisis in a week. Watch this section more closely than the equity readout.</div>
+</div>
+
+<div class="status-bar" id="cm-status">
+  <div class="status-cell">
+    <div class="lbl">30y-10y Slope</div>
+    <div class="val" id="cm-slope">—</div>
+    <div class="sub">term premium signal</div>
+  </div>
+  <div class="status-cell">
+    <div class="lbl">10y Term Premium</div>
+    <div class="val" id="cm-term">—</div>
+    <div class="sub">FRED ACM model</div>
+  </div>
+  <div class="status-cell">
+    <div class="lbl">Foreign UST Holdings</div>
+    <div class="val" id="cm-foreign">—</div>
+    <div class="sub" id="cm-foreign-trend">—</div>
+  </div>
+  <div class="status-cell">
+    <div class="lbl">TLT-Gold 30d Corr</div>
+    <div class="val" id="cm-corr">—</div>
+    <div class="sub">flight-to-safety signal</div>
+  </div>
+</div>
+
+<div id="cm-flags-panel" style="margin-bottom: 24px;"></div>
+
+<table class="etf-table" id="cm-table">
+  <thead>
+    <tr><th>Cross-Border Instrument</th><th>Ticker</th><th>Latest</th><th>1-mo</th><th>3-mo</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<!-- SECTION VI — MARKET PROXY READOUT -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 06</span>
   <span class="section-marker-text">Market Proxy Readout</span>
   <div class="section-marker-line"></div>
 </div>
@@ -486,6 +530,46 @@ body::before {
     note.textContent = aw.note;
     awEl.appendChild(note);
   }
+
+  // ---- Capital Migration ----
+  const cm = m.capital_migration || {};
+  const fmtP = (v, suffix='') => v === null || v === undefined ? '—' : (v >= 0 ? '+' : '') + v.toFixed(2) + suffix;
+  document.getElementById('cm-slope').textContent = fmtP(cm.long_end_slope_pp, 'pp');
+  document.getElementById('cm-term').textContent = cm.term_premium_10y !== null && cm.term_premium_10y !== undefined ? cm.term_premium_10y.toFixed(2) + '%' : '—';
+  if (cm.foreign_treasuries_value) {
+    document.getElementById('cm-foreign').textContent = '$' + (cm.foreign_treasuries_value).toLocaleString(undefined, {maximumFractionDigits: 0}) + 'B';
+    const t = cm.foreign_treasuries_trend;
+    const trendEl = document.getElementById('cm-foreign-trend');
+    trendEl.textContent = 'trend: ' + (t || '—');
+    if (t === 'up') trendEl.style.color = 'var(--bull)';
+    else if (t === 'down') trendEl.style.color = 'var(--bear)';
+  }
+  document.getElementById('cm-corr').textContent = fmtP(cm.tlt_gold_30d_corr);
+
+  const cmFlags = document.getElementById('cm-flags-panel');
+  if ((cm.flags || []).length === 0) {
+    cmFlags.innerHTML = `<div class="breaches empty" style="border-left: 4px solid var(--bull); background: rgba(45,80,22,.04); padding: 14px 22px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--bull); font-weight: 600;">✓ No capital-flight flags triggered</div>
+    </div>`;
+  } else {
+    cmFlags.innerHTML = `<div class="breaches" style="border-left: 4px solid var(--bear); background: rgba(184,39,13,.04); padding: 14px 22px;">
+      <div style="font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--bear); font-weight: 600; margin-bottom: 10px;">${cm.flags.length} flag${cm.flags.length === 1 ? '' : 's'}</div>
+      ${cm.flags.map(f => `<div style="font-family: Fraunces, serif; font-size: 14px; line-height: 1.6; color: var(--ink-soft); padding: 4px 0;"><strong style="color: var(--ink); text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .15em; margin-right: 10px;">${f.level}</strong>${f.msg}</div>`).join('')}
+    </div>`;
+  }
+
+  // capital migration ETF table — subset of the proxies that are cross-border
+  const cmTbody = document.querySelector('#cm-table tbody');
+  const cmKeys = ['us_30y_yield', 'us_10y_yield', 'intl_sovereign', 'em_sovereign', 'intl_treasury', 'yen', 'sterling', 'longbonds', 'gold'];
+  cmKeys.forEach(k => {
+    const v = (m.etf_proxies || {})[k];
+    if (!v || !v.latest) return;
+    const tr = document.createElement('tr');
+    const fmt = n => (n > 0 ? '+' : '') + n.toFixed(2) + '%';
+    const cls = n => n > 0 ? 'up' : n < 0 ? 'down' : '';
+    tr.innerHTML = `<td>${v.label || k}</td><td>${v.ticker}</td><td>${v.latest.toFixed(2)}</td><td class="${cls(v['1mo_pct'])}">${fmt(v['1mo_pct'])}</td><td class="${cls(v['3mo_pct'])}">${fmt(v['3mo_pct'])}</td>`;
+    cmTbody.appendChild(tr);
+  });
 
   // ETF table
   const tbody = document.querySelector('#etf-table tbody');

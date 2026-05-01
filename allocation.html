@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Allocation Engine — Sizing &amp; Concentration</title>
+<title>The Allocation Engine — Sizing &amp; Stress Tests</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600&display=swap" rel="stylesheet">
@@ -28,93 +28,102 @@ body::before {
   background-image: radial-gradient(circle at 12% 28%, rgba(212,163,53,.02) 0%, transparent 40%);
   pointer-events: none; z-index: 0;
 }
-.broadsheet { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 36px 40px 100px; }
+.broadsheet { position: relative; z-index: 2; max-width: 1280px; margin: 0 auto; padding: 36px 40px 100px; }
 
-.back-link {
-  display: inline-flex; align-items: center; gap: 10px;
-  font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em;
-  text-transform: uppercase; color: var(--ink-mute); text-decoration: none;
-  padding: 4px 0; margin-bottom: 24px; border-bottom: 1px solid transparent;
-  transition: color .2s, border-color .2s;
-}
+.back-link { display: inline-flex; align-items: center; gap: 10px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: var(--ink-mute); text-decoration: none; padding: 4px 0; margin-bottom: 24px; border-bottom: 1px solid transparent; transition: color .2s, border-color .2s; }
 .back-link .arrow { color: var(--accent); font-family: 'Fraunces', serif; font-style: italic; font-size: 16px; }
 .back-link:hover { color: var(--ink); border-bottom-color: var(--ink); }
 
-.masthead {
-  text-align: center; border-top: 4px double var(--rule-strong);
-  border-bottom: 4px double var(--rule-strong);
-  padding: 28px 0 32px; margin-bottom: 32px;
-}
+.masthead { text-align: center; border-top: 4px double var(--rule-strong); border-bottom: 4px double var(--rule-strong); padding: 28px 0 32px; margin-bottom: 32px; }
 .kicker { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; font-weight: 500; }
 .masthead-title { font-family: 'Fraunces', serif; font-weight: 900; font-size: clamp(56px, 9vw, 112px); line-height: .9; letter-spacing: -.04em; font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144; margin-bottom: 8px; }
 .masthead-title em { font-style: italic; font-weight: 400; color: var(--accent); }
 .masthead-tagline { font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; font-weight: 300; color: var(--ink-soft); letter-spacing: .04em; max-width: 720px; margin: 0 auto; }
 .masthead-volume { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--ink-mute); margin-top: 14px; }
-.masthead-volume .ornament { color: var(--accent); margin: 0 12px; font-family: 'Fraunces', serif; font-style: italic; }
 
 .section-marker { display: flex; align-items: center; gap: 16px; margin: 56px 0 28px; }
 .section-marker-line { flex: 1; height: 1px; background: var(--rule-strong); }
 .section-marker-text { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink); font-weight: 500; }
 .section-marker-num { font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; color: var(--accent); font-weight: 500; }
 
-.lede { display: grid; grid-template-columns: 7fr 5fr; gap: 56px; margin-bottom: 32px; }
-.lede-headline { font-family: 'Fraunces', serif; font-weight: 700; font-size: clamp(28px, 3.4vw, 42px); line-height: 1.05; letter-spacing: -.02em; margin-bottom: 18px; }
-.lede-headline em { color: var(--accent); font-style: italic; font-weight: 500; }
-.lede-deck { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 17px; line-height: 1.6; color: var(--ink-soft); border-left: 3px solid var(--accent); padding-left: 18px; }
-
-.callout {
-  background: var(--paper-warm); border: 1px solid var(--rule-strong);
-  padding: 22px 26px; margin-bottom: 24px; position: relative;
-}
+.callout { background: var(--paper-warm); border: 1px solid var(--rule-strong); padding: 22px 26px; margin-bottom: 24px; position: relative; }
 .callout::before { content: 'METHODOLOGY'; position: absolute; top: -10px; left: 16px; background: var(--paper); padding: 0 10px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .2em; color: var(--ink-mute); }
 .callout-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px; font-style: italic; margin-bottom: 12px; color: var(--ink); }
 .callout-body { font-family: 'Fraunces', serif; font-size: 14px; line-height: 1.65; color: var(--ink-soft); }
 
 /* status bar */
-.status-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 32px; }
-.status-cell { background: var(--paper-warm); padding: 16px 20px; }
+.status-bar { display: grid; grid-template-columns: repeat(5, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 32px; }
+.status-cell { background: var(--paper-warm); padding: 14px 18px; }
 .status-cell .lbl { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 6px; font-weight: 500; }
-.status-cell .val { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; color: var(--ink); font-variation-settings: "opsz" 144; }
+.status-cell .val { font-family: 'Fraunces', serif; font-weight: 700; font-size: 20px; color: var(--ink); font-variation-settings: "opsz" 144; }
 .status-cell .val.red { color: var(--bear); }
 .status-cell .val.green { color: var(--bull); }
 .status-cell .sub { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-mute); margin-top: 4px; }
 
-/* rules table */
-.rules-table { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 12px; margin-bottom: 32px; border-top: 3px solid var(--rule-strong); border-bottom: 3px solid var(--rule-strong); }
-.rules-table th { text-align: left; padding: 12px 14px; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 1px solid var(--rule-strong); background: var(--paper-warm); font-weight: 500; }
-.rules-table td { padding: 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
-.rules-table tr:last-child td { border-bottom: none; }
-.rule-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 14px; color: var(--ink); }
-.rule-rationale { font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--ink-mute); margin-top: 4px; line-height: 1.5; }
-.rule-cap { font-weight: 700; font-size: 14px; color: var(--accent); white-space: nowrap; }
+/* add position panel */
+.add-panel { background: var(--paper-warm); border: 1px solid var(--rule-strong); padding: 22px 26px; margin-bottom: 24px; }
+.add-panel h4 { font-family: 'Fraunces', serif; font-weight: 600; font-style: italic; font-size: 18px; margin-bottom: 14px; color: var(--ink); }
+.add-form { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr auto; gap: 12px; align-items: end; }
+.add-form label { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px; }
+.add-form input, .add-form select { background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 100%; transition: border-color .15s; }
+.add-form input:focus, .add-form select:focus { outline: none; border-color: var(--accent); }
+.add-btn { background: var(--accent); color: var(--paper); border: none; padding: 11px 22px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; font-weight: 600; cursor: pointer; transition: background .15s; }
+.add-btn:hover { background: var(--accent-deep); }
+.add-btn.ghost { background: transparent; color: var(--ink); border: 1px solid var(--ink-faint); }
+.add-btn.ghost:hover { background: var(--paper-warm); border-color: var(--ink); }
 
-/* positions panel */
-.positions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 32px; }
-.positions-list { background: var(--paper-warm); border: 1px solid var(--rule-strong); padding: 22px 24px; }
-.positions-list h4 { font-family: 'Fraunces', serif; font-weight: 600; font-style: italic; font-size: 18px; margin-bottom: 14px; color: var(--ink); }
-.pos-row { display: grid; grid-template-columns: 60px 1fr auto auto; gap: 12px; padding: 10px 0; border-bottom: 1px dotted var(--rule); align-items: baseline; }
-.pos-row:last-child { border-bottom: none; }
-.pos-ticker { font-family: 'Fraunces', serif; font-weight: 700; font-size: 16px; color: var(--ink); }
-.pos-cluster { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-mute); letter-spacing: .05em; }
-.pos-dollars { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink-soft); }
-.pos-pct { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px; color: var(--accent); }
-.pos-row.unclassified .pos-cluster { color: var(--gold); }
+.suggest-box { position: relative; }
+.suggest-list { position: absolute; top: 100%; left: 0; right: 0; background: var(--paper-deep); border: 1px solid var(--rule-strong); border-top: none; max-height: 240px; overflow-y: auto; z-index: 50; display: none; }
+.suggest-list.show { display: block; }
+.suggest-item { padding: 8px 12px; cursor: pointer; font-family: 'IBM Plex Mono', monospace; font-size: 12px; border-bottom: 1px solid var(--rule); }
+.suggest-item:hover, .suggest-item.active { background: var(--paper-warm); }
+.suggest-item .t { color: var(--ink); font-weight: 600; }
+.suggest-item .n { color: var(--ink-mute); margin-left: 12px; font-style: italic; font-family: 'Fraunces', serif; }
+.suggest-item .c { color: var(--accent); margin-left: 12px; font-size: 10px; letter-spacing: .1em; }
+
+.toolbar { display: flex; gap: 10px; margin-bottom: 16px; flex-wrap: wrap; }
+.toolbar button { background: transparent; color: var(--ink); border: 1px solid var(--ink-faint); padding: 8px 16px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .2em; text-transform: uppercase; font-weight: 600; cursor: pointer; transition: all .15s; }
+.toolbar button:hover { background: var(--paper-warm); border-color: var(--ink); }
+.toolbar button.danger { color: var(--bear); border-color: var(--bear); }
+.toolbar button.danger:hover { background: rgba(232,93,61,.08); }
+
+/* positions table */
+.pos-table { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 12px; margin-bottom: 24px; border-top: 3px solid var(--rule-strong); border-bottom: 3px solid var(--rule-strong); }
+.pos-table th { text-align: left; padding: 12px 10px; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 1px solid var(--rule-strong); background: var(--paper-warm); font-weight: 500; }
+.pos-table td { padding: 12px 10px; border-bottom: 1px solid var(--rule); vertical-align: middle; }
+.pos-table tr:hover { background: var(--paper-warm); }
+.pos-t { font-family: 'Fraunces', serif; font-weight: 700; font-size: 16px; color: var(--ink); }
+.pos-n { font-family: 'Fraunces', serif; font-style: italic; font-size: 12px; color: var(--ink-mute); }
+.pos-cluster { font-family: 'IBM Plex Mono', monospace; font-size: 9px; color: var(--ink-mute); letter-spacing: .08em; padding: 2px 7px; background: var(--paper-warm); border: 1px solid var(--rule); display: inline-block; }
+.pos-cluster.unclassified { color: var(--gold); border-color: var(--gold); }
+.pos-sleeve { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; padding: 3px 8px; font-weight: 600; }
+.pos-sleeve.core { background: rgba(184,39,13,.08); color: var(--accent); border: 1px solid var(--accent); }
+.pos-sleeve.watch { background: rgba(212,163,53,.08); color: var(--gold); border: 1px solid var(--gold); }
+.pos-dollars { color: var(--ink-soft); text-align: right; }
+.pos-pct { color: var(--accent); font-weight: 600; text-align: right; }
+.pos-pct.over { color: var(--bear); }
+.pos-actions { text-align: right; }
+.pos-actions input[type=number] { width: 80px; background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 5px 7px; font-family: 'IBM Plex Mono', monospace; font-size: 11px; text-align: right; }
+.pos-actions input[type=number]:focus { outline: none; border-color: var(--accent); }
+.pos-actions button { background: transparent; color: var(--ink-mute); border: 1px solid var(--rule); padding: 5px 9px; font-size: 11px; cursor: pointer; margin-left: 6px; transition: all .15s; }
+.pos-actions button:hover { color: var(--bear); border-color: var(--bear); }
 
 /* concentration view */
-.concentration { background: var(--paper-warm); border: 1px solid var(--rule-strong); padding: 22px 24px; }
-.concentration h4 { font-family: 'Fraunces', serif; font-weight: 600; font-style: italic; font-size: 18px; margin-bottom: 14px; color: var(--ink); }
+.split-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 32px; }
+.panel { background: var(--paper-warm); border: 1px solid var(--rule-strong); padding: 22px 24px; }
+.panel h4 { font-family: 'Fraunces', serif; font-weight: 600; font-style: italic; font-size: 18px; margin-bottom: 14px; color: var(--ink); }
 .cluster-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 10px 0; border-bottom: 1px dotted var(--rule); align-items: baseline; }
 .cluster-row:last-child { border-bottom: none; }
 .cluster-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .04em; color: var(--ink); }
+.cluster-label small { color: var(--ink-mute); font-style: italic; font-family: 'Fraunces', serif; letter-spacing: 0; font-size: 11px; margin-left: 8px; }
 .cluster-pct { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px; }
 .cluster-pct.over { color: var(--bear); }
 .cluster-pct.warn { color: var(--gold); }
 .cluster-pct.ok { color: var(--bull); }
 .cluster-bar { grid-column: 1 / 3; height: 4px; background: var(--rule); margin-top: 4px; position: relative; }
-.cluster-bar-fill { height: 100%; background: var(--accent); }
-.cluster-bar-cap { position: absolute; height: 100%; width: 1px; background: var(--ink); top: 0; }
+.cluster-bar-fill { height: 100%; }
 
-/* breaches panel */
+/* breaches */
 .breaches { border-left: 4px solid var(--bear); background: rgba(184,39,13,.04); padding: 18px 22px; margin-bottom: 24px; }
 .breaches.empty { border-left-color: var(--bull); background: rgba(45,80,22,.04); }
 .breaches h4 { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--bear); margin-bottom: 12px; font-weight: 600; }
@@ -123,17 +132,35 @@ body::before {
 .breach-item:last-child { border-bottom: none; }
 .breach-item strong { color: var(--ink); font-weight: 600; }
 
-/* edit panel */
-.edit-panel { background: var(--paper-warm); border: 1px dashed var(--ink-faint); padding: 18px 22px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); margin-bottom: 24px; line-height: 1.7; }
-.edit-panel strong { color: var(--accent); font-weight: 600; }
+/* stress test */
+.stress-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+.stress-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; }
+.stress-row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: center; padding: 8px 0; border-bottom: 1px dotted var(--rule); }
+.stress-row:last-child { border-bottom: none; }
+.stress-row label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-soft); letter-spacing: .04em; }
+.stress-row input[type=number] { width: 100px; background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 7px 10px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; text-align: right; }
+.stress-row input[type=number]:focus { outline: none; border-color: var(--accent); }
+.stress-result { background: var(--paper-deep); border: 1px solid var(--rule-strong); padding: 24px; }
+.stress-result .lbl { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .2em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 8px; font-weight: 600; }
+.stress-result .val { font-family: 'Fraunces', serif; font-weight: 700; font-size: 36px; line-height: 1; font-variation-settings: "opsz" 144; margin-bottom: 8px; }
+.stress-result .val.gain { color: var(--bull); }
+.stress-result .val.loss { color: var(--bear); }
+.stress-result .delta { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink-soft); margin-bottom: 14px; }
+.stress-result .impacts { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-mute); line-height: 1.7; }
+
+/* preset scenarios */
+.presets { display: flex; gap: 8px; margin-bottom: 18px; flex-wrap: wrap; }
+.preset-btn { background: transparent; color: var(--ink-soft); border: 1px solid var(--rule); padding: 7px 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; font-weight: 500; cursor: pointer; transition: all .15s; }
+.preset-btn:hover { color: var(--ink); border-color: var(--accent); background: rgba(232,93,61,.04); }
 
 .disclaimer { font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--ink-mute); margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--rule); text-align: center; }
 
 @media (max-width: 920px) {
   .broadsheet { padding: 24px 22px 80px; }
-  .lede { grid-template-columns: 1fr; gap: 24px; }
-  .positions-grid { grid-template-columns: 1fr; }
   .status-bar { grid-template-columns: 1fr 1fr; }
+  .add-form { grid-template-columns: 1fr; }
+  .split-grid, .stress-grid { grid-template-columns: 1fr; }
+  .stress-controls { grid-template-columns: 1fr; }
 }
 </style>
 </head>
@@ -145,135 +172,145 @@ body::before {
 <header class="masthead">
   <div class="kicker">Vol. II · Allocation Engine</div>
   <h1 class="masthead-title">The <em>Allocation</em> Engine</h1>
-  <p class="masthead-tagline">Position sizing, cluster concentration, and regime-adjusted cash. Where conviction meets discipline.</p>
-  <div class="masthead-volume">
-    <span id="a-asof">Loading…</span> <span class="ornament">&</span> Educational Use Only
-  </div>
+  <p class="masthead-tagline">Pick tickers from your universe, weigh them, stress them. Where conviction meets discipline.</p>
+  <div class="masthead-volume" id="a-asof">Loading…</div>
 </header>
 
 <!-- STATUS BAR -->
 <div class="status-bar">
-  <div class="status-cell">
-    <div class="lbl">Total Capital</div>
-    <div class="val" id="a-total">$0</div>
-    <div class="sub" id="a-cash">cash —</div>
-  </div>
-  <div class="status-cell">
-    <div class="lbl">Names</div>
-    <div class="val" id="a-names">0</div>
-    <div class="sub" id="a-sleeves">core 0 · watch 0</div>
-  </div>
-  <div class="status-cell">
-    <div class="lbl">Breaches</div>
-    <div class="val" id="a-breaches">0</div>
-    <div class="sub">cap violations</div>
-  </div>
-  <div class="status-cell">
-    <div class="lbl">Regime Cash Target</div>
-    <div class="val" id="a-cash-target">—</div>
-    <div class="sub" id="a-regime-note">—</div>
-  </div>
+  <div class="status-cell"><div class="lbl">Total Capital</div><div class="val" id="a-total">$0</div><div class="sub" id="a-cash">cash —</div></div>
+  <div class="status-cell"><div class="lbl">Positions</div><div class="val" id="a-names">0</div><div class="sub" id="a-sleeves">core 0 · watch 0</div></div>
+  <div class="status-cell"><div class="lbl">Largest Position</div><div class="val" id="a-largest">—</div><div class="sub" id="a-largest-pct">—</div></div>
+  <div class="status-cell"><div class="lbl">Breaches</div><div class="val" id="a-breaches">0</div><div class="sub">cap violations</div></div>
+  <div class="status-cell"><div class="lbl">Regime Cash Target</div><div class="val" id="a-cash-target">—</div><div class="sub" id="a-regime-note">—</div></div>
 </div>
 
-<!-- LEDE -->
-<div class="lede">
-  <div>
-    <h2 class="lede-headline">A score does not size <em>itself</em>.</h2>
-    <p class="lede-deck">A 7+ on the Five-Pillar Ledger tells you a name is durable. It does not tell you how much to own. Without a sizing rule and a concentration rule, every concentrated thesis eventually becomes a single point of failure. This page imposes both — sleeve caps, name caps, cluster caps — and surfaces what the rules say about what you currently hold.</p>
-  </div>
-  <div class="callout">
-    <div class="callout-title">How it works</div>
-    <div class="callout-body">Edit data/positions.json with your actual positions. The engine reads the cluster tags from data/core.json and data/watch.json and tells you where you are concentrated against the rules. The rules are deliberately strict — better to fight them than to find out, after a 40% drawdown, that you weren't following any.</div>
-  </div>
-</div>
-
-<!-- SECTION I — RULES -->
+<!-- ADD POSITION -->
 <div class="section-marker">
   <span class="section-marker-num">№ 01</span>
-  <span class="section-marker-text">The Sizing &amp; Concentration Rules</span>
+  <span class="section-marker-text">Build Your Allocation</span>
   <div class="section-marker-line"></div>
 </div>
 
-<table class="rules-table">
+<div class="callout">
+  <div class="callout-title">How this works</div>
+  <div class="callout-body">Search for a ticker — the dropdown autocompletes from your Core and Watch universes. Pick a sleeve, set your dollar amount, click Add. Edit any cell inline. Your allocation persists in this browser via localStorage. Export to JSON when you want to commit it to the repo or copy elsewhere.</div>
+</div>
+
+<div class="add-panel">
+  <h4>Add a position</h4>
+  <div class="add-form">
+    <div class="suggest-box">
+      <label for="t-input">Ticker</label>
+      <input type="text" id="t-input" placeholder="Type ticker or company name…" autocomplete="off">
+      <div class="suggest-list" id="t-suggest"></div>
+    </div>
+    <div>
+      <label for="s-input">Sleeve</label>
+      <select id="s-input">
+        <option value="core">Core</option>
+        <option value="watch">Watch</option>
+      </select>
+    </div>
+    <div>
+      <label for="d-input">Dollars</label>
+      <input type="number" id="d-input" placeholder="0" min="0" step="100">
+    </div>
+    <div>
+      <label for="n-input">Note (optional)</label>
+      <input type="text" id="n-input" placeholder="Why this name?">
+    </div>
+    <button class="add-btn" id="add-btn">Add</button>
+  </div>
+</div>
+
+<div class="add-panel" style="display: grid; grid-template-columns: 1fr 1fr auto; gap: 12px; align-items: end;">
+  <div>
+    <label style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px;">Cash on hand</label>
+    <input type="number" id="cash-input" min="0" step="500" style="background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 100%;">
+  </div>
+  <div></div>
+  <button class="add-btn ghost" id="cash-save">Save cash</button>
+</div>
+
+<div class="toolbar">
+  <button id="export-btn">Export positions.json</button>
+  <button id="import-btn">Import positions.json</button>
+  <input type="file" id="import-file" accept=".json,application/json" style="display: none;">
+  <button id="reset-btn" class="danger">Reset all</button>
+</div>
+
+<!-- POSITIONS TABLE -->
+<table class="pos-table" id="pos-table">
   <thead>
-    <tr><th>Rule</th><th style="width: 140px;">Cap</th></tr>
+    <tr><th>Ticker</th><th>Cluster</th><th>Sleeve</th><th style="text-align: right;">Dollars</th><th style="text-align: right;">Weight</th><th style="text-align: right; width: 180px;">Edit</th></tr>
   </thead>
-  <tbody>
-    <tr>
-      <td>
-        <div class="rule-name">Per-name cap, Core sleeve</div>
-        <div class="rule-rationale">No single durable compounder gets more than 8% of capital. Even Lilly has had 40% drawdowns on regulatory news.</div>
-      </td>
-      <td class="rule-cap">8%</td>
-    </tr>
-    <tr>
-      <td>
-        <div class="rule-name">Per-name cap, Watch sleeve</div>
-        <div class="rule-rationale">Asymmetric bets are sized to survive a zero. 3% per name means you can be wrong on five in a row and still have most of your capital.</div>
-      </td>
-      <td class="rule-cap">3%</td>
-    </tr>
-    <tr>
-      <td>
-        <div class="rule-name">Per-cluster cap, Core sleeve</div>
-        <div class="rule-rationale">Cluster = correlated thesis (e.g. mag7_platforms, glp1_franchise, payments_network). Six durable compounders in the same cluster is one bet, not six.</div>
-      </td>
-      <td class="rule-cap">25%</td>
-    </tr>
-    <tr>
-      <td>
-        <div class="rule-name">Per-cluster cap, Watch sleeve</div>
-        <div class="rule-rationale">Same logic, tighter bound. Two gene-editing names is one biotech bet.</div>
-      </td>
-      <td class="rule-cap">12%</td>
-    </tr>
-    <tr>
-      <td>
-        <div class="rule-name">Total Watch sleeve cap</div>
-        <div class="rule-rationale">The asymmetric sleeve is high-variance by design. Capping it at 20% of total capital means a 100% loss across the whole sleeve is still survivable.</div>
-      </td>
-      <td class="rule-cap">20%</td>
-    </tr>
-    <tr>
-      <td>
-        <div class="rule-name">Cash floor</div>
-        <div class="rule-rationale">Dry powder is its own position. Adjusts up in stagflation/deflation regimes (Q3/Q4), down in goldilocks (Q1).</div>
-      </td>
-      <td class="rule-cap" id="rule-cash">10–25%</td>
-    </tr>
-  </tbody>
+  <tbody><tr><td colspan="6" style="text-align: center; padding: 32px; color: var(--ink-mute); font-family: Fraunces, serif; font-style: italic;">No positions yet — add one above.</td></tr></tbody>
 </table>
 
-<!-- SECTION II — CURRENT ALLOCATION -->
+<!-- CONCENTRATION + BREACHES -->
 <div class="section-marker">
   <span class="section-marker-num">№ 02</span>
-  <span class="section-marker-text">Your Current Allocation</span>
+  <span class="section-marker-text">Concentration &amp; Breaches</span>
   <div class="section-marker-line"></div>
 </div>
 
-<div class="edit-panel">
-  <strong>EDIT YOUR POSITIONS:</strong> Open <code>data/positions.json</code> in any text editor. Add or modify position objects with <code>{ "t": "TICKER", "dollars": 1000, "sleeve": "core" | "watch" }</code>. Save the file and refresh this page.
-</div>
-
-<div class="positions-grid">
-  <div class="positions-list" id="positions-list">
-    <h4>Positions</h4>
-  </div>
-  <div class="concentration" id="concentration">
-    <h4>Cluster concentration</h4>
-  </div>
-</div>
-
-<!-- SECTION III — BREACHES -->
-<div class="section-marker">
-  <span class="section-marker-num">№ 03</span>
-  <span class="section-marker-text">Rule Breaches &amp; Drift</span>
-  <div class="section-marker-line"></div>
+<div class="split-grid">
+  <div class="panel" id="cluster-panel"><h4>Cluster concentration</h4></div>
+  <div class="panel" id="sleeve-panel"><h4>Sleeve breakdown</h4></div>
 </div>
 
 <div id="breaches-panel"></div>
 
-<p class="disclaimer">The rules above are conservative defaults — not personal advice. Adjust to your own risk tolerance, time horizon, and tax situation. For a $50K+ concentrated thesis, review with a licensed advisor before acting.</p>
+<!-- STRESS TEST -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 03</span>
+  <span class="section-marker-text">Stress Test Your Allocation</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<div class="callout">
+  <div class="callout-title">What this asks</div>
+  <div class="callout-body">"If X happens, what does my portfolio look like." Pick a scope (a single ticker, a cluster, a sleeve, or the whole portfolio) and apply a percentage shock. The result panel shows the new total, the dollar P&L, and the names that took the biggest hit. Use the preset buttons for canonical scenarios.</div>
+</div>
+
+<div class="presets">
+  <button class="preset-btn" data-scope="all" data-pct="-20">Equity correction (-20% all)</button>
+  <button class="preset-btn" data-scope="cluster:mag7_platforms" data-pct="-30">Mag 7 selloff (-30%)</button>
+  <button class="preset-btn" data-scope="cluster:glp1_franchise" data-pct="-40">GLP-1 trial readout fail (-40%)</button>
+  <button class="preset-btn" data-scope="sleeve:watch" data-pct="-50">Watch sleeve halved</button>
+  <button class="preset-btn" data-scope="all" data-pct="20">Bull case (+20% all)</button>
+  <button class="preset-btn" data-scope="cluster:gene_editing" data-pct="-80">Gene editing cluster zero (-80%)</button>
+</div>
+
+<div class="stress-grid">
+  <div class="panel">
+    <h4>Custom shock</h4>
+    <div class="stress-controls">
+      <div>
+        <label style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px;">Scope</label>
+        <select id="stress-scope" style="background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 100%;">
+          <option value="all">All positions</option>
+          <option value="sleeve:core">Sleeve: Core</option>
+          <option value="sleeve:watch">Sleeve: Watch</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: block; margin-bottom: 6px;">% shock (use negative for loss)</label>
+        <input type="number" id="stress-pct" value="-20" step="5" style="background: var(--paper-deep); border: 1px solid var(--rule); color: var(--ink); padding: 10px 12px; font-family: 'IBM Plex Mono', monospace; font-size: 13px; width: 100%;">
+      </div>
+    </div>
+    <button class="add-btn" id="stress-run" style="width: 100%;">Run stress test</button>
+  </div>
+  <div class="stress-result">
+    <div class="lbl">Stressed Portfolio Value</div>
+    <div class="val" id="stress-val">—</div>
+    <div class="delta" id="stress-delta">Pick a scenario above.</div>
+    <div class="impacts" id="stress-impacts"></div>
+  </div>
+</div>
+
+<p class="disclaimer">Educational use only. Stress test is a deterministic shock applied to current dollar values — not a Monte Carlo, not a real risk model. Treat as directional intuition, not actionable VaR.</p>
 
 </div>
 
@@ -282,166 +319,353 @@ body::before {
 <script src="assets/tooltip.js"></script>
 <script>
 const RULES = {
-  per_name_core: 0.08,
-  per_name_watch: 0.03,
-  per_cluster_core: 0.25,
-  per_cluster_watch: 0.12,
+  per_name_core: 0.08, per_name_watch: 0.03,
+  per_cluster_core: 0.25, per_cluster_watch: 0.12,
   watch_total: 0.20,
-  cash_target_by_regime: {
-    'Goldilocks': 0.10,
-    'Reflation': 0.15,
-    'Deflation': 0.20,
-    'Stagflation': 0.25,
-    'Unclassified': 0.20,
-  },
+  cash_target_by_regime: { Goldilocks: 0.10, Reflation: 0.15, Deflation: 0.20, Stagflation: 0.25, Unclassified: 0.20 },
 };
+const STORAGE_KEY = 'compendium_positions_v1';
 
-(async function () {
+let universe = {}; // ticker -> { n, cluster, sleeve_default }
+let state = { cash: 50000, positions: [] };
+let regime = 'Unclassified';
+
+// ---------- state ----------
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) state = JSON.parse(raw);
+  } catch (_) {}
+}
+function saveState() {
+  try { localStorage.setItem(STORAGE_KEY, JSON.stringify(state)); } catch (_) {}
+}
+function newId() { return Math.random().toString(36).slice(2, 9); }
+
+// ---------- universe ----------
+async function loadUniverse() {
   const data = await window.COMPENDIUM.loadAll();
-  const positions = await window.COMPENDIUM.loadJson('data/positions.json');
-  if (!positions || !positions.positions) {
-    document.getElementById('a-asof').textContent = 'data/positions.json missing';
-    return;
+  (data.core || []).forEach(c => { universe[c.t] = { n: c.n, cluster: c.cluster, sleeve: 'core' }; });
+  (data.watch || []).forEach(c => { universe[c.t] = { n: c.n, cluster: c.cluster, sleeve: 'watch' }; });
+  regime = (data.macro && data.macro.regime && data.macro.regime.regime_name) || 'Unclassified';
+  document.getElementById('a-asof').textContent = 'Last data ' + ((data.lastUpdated && data.lastUpdated.asof) ? data.lastUpdated.asof.split('T')[0] : '—');
+  document.getElementById('a-regime-note').textContent = regime + ' regime';
+  return data;
+}
+
+// ---------- ticker autocomplete ----------
+function setupSearch() {
+  const input = document.getElementById('t-input');
+  const list = document.getElementById('t-suggest');
+  const sleeveSel = document.getElementById('s-input');
+  let activeIdx = -1;
+  let currentItems = [];
+
+  function render(query) {
+    const q = query.trim().toUpperCase();
+    if (!q) { list.classList.remove('show'); return; }
+    const items = Object.entries(universe)
+      .filter(([t, m]) => t.includes(q) || m.n.toUpperCase().includes(q))
+      .slice(0, 12);
+    if (items.length === 0) {
+      list.innerHTML = `<div class="suggest-item" data-custom="${q}"><span class="t">${q}</span><span class="n">Add as custom ticker (unclassified)</span></div>`;
+    } else {
+      list.innerHTML = items.map(([t, m]) =>
+        `<div class="suggest-item" data-t="${t}"><span class="t">${t}</span><span class="n">${m.n}</span><span class="c">${m.cluster.toUpperCase()}</span></div>`
+      ).join('');
+    }
+    currentItems = list.querySelectorAll('.suggest-item');
+    activeIdx = -1;
+    list.classList.add('show');
   }
-  document.getElementById('a-asof').textContent = 'Refreshed ' + (positions._asof || '—');
 
-  // build cluster lookup from core + watch
-  const lookup = {};
-  (data.core || []).forEach(c => { lookup[c.t] = { cluster: c.cluster, sleeve: 'core', name: c.n }; });
-  (data.watch || []).forEach(c => { lookup[c.t] = { cluster: c.cluster, sleeve: 'watch', name: c.n }; });
+  function pick(item) {
+    const t = item.getAttribute('data-t') || item.getAttribute('data-custom');
+    input.value = t;
+    list.classList.remove('show');
+    if (universe[t]) sleeveSel.value = universe[t].sleeve;
+    document.getElementById('d-input').focus();
+  }
 
-  const positionsTotal = positions.positions.reduce((s, p) => s + (p.dollars || 0), 0);
-  const totalCapital = positionsTotal + (positions.cash || 0);
+  input.addEventListener('input', e => render(e.target.value));
+  input.addEventListener('focus', e => { if (e.target.value) render(e.target.value); });
+  input.addEventListener('keydown', e => {
+    if (!list.classList.contains('show')) return;
+    if (e.key === 'ArrowDown') { e.preventDefault(); activeIdx = Math.min(activeIdx + 1, currentItems.length - 1); update(); }
+    else if (e.key === 'ArrowUp') { e.preventDefault(); activeIdx = Math.max(activeIdx - 1, 0); update(); }
+    else if (e.key === 'Enter' && activeIdx >= 0) { e.preventDefault(); pick(currentItems[activeIdx]); }
+    else if (e.key === 'Escape') { list.classList.remove('show'); }
+  });
+  function update() { currentItems.forEach((el, i) => el.classList.toggle('active', i === activeIdx)); }
+  list.addEventListener('mousedown', e => { const item = e.target.closest('.suggest-item'); if (item) pick(item); });
+  document.addEventListener('click', e => { if (!input.contains(e.target) && !list.contains(e.target)) list.classList.remove('show'); });
+}
+
+// ---------- add / edit / delete ----------
+function addPosition() {
+  const t = document.getElementById('t-input').value.trim().toUpperCase();
+  const sleeve = document.getElementById('s-input').value;
+  const dollars = parseFloat(document.getElementById('d-input').value) || 0;
+  const note = document.getElementById('n-input').value.trim();
+  if (!t || dollars <= 0) { alert('Need a ticker and a positive dollar amount.'); return; }
+  state.positions.push({ id: newId(), t, sleeve, dollars, note });
+  saveState();
+  document.getElementById('t-input').value = '';
+  document.getElementById('d-input').value = '';
+  document.getElementById('n-input').value = '';
+  render();
+}
+function deletePosition(id) {
+  state.positions = state.positions.filter(p => p.id !== id);
+  saveState(); render();
+}
+function updateDollars(id, val) {
+  const p = state.positions.find(p => p.id === id);
+  if (p) { p.dollars = parseFloat(val) || 0; saveState(); render(); }
+}
+function updateSleeve(id, val) {
+  const p = state.positions.find(p => p.id === id);
+  if (p) { p.sleeve = val; saveState(); render(); }
+}
+
+// ---------- render ----------
+function render() {
+  const total = state.positions.reduce((s, p) => s + p.dollars, 0) + state.cash;
 
   // status bar
-  document.getElementById('a-total').textContent = '$' + totalCapital.toLocaleString();
-  document.getElementById('a-cash').textContent = 'cash $' + (positions.cash || 0).toLocaleString() + ' (' + ((positions.cash / totalCapital) * 100).toFixed(1) + '%)';
-  document.getElementById('a-names').textContent = positions.positions.length;
-  const coreCnt = positions.positions.filter(p => p.sleeve === 'core').length;
-  const watchCnt = positions.positions.filter(p => p.sleeve === 'watch').length;
+  document.getElementById('a-total').textContent = '$' + total.toLocaleString();
+  document.getElementById('a-cash').textContent = total > 0 ? `cash $${state.cash.toLocaleString()} (${(state.cash/total*100).toFixed(1)}%)` : 'cash —';
+  document.getElementById('cash-input').value = state.cash;
+  document.getElementById('a-names').textContent = state.positions.length;
+  const coreCnt = state.positions.filter(p => p.sleeve === 'core').length;
+  const watchCnt = state.positions.filter(p => p.sleeve === 'watch').length;
   document.getElementById('a-sleeves').textContent = `core ${coreCnt} · watch ${watchCnt}`;
-
-  // regime cash target
-  const regime = (data.macro && data.macro.regime && data.macro.regime.regime_name) || 'Unclassified';
+  const largest = state.positions.slice().sort((a,b) => b.dollars - a.dollars)[0];
+  if (largest) {
+    document.getElementById('a-largest').textContent = largest.t;
+    document.getElementById('a-largest-pct').textContent = (largest.dollars/total*100).toFixed(1) + '%';
+  } else {
+    document.getElementById('a-largest').textContent = '—';
+    document.getElementById('a-largest-pct').textContent = '—';
+  }
   const cashTarget = RULES.cash_target_by_regime[regime] || 0.20;
-  document.getElementById('a-cash-target').textContent = (cashTarget * 100).toFixed(0) + '%';
-  document.getElementById('a-regime-note').textContent = regime + ' regime';
-  document.getElementById('rule-cash').textContent = (cashTarget * 100).toFixed(0) + '% (current)';
+  document.getElementById('a-cash-target').textContent = (cashTarget*100).toFixed(0) + '%';
 
-  // render positions
-  const posListEl = document.getElementById('positions-list');
-  posListEl.innerHTML = '<h4>Positions</h4>';
-  positions.positions.forEach(p => {
-    const meta = lookup[p.t] || { cluster: 'unclassified', sleeve: p.sleeve, name: p.t };
-    const pct = totalCapital > 0 ? (p.dollars / totalCapital * 100) : 0;
-    const row = document.createElement('div');
-    row.className = 'pos-row' + (meta.cluster === 'unclassified' ? ' unclassified' : '');
-    row.innerHTML = `
-      <div class="pos-ticker">${p.t}</div>
-      <div>
-        <div style="font-family:Fraunces,serif;font-size:13px;color:var(--ink-soft);">${meta.name}</div>
-        <div class="pos-cluster">${meta.cluster.toUpperCase()} · ${(p.sleeve || meta.sleeve || 'unknown').toUpperCase()}</div>
-      </div>
-      <div class="pos-dollars">$${(p.dollars || 0).toLocaleString()}</div>
-      <div class="pos-pct">${pct.toFixed(1)}%</div>
-    `;
-    posListEl.appendChild(row);
-  });
-
-  // cash row
-  const cashRow = document.createElement('div');
-  cashRow.className = 'pos-row';
-  cashRow.innerHTML = `
-    <div class="pos-ticker">CASH</div>
-    <div><div style="font-family:Fraunces,serif;font-style:italic;font-size:13px;color:var(--ink-soft);">Dry powder</div></div>
-    <div class="pos-dollars">$${(positions.cash || 0).toLocaleString()}</div>
-    <div class="pos-pct">${((positions.cash / totalCapital) * 100).toFixed(1)}%</div>
-  `;
-  posListEl.appendChild(cashRow);
+  // positions table
+  const tbody = document.querySelector('#pos-table tbody');
+  if (state.positions.length === 0) {
+    tbody.innerHTML = '<tr><td colspan="6" style="text-align: center; padding: 32px; color: var(--ink-mute); font-family: Fraunces, serif; font-style: italic;">No positions yet — add one above.</td></tr>';
+  } else {
+    tbody.innerHTML = '';
+    state.positions.slice().sort((a,b) => b.dollars - a.dollars).forEach(p => {
+      const meta = universe[p.t] || { n: p.t, cluster: 'unclassified' };
+      const pct = total > 0 ? (p.dollars/total*100) : 0;
+      const cap = (p.sleeve === 'core' ? RULES.per_name_core : RULES.per_name_watch) * 100;
+      const tr = document.createElement('tr');
+      tr.innerHTML = `
+        <td><div class="pos-t">${p.t}</div><div class="pos-n">${meta.n}</div></td>
+        <td><span class="pos-cluster ${meta.cluster === 'unclassified' ? 'unclassified' : ''}">${meta.cluster.toUpperCase()}</span></td>
+        <td><select class="pos-sleeve-sel pos-sleeve ${p.sleeve}" data-id="${p.id}" style="background: transparent; border: none; color: inherit; font: inherit; cursor: pointer;"><option value="core" ${p.sleeve==='core'?'selected':''}>CORE</option><option value="watch" ${p.sleeve==='watch'?'selected':''}>WATCH</option></select></td>
+        <td class="pos-dollars">$${p.dollars.toLocaleString()}</td>
+        <td class="pos-pct ${pct > cap ? 'over' : ''}">${pct.toFixed(1)}%</td>
+        <td class="pos-actions"><input type="number" class="pos-d-edit" data-id="${p.id}" value="${p.dollars}" step="100"><button class="pos-del" data-id="${p.id}">×</button></td>
+      `;
+      tbody.appendChild(tr);
+    });
+    document.querySelectorAll('.pos-del').forEach(b => b.onclick = e => deletePosition(e.target.getAttribute('data-id')));
+    document.querySelectorAll('.pos-d-edit').forEach(i => i.onchange = e => updateDollars(e.target.getAttribute('data-id'), e.target.value));
+    document.querySelectorAll('.pos-sleeve-sel').forEach(s => s.onchange = e => updateSleeve(e.target.getAttribute('data-id'), e.target.value));
+  }
 
   // cluster aggregation
   const clusters = {};
-  positions.positions.forEach(p => {
-    const meta = lookup[p.t] || { cluster: 'unclassified', sleeve: p.sleeve };
-    const sleeve = p.sleeve || meta.sleeve || 'core';
-    const key = sleeve + '::' + meta.cluster;
-    clusters[key] = clusters[key] || { sleeve, cluster: meta.cluster, dollars: 0, names: [] };
-    clusters[key].dollars += (p.dollars || 0);
+  state.positions.forEach(p => {
+    const meta = universe[p.t] || { cluster: 'unclassified' };
+    const key = p.sleeve + '::' + meta.cluster;
+    clusters[key] = clusters[key] || { sleeve: p.sleeve, cluster: meta.cluster, dollars: 0, names: [] };
+    clusters[key].dollars += p.dollars;
     clusters[key].names.push(p.t);
   });
 
-  const clusterEl = document.getElementById('concentration');
+  const clusterEl = document.getElementById('cluster-panel');
   clusterEl.innerHTML = '<h4>Cluster concentration</h4>';
-  const sortedClusters = Object.values(clusters).sort((a, b) => b.dollars - a.dollars);
-  sortedClusters.forEach(c => {
-    const pct = totalCapital > 0 ? (c.dollars / totalCapital) : 0;
+  const sorted = Object.values(clusters).sort((a,b) => b.dollars - a.dollars);
+  if (sorted.length === 0) clusterEl.innerHTML += '<div style="font-family: Fraunces, serif; font-style: italic; color: var(--ink-mute); font-size: 14px;">No positions to group.</div>';
+  sorted.forEach(c => {
+    const pct = total > 0 ? (c.dollars/total) : 0;
     const cap = c.sleeve === 'core' ? RULES.per_cluster_core : RULES.per_cluster_watch;
     const cls = pct > cap ? 'over' : pct > cap * 0.75 ? 'warn' : 'ok';
+    const color = cls === 'over' ? 'bear' : cls === 'warn' ? 'gold' : 'bull';
     const row = document.createElement('div');
     row.className = 'cluster-row';
-    row.innerHTML = `
-      <div class="cluster-label">${c.cluster.toUpperCase()}<span style="color:var(--ink-mute);font-style:italic;font-family:Fraunces,serif;letter-spacing:0;font-size:11px;margin-left:8px;">${c.sleeve} · ${c.names.join(', ')}</span></div>
-      <div class="cluster-pct ${cls}">${(pct * 100).toFixed(1)}% / ${(cap * 100).toFixed(0)}%</div>
-      <div class="cluster-bar">
-        <div class="cluster-bar-fill" style="width:${Math.min(100, pct / cap * 100)}%; background: var(--${cls === 'over' ? 'bear' : cls === 'warn' ? 'gold' : 'bull'});"></div>
-        <div class="cluster-bar-cap" style="left: 100%;"></div>
-      </div>
-    `;
+    row.innerHTML = `<div class="cluster-label">${c.cluster.toUpperCase()}<small>${c.sleeve} · ${c.names.join(', ')}</small></div><div class="cluster-pct ${cls}">${(pct*100).toFixed(1)}% / ${(cap*100).toFixed(0)}%</div><div class="cluster-bar"><div class="cluster-bar-fill" style="width:${Math.min(100, pct/cap*100)}%; background: var(--${color});"></div></div>`;
     clusterEl.appendChild(row);
   });
 
-  // breach detection
-  const breaches = [];
-  // per-name caps
-  positions.positions.forEach(p => {
-    const meta = lookup[p.t] || { sleeve: p.sleeve };
-    const sleeve = p.sleeve || meta.sleeve || 'core';
-    const cap = sleeve === 'core' ? RULES.per_name_core : RULES.per_name_watch;
-    const pct = totalCapital > 0 ? (p.dollars / totalCapital) : 0;
-    if (pct > cap) {
-      breaches.push(`<strong>${p.t}</strong> at ${(pct * 100).toFixed(1)}% exceeds ${sleeve} per-name cap of ${(cap * 100).toFixed(0)}%. Trim by $${Math.round(p.dollars - cap * totalCapital).toLocaleString()}.`);
-    }
+  // sleeve breakdown
+  const sleeveEl = document.getElementById('sleeve-panel');
+  sleeveEl.innerHTML = '<h4>Sleeve breakdown</h4>';
+  ['core', 'watch'].forEach(s => {
+    const sum = state.positions.filter(p => p.sleeve === s).reduce((a,p) => a+p.dollars, 0);
+    const pct = total > 0 ? sum/total : 0;
+    const cap = s === 'watch' ? RULES.watch_total : 0.80;
+    const cls = pct > cap ? 'over' : pct > cap * 0.85 ? 'warn' : 'ok';
+    const color = cls === 'over' ? 'bear' : cls === 'warn' ? 'gold' : 'bull';
+    const row = document.createElement('div');
+    row.className = 'cluster-row';
+    row.innerHTML = `<div class="cluster-label">${s.toUpperCase()}<small>${state.positions.filter(p=>p.sleeve===s).length} names</small></div><div class="cluster-pct ${cls}">${(pct*100).toFixed(1)}% ${s==='watch' ? '/ '+(cap*100).toFixed(0)+'%' : ''}</div><div class="cluster-bar"><div class="cluster-bar-fill" style="width:${Math.min(100, pct*100)}%; background: var(--${color});"></div></div>`;
+    sleeveEl.appendChild(row);
   });
-  // cluster caps
+  // cash row
+  const cashPct = total > 0 ? state.cash/total : 0;
+  const cashCls = cashPct < cashTarget ? 'over' : 'ok';
+  const cashRow = document.createElement('div');
+  cashRow.className = 'cluster-row';
+  cashRow.innerHTML = `<div class="cluster-label">CASH<small>regime target ${(cashTarget*100).toFixed(0)}%</small></div><div class="cluster-pct ${cashCls}">${(cashPct*100).toFixed(1)}%</div>`;
+  sleeveEl.appendChild(cashRow);
+
+  // breaches
+  const breaches = [];
+  state.positions.forEach(p => {
+    const cap = p.sleeve === 'core' ? RULES.per_name_core : RULES.per_name_watch;
+    const pct = total > 0 ? p.dollars/total : 0;
+    if (pct > cap) breaches.push(`<strong>${p.t}</strong> at ${(pct*100).toFixed(1)}% exceeds ${p.sleeve} per-name cap of ${(cap*100).toFixed(0)}%. Trim by $${Math.round(p.dollars - cap*total).toLocaleString()}.`);
+  });
   Object.values(clusters).forEach(c => {
     const cap = c.sleeve === 'core' ? RULES.per_cluster_core : RULES.per_cluster_watch;
-    const pct = totalCapital > 0 ? (c.dollars / totalCapital) : 0;
-    if (pct > cap) {
-      breaches.push(`<strong>${c.cluster}</strong> cluster (${c.sleeve}) at ${(pct * 100).toFixed(1)}% exceeds ${(cap * 100).toFixed(0)}% cap. Diversify or trim.`);
-    }
+    const pct = total > 0 ? c.dollars/total : 0;
+    if (pct > cap) breaches.push(`<strong>${c.cluster}</strong> cluster (${c.sleeve}) at ${(pct*100).toFixed(1)}% exceeds ${(cap*100).toFixed(0)}% cap.`);
   });
-  // sleeve total
-  const watchTotal = positions.positions.filter(p => p.sleeve === 'watch').reduce((s, p) => s + (p.dollars || 0), 0);
-  const watchPct = totalCapital > 0 ? (watchTotal / totalCapital) : 0;
-  if (watchPct > RULES.watch_total) {
-    breaches.push(`<strong>Watch sleeve</strong> at ${(watchPct * 100).toFixed(1)}% exceeds ${(RULES.watch_total * 100).toFixed(0)}% total cap. Trim asymmetric bets by $${Math.round(watchTotal - RULES.watch_total * totalCapital).toLocaleString()}.`);
-  }
-  // cash check
-  const cashPct = totalCapital > 0 ? (positions.cash / totalCapital) : 0;
-  if (cashPct < cashTarget) {
-    breaches.push(`<strong>Cash</strong> at ${(cashPct * 100).toFixed(1)}% is below ${regime}-regime target of ${(cashTarget * 100).toFixed(0)}%. Consider trimming risk to raise $${Math.round((cashTarget - cashPct) * totalCapital).toLocaleString()}.`);
-  }
-  // unclassified positions
-  positions.positions.forEach(p => {
-    if (!lookup[p.t]) {
-      breaches.push(`<strong>${p.t}</strong> is not in core.json or watch.json — cluster concentration cannot be tracked. Add to a ledger or accept blind exposure.`);
-    }
+  const watchSum = state.positions.filter(p=>p.sleeve==='watch').reduce((a,p)=>a+p.dollars,0);
+  const watchPct = total > 0 ? watchSum/total : 0;
+  if (watchPct > RULES.watch_total) breaches.push(`<strong>Watch sleeve</strong> at ${(watchPct*100).toFixed(1)}% exceeds ${(RULES.watch_total*100).toFixed(0)}% total cap. Trim by $${Math.round(watchSum - RULES.watch_total*total).toLocaleString()}.`);
+  if (cashPct < cashTarget && total > 0) breaches.push(`<strong>Cash</strong> at ${(cashPct*100).toFixed(1)}% is below ${regime}-regime target of ${(cashTarget*100).toFixed(0)}%. Need $${Math.round((cashTarget - cashPct)*total).toLocaleString()} more in dry powder.`);
+  state.positions.forEach(p => {
+    if (!universe[p.t]) breaches.push(`<strong>${p.t}</strong> is not in core.json or watch.json — cluster concentration cannot be tracked. Add to a ledger or accept blind exposure.`);
   });
 
   document.getElementById('a-breaches').textContent = breaches.length;
-  document.getElementById('a-breaches').classList.add(breaches.length > 0 ? 'red' : 'green');
+  const bEl = document.getElementById('a-breaches');
+  bEl.classList.toggle('red', breaches.length > 0);
+  bEl.classList.toggle('green', breaches.length === 0);
 
   const bp = document.getElementById('breaches-panel');
-  if (breaches.length === 0) {
-    bp.innerHTML = `<div class="breaches empty">
-      <h4>✓ No rule breaches</h4>
-      <div class="breach-item">Your current allocation respects every cap. The discipline is intact. The thesis still has to be right — but at least you'll be alive to learn from it if it isn't.</div>
-    </div>`;
+  if (breaches.length === 0 && state.positions.length > 0) {
+    bp.innerHTML = `<div class="breaches empty"><h4>✓ No rule breaches</h4><div class="breach-item">Your current allocation respects every cap.</div></div>`;
+  } else if (breaches.length > 0) {
+    bp.innerHTML = `<div class="breaches"><h4>✗ ${breaches.length} rule breach${breaches.length===1?'':'es'}</h4>${breaches.map(b => `<div class="breach-item">${b}</div>`).join('')}</div>`;
   } else {
-    bp.innerHTML = `<div class="breaches">
-      <h4>✗ ${breaches.length} rule breach${breaches.length === 1 ? '' : 'es'} detected</h4>
-      ${breaches.map(b => `<div class="breach-item">${b}</div>`).join('')}
-    </div>`;
+    bp.innerHTML = '';
+  }
+}
+
+// ---------- stress test ----------
+function runStress(scope, pct) {
+  const total = state.positions.reduce((s, p) => s + p.dollars, 0) + state.cash;
+  const shock = pct / 100;
+  const impacts = [];
+  let stressedTotal = state.cash;
+  state.positions.forEach(p => {
+    const meta = universe[p.t] || { cluster: 'unclassified' };
+    let apply = false;
+    if (scope === 'all') apply = true;
+    else if (scope.startsWith('sleeve:') && p.sleeve === scope.slice(7)) apply = true;
+    else if (scope.startsWith('cluster:') && meta.cluster === scope.slice(8)) apply = true;
+    else if (scope.startsWith('ticker:') && p.t === scope.slice(7)) apply = true;
+    const newVal = apply ? p.dollars * (1 + shock) : p.dollars;
+    stressedTotal += newVal;
+    if (apply) impacts.push({ t: p.t, before: p.dollars, after: newVal, delta: newVal - p.dollars });
+  });
+  const delta = stressedTotal - total;
+  const valEl = document.getElementById('stress-val');
+  valEl.textContent = '$' + Math.round(stressedTotal).toLocaleString();
+  valEl.classList.toggle('gain', delta > 0);
+  valEl.classList.toggle('loss', delta < 0);
+  document.getElementById('stress-delta').innerHTML = `${delta >= 0 ? '+' : ''}$${Math.round(delta).toLocaleString()} (${(delta/total*100).toFixed(1)}%) vs. baseline of $${Math.round(total).toLocaleString()}`;
+  const impactStr = impacts.length === 0
+    ? 'No positions matched this scope.'
+    : 'Names hit:<br>' + impacts.sort((a,b) => a.delta - b.delta).slice(0, 8).map(i => `&nbsp;&nbsp;${i.t.padEnd(8)} $${Math.round(i.before).toLocaleString()} → $${Math.round(i.after).toLocaleString()} (${i.delta>0?'+':''}$${Math.round(i.delta).toLocaleString()})`).join('<br>');
+  document.getElementById('stress-impacts').innerHTML = impactStr;
+}
+
+// ---------- import / export ----------
+function exportJson() {
+  const out = { _asof: new Date().toISOString().split('T')[0], cash: state.cash, positions: state.positions.map(({id, ...rest}) => rest) };
+  const blob = new Blob([JSON.stringify(out, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = 'positions.json';
+  document.body.appendChild(a); a.click(); document.body.removeChild(a); URL.revokeObjectURL(url);
+}
+function importJson(file) {
+  const reader = new FileReader();
+  reader.onload = e => {
+    try {
+      const data = JSON.parse(e.target.result);
+      state.cash = data.cash || 0;
+      state.positions = (data.positions || []).map(p => ({ id: newId(), t: p.t, sleeve: p.sleeve || 'core', dollars: p.dollars || 0, note: p.note || '' }));
+      saveState(); render();
+    } catch (err) { alert('Invalid JSON: ' + err.message); }
+  };
+  reader.readAsText(file);
+}
+
+// ---------- preset scenarios — populate dropdown with clusters ----------
+function populateStressScopes() {
+  const sel = document.getElementById('stress-scope');
+  const clusters = new Set();
+  state.positions.forEach(p => { const m = universe[p.t]; if (m) clusters.add(m.cluster); });
+  Object.values(universe).forEach(m => clusters.add(m.cluster));
+  Array.from(clusters).sort().forEach(c => {
+    const opt = document.createElement('option');
+    opt.value = 'cluster:' + c; opt.textContent = 'Cluster: ' + c.toUpperCase();
+    sel.appendChild(opt);
+  });
+  state.positions.forEach(p => {
+    const opt = document.createElement('option');
+    opt.value = 'ticker:' + p.t; opt.textContent = 'Ticker: ' + p.t;
+    sel.appendChild(opt);
+  });
+}
+
+// ---------- init ----------
+(async function () {
+  loadState();
+  await loadUniverse();
+  setupSearch();
+
+  // wire up controls
+  document.getElementById('add-btn').onclick = addPosition;
+  document.getElementById('cash-save').onclick = () => { state.cash = parseFloat(document.getElementById('cash-input').value) || 0; saveState(); render(); };
+  document.getElementById('export-btn').onclick = exportJson;
+  document.getElementById('import-btn').onclick = () => document.getElementById('import-file').click();
+  document.getElementById('import-file').onchange = e => { if (e.target.files[0]) importJson(e.target.files[0]); };
+  document.getElementById('reset-btn').onclick = () => {
+    if (confirm('Reset all positions and cash? This cannot be undone unless you exported first.')) {
+      state = { cash: 0, positions: [] };
+      saveState(); render();
+    }
+  };
+  document.getElementById('stress-run').onclick = () => runStress(document.getElementById('stress-scope').value, parseFloat(document.getElementById('stress-pct').value) || 0);
+  document.querySelectorAll('.preset-btn').forEach(b => b.onclick = () => {
+    document.getElementById('stress-scope').value = b.getAttribute('data-scope');
+    document.getElementById('stress-pct').value = b.getAttribute('data-pct');
+    runStress(b.getAttribute('data-scope'), parseFloat(b.getAttribute('data-pct')));
+  });
+
+  populateStressScopes();
+  render();
+
+  // if state was empty, seed with the demo positions from positions.json
+  if (state.positions.length === 0 && state.cash === 0) {
+    try {
+      const seed = await window.COMPENDIUM.loadJson('data/positions.json');
+      if (seed && seed.positions) {
+        state.cash = seed.cash || 0;
+        state.positions = seed.positions.map(p => ({ id: newId(), t: p.t, sleeve: p.sleeve || 'core', dollars: p.dollars || 0, note: p.note || '' }));
+        saveState(); render();
+      }
+    } catch (_) {}
   }
 })();
 </script>

@@ -160,6 +160,10 @@ FRED_SERIES = [
     ("m2_yoy",                "M2SL",            "M2 money stock"),
     # Risk-on/risk-off proxies from FRED
     ("hy_spread",             "BAMLH0A0HYM2",    "ICE BofA HY OAS (%)"),
+    # Capital migration / cross-border sovereign indicators
+    ("thirty_year",           "DGS30",           "30-year Treasury yield (%)"),
+    ("term_premium_10y",      "THREEFYTP10",     "10-year ACM term premium estimate (%)"),
+    ("foreign_treasuries",    "FDHBFIN",         "Foreign holdings of US Treasuries ($B, monthly)"),
 ]
 
 
@@ -216,6 +220,14 @@ def etf_proxies() -> dict:
         ("em",              "EEM",  "EM equities ETF"),
         ("intl_dev",        "EFA",  "Intl developed equities ETF"),
         ("vix",             "^VIX", "VIX index"),
+        # Capital migration proxies — yields and cross-border sovereign / FX
+        ("us_30y_yield",    "^TYX", "US 30-year Treasury yield (index)"),
+        ("us_10y_yield",    "^TNX", "US 10-year Treasury yield (index)"),
+        ("intl_sovereign",  "BWX",  "International developed sovereign ex-US ETF"),
+        ("em_sovereign",    "EMB",  "USD EM sovereign bond ETF"),
+        ("intl_treasury",   "IGOV", "International Treasury ex-US ETF"),
+        ("yen",             "FXY",  "Japanese yen ETF (JGB / BoJ proxy)"),
+        ("sterling",        "FXB",  "British pound ETF (gilt / UK fiscal proxy)"),
     ]
     for key, ticker, label in pairs:
         try:
@@ -341,28 +353,110 @@ def big_debt_crisis_tripwires(snap: dict) -> list[dict]:
     return flags
 
 
-def all_weather_template() -> dict:
+def capital_migration(snap: dict) -> dict:
     """
-    Bridgewater's All Weather portfolio is the canonical risk-parity template.
-    Used as a benchmark to compare the user's actual allocation against a
-    diversified-by-risk baseline.
+    Cross-border sovereign-debt and capital-flow signals.
+
+    Tracks the kind of stress that historically transmits a thesis like
+    "AI concentration creates fragility" into actual market drawdowns —
+    via the long end of the sovereign curve, term premium expansion,
+    and rotation across G3 sovereign markets.
+
+    Composite signals computed:
+      - 30y / 10y curve slope (term premium proxy)
+      - TLT vs. gold 30-day rolling correlation (flight-to-safety pattern)
+      - US vs. international developed sovereign 3-mo return spread
+      - Yen-gold relationship (BoJ policy stress proxy)
     """
+    fred = snap.get("fred", {}) or {}
+    proxies = snap.get("etf_proxies", {}) or {}
+
+    # 1. Long-end curve slope: prefer FRED (DGS30 - DGS10), fallback to ^TYX/^TNX index ratio
+    long_end_slope = None
+    long_end_source = None
+    dgs30 = (fred.get("thirty_year") or {}).get("latest_value")
+    dgs10 = (fred.get("ten_year") or {}).get("latest_value")
+    if dgs30 is not None and dgs10 is not None:
+        long_end_slope = dgs30 - dgs10
+        long_end_source = "FRED DGS30-DGS10"
+    else:
+        # ^TYX is reported as 10x yield (e.g. 4.85% → 48.5). Same for ^TNX.
+        tyx = (proxies.get("us_30y_yield") or {}).get("latest")
+        tnx = (proxies.get("us_10y_yield") or {}).get("latest")
+        if tyx is not None and tnx is not None:
+            long_end_slope = (tyx - tnx) / 10  # convert from index to actual %
+            long_end_source = "yfinance ^TYX-^TNX"
+
+    # 2. TLT-gold 30-day rolling correlation (flight-to-safety regime)
+    tlt_gold_corr = None
+    try:
+        gld_hist = yf.Ticker("GLD").history(period="3mo", interval="1d")["Close"]
+        tlt_ret = tlt_hist.pct_change().dropna()
+        gld_ret = gld_hist.pct_change().dropna()
+        common_idx = tlt_ret.index.intersection(gld_ret.index)
+        if len(common_idx) >= 30:
+            window = common_idx[-30:]
+            tlt_gold_corr = float(tlt_ret.loc[window].corr(gld_ret.loc[window]))
+    except Exception:
+        pass
+
+    us_intl_spread = None
+    us_long = (proxies.get("longbonds") or {}).get("3mo_pct")
+    intl_sov = (proxies.get("intl_sovereign") or {}).get("3mo_pct")
+    if us_long is not None and intl_sov is not None:
+        us_intl_spread = us_long - intl_sov
+
+    yen_3mo = (proxies.get("yen") or {}).get("3mo_pct")
+    gold_3mo = (proxies.get("gold") or {}).get("3mo_pct")
+    fhold = fred.get("foreign_treasuries") or {}
+    foreign_treasuries_trend = fhold.get("trend")
+    foreign_treasuries_value = fhold.get("latest_value")
+    term_prem = (fred.get("term_premium_10y") or {}).get("latest_value")
+
+    flags = []
+    if long_end_slope is not None and long_end_slope > 1.0:
+        flags.append({"level": "watch", "msg": f"30y-10y slope at {long_end_slope:+.2f}pp - term premium expanding."})
+    if long_end_slope is not None and long_end_slope > 1.5:
+        flags.append({"level": "alert", "msg": f"30y-10y slope at {long_end_slope:+.2f}pp is meaningful - capital demanding more compensation for US duration."})
+    if tlt_gold_corr is not None and tlt_gold_corr > 0.4:
+        flags.append({"level": "watch", "msg": f"TLT-gold 30d corr at {tlt_gold_corr:+.2f} - bonds and gold rallying together is a flight-to-safety pattern."})
+    if foreign_treasuries_trend == "down":
+        flags.append({"level": "alert", "msg": "Foreign holdings of US Treasuries falling on the latest print - net seller flow."})
+    if yen_3mo is not None and yen_3mo > 5:
+        flags.append({"level": "watch", "msg": f"Yen +{yen_3mo:.1f}% over 3mo - possible carry unwind / Japan repatriation pressure."})
+
     return {
-        "description": (
-            "Risk-parity benchmark: equal risk contribution across asset classes, "
-            "not equal capital. Approximate weights (one common formulation)."
+        "long_end_slope_pp": long_end_slope,
+        "long_end_source": long_end_source,
+        "term_premium_10y": term_prem,
+        "tlt_gold_30d_corr": tlt_gold_corr,
+        "us_intl_sov_spread_3mo": us_intl_spread,
+        "yen_3mo_pct": yen_3mo,
+        "gold_3mo_pct": gold_3mo,
+        "foreign_treasuries_value": foreign_treasuries_value,
+        "foreign_treasuries_trend": foreign_treasuries_trend,
+        "flags": flags,
+        "explainer": (
+            "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. "
+            "TLT-gold correlation flags flight-to-safety. Yen and sterling proxy JGB/BoJ and gilt/UK fiscal stress. "
+            "Foreign Treasury holdings tell you whether the marginal buyer is sticking around."
         ),
+    }
+
+
+def all_weather_template() -> dict:
+    return {
+        "description": "Risk-parity benchmark: equal risk contribution across asset classes, not equal capital.",
         "weights": {
-            "long_bonds":      0.40,   # TLT-equivalent
-            "stocks":          0.30,   # SPY-equivalent
-            "intermediate":    0.15,   # IEF-equivalent
-            "commodities":     0.075,  # DBC-equivalent
-            "gold":            0.075,  # GLD-equivalent
+            "long_bonds":   0.40,
+            "stocks":       0.30,
+            "intermediate": 0.15,
+            "commodities":  0.075,
+            "gold":         0.075,
         },
         "note": (
-            "Holds bonds in deflationary/risk-off regimes, gold/commodities in "
-            "inflationary regimes, equities in growth regimes — designed to "
-            "perform across all four quadrants."
+            "Holds bonds in deflationary regimes, gold/commodities in inflationary regimes, "
+            "equities in growth regimes - designed to perform across all four quadrants."
         ),
     }
 
@@ -377,16 +471,13 @@ def refresh_macro() -> dict:
     snap["regime"] = classify_regime(snap)
     snap["big_debt_crisis"] = big_debt_crisis_tripwires(snap)
     snap["all_weather"] = all_weather_template()
+    snap["capital_migration"] = capital_migration(snap)
     snap["asof"] = dt.datetime.utcnow().isoformat() + "Z"
     snap["fred_key_present"] = bool(FRED_KEY)
     (DATA / "macro.json").write_text(json.dumps(snap, indent=2, default=str))
     print(f"macro.json written. FRED key present: {bool(FRED_KEY)}. Regime: {snap['regime']['regime_name']}")
     return snap
 
-
-# ---------------------------------------------------------------------------
-# MAIN
-# ---------------------------------------------------------------------------
 
 def main():
     ap = argparse.ArgumentParser()
