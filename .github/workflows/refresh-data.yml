@@ -13,8 +13,16 @@ name: Refresh Compendium Data
 
 on:
   schedule:
-    - cron: '0 22 * * 1-5'   # weekdays at 22:00 UTC
+    - cron: '0 22 * * 1-5'   # weekdays at 22:00 UTC — prices + macro
+    - cron: '0 22 * * 0'     # Sundays at 22:00 UTC — also refresh historical returns
   workflow_dispatch:           # allow manual runs from the Actions tab
+    inputs:
+      with_returns:
+        description: 'Also refresh historical returns (data/returns.json). Adds ~1 min.'
+        required: false
+        default: 'false'
+        type: choice
+        options: ['false', 'true']
 
 permissions:
   contents: write
@@ -42,13 +50,19 @@ jobs:
         env:
           FRED_API_KEY: ${{ secrets.FRED_API_KEY }}
         run: |
-          python scripts/refresh_data.py --throttle 0.3
+          # Returns get refreshed on Sundays (cron '0 22 * * 0') or when manual
+          # dispatch sets with_returns=true. Otherwise just prices + macro.
+          if [ "${{ github.event.schedule }}" = "0 22 * * 0" ] || [ "${{ github.event.inputs.with_returns }}" = "true" ]; then
+            python scripts/refresh_data.py --with-returns --throttle 0.3
+          else
+            python scripts/refresh_data.py --throttle 0.3
+          fi
 
       - name: Commit & push if data changed
         run: |
           git config user.name  "compendium-bot"
           git config user.email "compendium-bot@users.noreply.github.com"
-          git add data/prices.json data/macro.json data/last_updated.json
+          git add data/prices.json data/macro.json data/last_updated.json data/returns.json
           if git diff --cached --quiet; then
             echo "No changes to commit"
             exit 0

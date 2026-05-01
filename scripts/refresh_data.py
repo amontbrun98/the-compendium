@@ -155,6 +155,136 @@ def refresh_prices(throttle: float = 0.4) -> dict:
 
 
 # ---------------------------------------------------------------------------
+# HISTORICAL RETURNS — for the backtest page
+#
+# This is NOT a true backtest of the framework. ROIC, moat, vintage, and
+# regulatory inputs are curated and frozen at the most recent review. We can't
+# recompute the composite score historically because we don't have a time-series
+# of those curated fields. What this section produces is total-return data per
+# ticker over standard windows (1m, 3m, YTD, 1y, 3y annualised, 5y annualised),
+# plus an SPY benchmark, so the backtest page can answer one specific question:
+# "Did the names that score well in the framework's most recent reading actually
+# compound over the prior 1/3/5 years?"
+#
+# Survivorship bias caveat: the universe is "names still in the ledger today."
+# Any company that scored well 5 years ago and went to zero is not in the
+# dataset. That's a known limitation; surface it on the page.
+# ---------------------------------------------------------------------------
+
+def _annualised(total_return: float, years: float) -> float | None:
+    """Convert a total return over `years` years into an annualised rate."""
+    if total_return is None or years <= 0:
+        return None
+    base = 1.0 + total_return
+    if base <= 0:
+        return None
+    return base ** (1.0 / years) - 1.0
+
+
+def fetch_returns(display_t: str, yf_symbol: str | None = None) -> dict:
+    """Pull 5y daily history and compute total returns at standard windows."""
+    api_symbol = yf_symbol or display_t
+    try:
+        hist = yf.Ticker(api_symbol).history(period="5y", auto_adjust=True)
+    except Exception as exc:  # noqa: BLE001
+        return {"t": display_t, "error": str(exc)[:200]}
+
+    if hist is None or hist.empty or "Close" not in hist:
+        return {"t": display_t, "error": "no history"}
+
+    # Drop tz info and keep only the close column for simplicity
+    closes = hist["Close"].dropna()
+    if len(closes) < 2:
+        return {"t": display_t, "error": "insufficient history"}
+
+    today = closes.index[-1]
+    last = float(closes.iloc[-1])
+
+    def total_return_at(target_days_back: int) -> float | None:
+        # Find the closest trading day at-or-before the target date
+        cutoff = today - dt.timedelta(days=target_days_back)
+        eligible = closes[closes.index <= cutoff]
+        if eligible.empty:
+            return None
+        prior = float(eligible.iloc[-1])
+        if prior <= 0:
+            return None
+        return last / prior - 1.0
+
+    # YTD: from first trading day of current calendar year
+    ytd_cutoff = dt.datetime(today.year, 1, 1, tzinfo=today.tzinfo) if today.tzinfo else dt.datetime(today.year, 1, 1)
+    ytd_eligible = closes[closes.index >= ytd_cutoff]
+    ytd_return = (last / float(ytd_eligible.iloc[0]) - 1.0) if not ytd_eligible.empty else None
+
+    r1m = total_return_at(30)
+    r3m = total_return_at(91)
+    r1y = total_return_at(365)
+    r3y_total = total_return_at(365 * 3)
+    r5y_total = total_return_at(365 * 5)
+
+    return {
+        "t": display_t,
+        "1m": r1m,
+        "3m": r3m,
+        "ytd": ytd_return,
+        "1y": r1y,
+        "3y_ann": _annualised(r3y_total, 3.0),
+        "5y_ann": _annualised(r5y_total, 5.0),
+        "first_close": float(closes.iloc[0]),
+        "last_close": last,
+        "history_start": closes.index[0].strftime("%Y-%m-%d"),
+        "history_end": today.strftime("%Y-%m-%d"),
+    }
+
+
+def refresh_returns(throttle: float = 0.4) -> dict:
+    """Generate data/returns.json — historical total returns per ticker plus SPY."""
+    universe = load_universe()
+    # Always include SPY as the equity baseline even if it isn't already a benchmark
+    seen = {t for t, _ in universe}
+    if "SPY" not in seen:
+        universe = list(universe) + [("SPY", "SPY")]
+
+    out: list[dict] = []
+    failed: list[str] = []
+    benchmarks: dict[str, dict] = {}
+    for i, (display_t, yf_symbol) in enumerate(universe, 1):
+        row = fetch_returns(display_t, yf_symbol)
+        if "error" in row:
+            failed.append(display_t)
+        else:
+            out.append(row)
+            if display_t in {"SPY", "QQQ", "IWM", "TLT", "GLD"}:
+                benchmarks[display_t] = {
+                    k: row.get(k) for k in ("1m", "3m", "ytd", "1y", "3y_ann", "5y_ann")
+                }
+        time.sleep(throttle)
+        if i % 10 == 0:
+            print(f"  returns: fetched {i}/{len(universe)}", file=sys.stderr)
+
+    payload = {
+        "asof": dt.datetime.utcnow().isoformat() + "Z",
+        "source": "yfinance",
+        "windows": ["1m", "3m", "ytd", "1y", "3y_ann", "5y_ann"],
+        "count": len(out),
+        "failed": failed,
+        "benchmarks": benchmarks,
+        "rows": out,
+        "_disclaimer": (
+            "Historical total returns over fixed windows ending on the asof date. "
+            "These returns are NOT a backtest of the framework's predictive power — "
+            "the curated inputs (ROIC, moat, vintage, regulatory) are frozen at the "
+            "most recent review and cannot be recomputed historically. Survivorship "
+            "bias applies: companies that scored well in past years and exited the "
+            "universe are not represented here."
+        ),
+    }
+    (DATA / "returns.json").write_text(json.dumps(payload, indent=2, default=str))
+    print(f"returns.json: {len(out)} rows, {len(failed)} failed")
+    return payload
+
+
+# ---------------------------------------------------------------------------
 # MACRO (FRED + fallback ETF proxies)
 # ---------------------------------------------------------------------------
 
@@ -499,23 +629,55 @@ def refresh_macro() -> dict:
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--prices-only", action="store_true")
-    ap.add_argument("--macro-only", action="store_true")
-    ap.add_argument("--throttle", type=float, default=0.4)
+    ap.add_argument("--prices-only",  action="store_true",
+                    help="Refresh data/prices.json only.")
+    ap.add_argument("--macro-only",   action="store_true",
+                    help="Refresh data/macro.json only.")
+    ap.add_argument("--returns-only", action="store_true",
+                    help="Refresh data/returns.json only (used by backtest.html).")
+    ap.add_argument("--with-returns", action="store_true",
+                    help="In addition to prices and macro, refresh data/returns.json. "
+                         "Adds ~1 minute to the run because it pulls 5y daily history "
+                         "for every ticker.")
+    ap.add_argument("--throttle",     type=float, default=0.4)
     args = ap.parse_args()
+
+    # Determine which sections to run. Explicit --*-only flags win.
+    do_prices  = args.prices_only  or (not args.macro_only and not args.returns_only)
+    do_macro   = args.macro_only   or (not args.prices_only and not args.returns_only)
+    do_returns = args.returns_only or args.with_returns
 
     manifest = {"asof": dt.datetime.utcnow().isoformat() + "Z"}
 
-    if not args.macro_only:
+    if do_prices:
         prices = refresh_prices(throttle=args.throttle)
         manifest["prices"] = {"count": prices["count"], "failed": prices["failed"]}
 
-    if not args.prices_only:
+    if do_macro:
         macro = refresh_macro()
         manifest["macro"] = {
             "regime": macro["regime"]["regime_name"],
             "fred_key": macro["fred_key_present"],
         }
+
+    if do_returns:
+        returns = refresh_returns(throttle=args.throttle)
+        manifest["returns"] = {
+            "count": returns["count"],
+            "failed": returns["failed"],
+            "windows": returns["windows"],
+        }
+
+    # Preserve any prior section's manifest entries when running in --*-only mode
+    # (otherwise a returns-only run would wipe the prices manifest entry).
+    if (DATA / "last_updated.json").exists():
+        try:
+            existing = json.loads((DATA / "last_updated.json").read_text())
+            for key in ("prices", "macro", "returns"):
+                if key not in manifest and key in existing:
+                    manifest[key] = existing[key]
+        except Exception:  # noqa: BLE001
+            pass
 
     (DATA / "last_updated.json").write_text(json.dumps(manifest, indent=2, default=str))
     print("done.")
