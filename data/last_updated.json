@@ -1,5 +1,9 @@
 {
-  "asof": "2026-05-01T18:46:58.294515Z",
+  "asof": "2026-05-01T18:59:01.579665Z",
+  "prices": {
+    "count": 86,
+    "failed": []
+  },
   "macro": {
     "regime": "Reflation",
     "fred_key": true

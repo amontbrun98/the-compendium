@@ -117,51 +117,51 @@
     "equities": {
       "ticker": "SPY",
       "label": "S&P 500 ETF",
-      "latest": 721.1400146484375,
-      "1mo_pct": 9.958372727188959,
-      "3mo_pct": 3.9831847841411916
+      "latest": 721.219970703125,
+      "1mo_pct": 9.9705643092459,
+      "3mo_pct": 3.9947138700888507
     },
     "nasdaq": {
       "ticker": "QQQ",
       "label": "Nasdaq 100 ETF",
-      "latest": 673.4099731445312,
-      "1mo_pct": 15.116755381085255,
-      "3mo_pct": 7.685033387960805
+      "latest": 673.8200073242188,
+      "1mo_pct": 15.186849092558763,
+      "3mo_pct": 7.750601980780525
     },
     "longbonds": {
       "ticker": "TLT",
       "label": "20+yr Treasury ETF",
-      "latest": 85.69999694824219,
-      "1mo_pct": -1.2559096160697725,
-      "3mo_pct": -0.25588528610323014
+      "latest": 85.67500305175781,
+      "1mo_pct": -1.2847077451407785,
+      "3mo_pct": -0.2849750663466266
     },
     "midbonds": {
       "ticker": "IEF",
       "label": "7-10yr Treasury ETF",
-      "latest": 94.81500244140625,
-      "1mo_pct": -0.46714222637517233,
-      "3mo_pct": -0.0350870024132921
+      "latest": 94.79499816894531,
+      "1mo_pct": -0.4881418820673167,
+      "3mo_pct": -0.05617781404274602
     },
     "tips": {
       "ticker": "TIP",
       "label": "TIPS ETF",
-      "latest": 111.38500213623047,
-      "1mo_pct": 0.5189103784003501,
-      "3mo_pct": 1.084490124645976
+      "latest": 111.37979888916016,
+      "1mo_pct": 0.5142147307287015,
+      "3mo_pct": 1.0797680564410328
     },
     "gold": {
       "ticker": "GLD",
       "label": "Gold ETF",
-      "latest": 424.2799987792969,
-      "1mo_pct": -1.194663570727883,
-      "3mo_pct": -0.667245585872045
+      "latest": 424.45001220703125,
+      "1mo_pct": -1.1550712402548013,
+      "3mo_pct": -0.6274419135027798
     },
     "commodities": {
       "ticker": "DBC",
       "label": "Broad commodities ETF",
-      "latest": 30.780099868774414,
-      "1mo_pct": 4.944084380635516,
-      "3mo_pct": 30.75657889406194
+      "latest": 30.809999465942383,
+      "1mo_pct": 5.046026410113003,
+      "3mo_pct": 30.883595019827027
     },
     "dollar": {
       "ticker": "UUP",
@@ -173,23 +173,23 @@
     "em": {
       "ticker": "EEM",
       "label": "EM equities ETF",
-      "latest": 64.05000305175781,
-      "1mo_pct": 13.182546172565734,
-      "3mo_pct": 8.046566077404904
+      "latest": 64.08000183105469,
+      "1mo_pct": 13.235556915128011,
+      "3mo_pct": 8.09717130668055
     },
     "intl_dev": {
       "ticker": "EFA",
       "label": "Intl developed equities ETF",
-      "latest": 102.25,
-      "1mo_pct": 4.336734693877542,
-      "3mo_pct": 0.8382627823769306
+      "latest": 102.26000213623047,
+      "1mo_pct": 4.3469409553372085,
+      "3mo_pct": 0.8481268219035165
     },
     "vix": {
       "ticker": "^VIX",
       "label": "VIX index",
-      "latest": 16.969999313354492,
-      "1mo_pct": -28.90658266981655,
-      "3mo_pct": 3.85556398337501
+      "latest": 17.010000228881836,
+      "1mo_pct": -28.73900447911285,
+      "3mo_pct": 4.100367625687151
     }
   },
   "regime": {
@@ -263,6 +263,6 @@
     },
     "note": "Holds bonds in deflationary/risk-off regimes, gold/commodities in inflationary regimes, equities in growth regimes \u2014 designed to perform across all four quadrants."
   },
-  "asof": "2026-05-01T18:47:05.009177Z",
+  "asof": "2026-05-01T18:59:48.566015Z",
   "fred_key_present": true
 }
