@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Allocation Engine — Sizing &amp; Concentration</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/tooltip.css">
+<style>
+:root {
+  --paper: #131210; --paper-warm: #1c1a17; --paper-deep: #0a0908;
+  --ink: #f0ebe2; --ink-soft: #c4bdb0; --ink-mute: #8a8278; --ink-faint: #4a4540;
+  --rule: #2c2824; --rule-strong: #f0ebe2;
+  --accent: #e85d3d; --accent-deep: #b8270d;
+  --gold: #d4a335; --bull: #6db83d; --bear: #e85d3d;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: 'Fraunces', Georgia, serif; font-size: 16px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased; font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 50, "WONK" 0;
+}
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image: radial-gradient(circle at 12% 28%, rgba(212,163,53,.02) 0%, transparent 40%);
+  pointer-events: none; z-index: 0;
+}
+.broadsheet { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 36px 40px 100px; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--ink-mute); text-decoration: none;
+  padding: 4px 0; margin-bottom: 24px; border-bottom: 1px solid transparent;
+  transition: color .2s, border-color .2s;
+}
+.back-link .arrow { color: var(--accent); font-family: 'Fraunces', serif; font-style: italic; font-size: 16px; }
+.back-link:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+.masthead {
+  text-align: center; border-top: 4px double var(--rule-strong);
+  border-bottom: 4px double var(--rule-strong);
+  padding: 28px 0 32px; margin-bottom: 32px;
+}
+.kicker { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; font-weight: 500; }
+.masthead-title { font-family: 'Fraunces', serif; font-weight: 900; font-size: clamp(56px, 9vw, 112px); line-height: .9; letter-spacing: -.04em; font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144; margin-bottom: 8px; }
+.masthead-title em { font-style: italic; font-weight: 400; color: var(--accent); }
+.masthead-tagline { font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; font-weight: 300; color: var(--ink-soft); letter-spacing: .04em; max-width: 720px; margin: 0 auto; }
+.masthead-volume { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--ink-mute); margin-top: 14px; }
+.masthead-volume .ornament { color: var(--accent); margin: 0 12px; font-family: 'Fraunces', serif; font-style: italic; }
+
+.section-marker { display: flex; align-items: center; gap: 16px; margin: 56px 0 28px; }
+.section-marker-line { flex: 1; height: 1px; background: var(--rule-strong); }
+.section-marker-text { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink); font-weight: 500; }
+.section-marker-num { font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; color: var(--accent); font-weight: 500; }
+
+.lede { display: grid; grid-template-columns: 7fr 5fr; gap: 56px; margin-bottom: 32px; }
+.lede-headline { font-family: 'Fraunces', serif; font-weight: 700; font-size: clamp(28px, 3.4vw, 42px); line-height: 1.05; letter-spacing: -.02em; margin-bottom: 18px; }
+.lede-headline em { color: var(--accent); font-style: italic; font-weight: 500; }
+.lede-deck { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 17px; line-height: 1.6; color: var(--ink-soft); border-left: 3px solid var(--accent); padding-left: 18px; }
+
+.callout {
+  background: var(--paper-warm); border: 1px solid var(--rule-strong);
+  padding: 22px 26px; margin-bottom: 24px; position: relative;
+}
+.callout::before { content: 'METHODOLOGY'; position: absolute; top: -10px; left: 16px; background: var(--paper); padding: 0 10px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .2em; color: var(--ink-mute); }
+.callout-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px; font-style: italic; margin-bottom: 12px; color: var(--ink); }
+.callout-body { font-family: 'Fraunces', serif; font-size: 14px; line-height: 1.65; color: var(--ink-soft); }
+
+/* status bar */
+.status-bar { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1px; background: var(--rule); border: 1px solid var(--rule); margin-bottom: 32px; }
+.status-cell { background: var(--paper-warm); padding: 16px 20px; }
+.status-cell .lbl { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 6px; font-weight: 500; }
+.status-cell .val { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; color: var(--ink); font-variation-settings: "opsz" 144; }
+.status-cell .val.red { color: var(--bear); }
+.status-cell .val.green { color: var(--bull); }
+.status-cell .sub { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-mute); margin-top: 4px; }
+
+/* rules table */
+.rules-table { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 12px; margin-bottom: 32px; border-top: 3px solid var(--rule-strong); border-bottom: 3px solid var(--rule-strong); }
+.rules-table th { text-align: left; padding: 12px 14px; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 1px solid var(--rule-strong); background: var(--paper-warm); font-weight: 500; }
+.rules-table td { padding: 14px; border-bottom: 1px solid var(--rule); vertical-align: top; }
+.rules-table tr:last-child td { border-bottom: none; }
+.rule-name { font-family: 'Fraunces', serif; font-weight: 600; font-size: 14px; color: var(--ink); }
+.rule-rationale { font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--ink-mute); margin-top: 4px; line-height: 1.5; }
+.rule-cap { font-weight: 700; font-size: 14px; color: var(--accent); white-space: nowrap; }
+
+/* positions panel */
+.positions-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 32px; }
+.positions-list { background: var(--paper-warm); border: 1px solid var(--rule-strong); padding: 22px 24px; }
+.positions-list h4 { font-family: 'Fraunces', serif; font-weight: 600; font-style: italic; font-size: 18px; margin-bottom: 14px; color: var(--ink); }
+.pos-row { display: grid; grid-template-columns: 60px 1fr auto auto; gap: 12px; padding: 10px 0; border-bottom: 1px dotted var(--rule); align-items: baseline; }
+.pos-row:last-child { border-bottom: none; }
+.pos-ticker { font-family: 'Fraunces', serif; font-weight: 700; font-size: 16px; color: var(--ink); }
+.pos-cluster { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-mute); letter-spacing: .05em; }
+.pos-dollars { font-family: 'IBM Plex Mono', monospace; font-size: 13px; color: var(--ink-soft); }
+.pos-pct { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px; color: var(--accent); }
+.pos-row.unclassified .pos-cluster { color: var(--gold); }
+
+/* concentration view */
+.concentration { background: var(--paper-warm); border: 1px solid var(--rule-strong); padding: 22px 24px; }
+.concentration h4 { font-family: 'Fraunces', serif; font-weight: 600; font-style: italic; font-size: 18px; margin-bottom: 14px; color: var(--ink); }
+.cluster-row { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 10px 0; border-bottom: 1px dotted var(--rule); align-items: baseline; }
+.cluster-row:last-child { border-bottom: none; }
+.cluster-label { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .04em; color: var(--ink); }
+.cluster-pct { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 13px; }
+.cluster-pct.over { color: var(--bear); }
+.cluster-pct.warn { color: var(--gold); }
+.cluster-pct.ok { color: var(--bull); }
+.cluster-bar { grid-column: 1 / 3; height: 4px; background: var(--rule); margin-top: 4px; position: relative; }
+.cluster-bar-fill { height: 100%; background: var(--accent); }
+.cluster-bar-cap { position: absolute; height: 100%; width: 1px; background: var(--ink); top: 0; }
+
+/* breaches panel */
+.breaches { border-left: 4px solid var(--bear); background: rgba(184,39,13,.04); padding: 18px 22px; margin-bottom: 24px; }
+.breaches.empty { border-left-color: var(--bull); background: rgba(45,80,22,.04); }
+.breaches h4 { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; text-transform: uppercase; color: var(--bear); margin-bottom: 12px; font-weight: 600; }
+.breaches.empty h4 { color: var(--bull); }
+.breach-item { font-family: 'Fraunces', serif; font-size: 14px; line-height: 1.7; color: var(--ink-soft); padding: 6px 0; border-bottom: 1px dotted var(--rule); }
+.breach-item:last-child { border-bottom: none; }
+.breach-item strong { color: var(--ink); font-weight: 600; }
+
+/* edit panel */
+.edit-panel { background: var(--paper-warm); border: 1px dashed var(--ink-faint); padding: 18px 22px; font-family: 'IBM Plex Mono', monospace; font-size: 12px; color: var(--ink-soft); margin-bottom: 24px; line-height: 1.7; }
+.edit-panel strong { color: var(--accent); font-weight: 600; }
+
+.disclaimer { font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--ink-mute); margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--rule); text-align: center; }
+
+@media (max-width: 920px) {
+  .broadsheet { padding: 24px 22px 80px; }
+  .lede { grid-template-columns: 1fr; gap: 24px; }
+  .positions-grid { grid-template-columns: 1fr; }
+  .status-bar { grid-template-columns: 1fr 1fr; }
+}
+</style>
+</head>
+<body>
+<div class="broadsheet">
+
+<a class="back-link" href="index.html"><span class="arrow">←</span>Back to The Compendium</a>
+
+<header class="masthead">
+  <div class="kicker">Vol. II · Allocation Engine</div>
+  <h1 class="masthead-title">The <em>Allocation</em> Engine</h1>
+  <p class="masthead-tagline">Position sizing, cluster concentration, and regime-adjusted cash. Where conviction meets discipline.</p>
+  <div class="masthead-volume">
+    <span id="a-asof">Loading…</span> <span class="ornament">&</span> Educational Use Only
+  </div>
+</header>
+
+<!-- STATUS BAR -->
+<div class="status-bar">
+  <div class="status-cell">
+    <div class="lbl">Total Capital</div>
+    <div class="val" id="a-total">$0</div>
+    <div class="sub" id="a-cash">cash —</div>
+  </div>
+  <div class="status-cell">
+    <div class="lbl">Names</div>
+    <div class="val" id="a-names">0</div>
+    <div class="sub" id="a-sleeves">core 0 · watch 0</div>
+  </div>
+  <div class="status-cell">
+    <div class="lbl">Breaches</div>
+    <div class="val" id="a-breaches">0</div>
+    <div class="sub">cap violations</div>
+  </div>
+  <div class="status-cell">
+    <div class="lbl">Regime Cash Target</div>
+    <div class="val" id="a-cash-target">—</div>
+    <div class="sub" id="a-regime-note">—</div>
+  </div>
+</div>
+
+<!-- LEDE -->
+<div class="lede">
+  <div>
+    <h2 class="lede-headline">A score does not size <em>itself</em>.</h2>
+    <p class="lede-deck">A 7+ on the Five-Pillar Ledger tells you a name is durable. It does not tell you how much to own. Without a sizing rule and a concentration rule, every concentrated thesis eventually becomes a single point of failure. This page imposes both — sleeve caps, name caps, cluster caps — and surfaces what the rules say about what you currently hold.</p>
+  </div>
+  <div class="callout">
+    <div class="callout-title">How it works</div>
+    <div class="callout-body">Edit data/positions.json with your actual positions. The engine reads the cluster tags from data/core.json and data/watch.json and tells you where you are concentrated against the rules. The rules are deliberately strict — better to fight them than to find out, after a 40% drawdown, that you weren't following any.</div>
+  </div>
+</div>
+
+<!-- SECTION I — RULES -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 01</span>
+  <span class="section-marker-text">The Sizing &amp; Concentration Rules</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<table class="rules-table">
+  <thead>
+    <tr><th>Rule</th><th style="width: 140px;">Cap</th></tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>
+        <div class="rule-name">Per-name cap, Core sleeve</div>
+        <div class="rule-rationale">No single durable compounder gets more than 8% of capital. Even Lilly has had 40% drawdowns on regulatory news.</div>
+      </td>
+      <td class="rule-cap">8%</td>
+    </tr>
+    <tr>
+      <td>
+        <div class="rule-name">Per-name cap, Watch sleeve</div>
+        <div class="rule-rationale">Asymmetric bets are sized to survive a zero. 3% per name means you can be wrong on five in a row and still have most of your capital.</div>
+      </td>
+      <td class="rule-cap">3%</td>
+    </tr>
+    <tr>
+      <td>
+        <div class="rule-name">Per-cluster cap, Core sleeve</div>
+        <div class="rule-rationale">Cluster = correlated thesis (e.g. mag7_platforms, glp1_franchise, payments_network). Six durable compounders in the same cluster is one bet, not six.</div>
+      </td>
+      <td class="rule-cap">25%</td>
+    </tr>
+    <tr>
+      <td>
+        <div class="rule-name">Per-cluster cap, Watch sleeve</div>
+        <div class="rule-rationale">Same logic, tighter bound. Two gene-editing names is one biotech bet.</div>
+      </td>
+      <td class="rule-cap">12%</td>
+    </tr>
+    <tr>
+      <td>
+        <div class="rule-name">Total Watch sleeve cap</div>
+        <div class="rule-rationale">The asymmetric sleeve is high-variance by design. Capping it at 20% of total capital means a 100% loss across the whole sleeve is still survivable.</div>
+      </td>
+      <td class="rule-cap">20%</td>
+    </tr>
+    <tr>
+      <td>
+        <div class="rule-name">Cash floor</div>
+        <div class="rule-rationale">Dry powder is its own position. Adjusts up in stagflation/deflation regimes (Q3/Q4), down in goldilocks (Q1).</div>
+      </td>
+      <td class="rule-cap" id="rule-cash">10–25%</td>
+    </tr>
+  </tbody>
+</table>
+
+<!-- SECTION II — CURRENT ALLOCATION -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 02</span>
+  <span class="section-marker-text">Your Current Allocation</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<div class="edit-panel">
+  <strong>EDIT YOUR POSITIONS:</strong> Open <code>data/positions.json</code> in any text editor. Add or modify position objects with <code>{ "t": "TICKER", "dollars": 1000, "sleeve": "core" | "watch" }</code>. Save the file and refresh this page.
+</div>
+
+<div class="positions-grid">
+  <div class="positions-list" id="positions-list">
+    <h4>Positions</h4>
+  </div>
+  <div class="concentration" id="concentration">
+    <h4>Cluster concentration</h4>
+  </div>
+</div>
+
+<!-- SECTION III — BREACHES -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 03</span>
+  <span class="section-marker-text">Rule Breaches &amp; Drift</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<div id="breaches-panel"></div>
+
+<p class="disclaimer">The rules above are conservative defaults — not personal advice. Adjust to your own risk tolerance, time horizon, and tax situation. For a $50K+ concentrated thesis, review with a licensed advisor before acting.</p>
+
+</div>
+
+<script src="assets/data-loader.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/tooltip.js"></script>
+<script>
+const RULES = {
+  per_name_core: 0.08,
+  per_name_watch: 0.03,
+  per_cluster_core: 0.25,
+  per_cluster_watch: 0.12,
+  watch_total: 0.20,
+  cash_target_by_regime: {
+    'Goldilocks': 0.10,
+    'Reflation': 0.15,
+    'Deflation': 0.20,
+    'Stagflation': 0.25,
+    'Unclassified': 0.20,
+  },
+};
+
+(async function () {
+  const data = await window.COMPENDIUM.loadAll();
+  const positions = await window.COMPENDIUM.loadJson('data/positions.json');
+  if (!positions || !positions.positions) {
+    document.getElementById('a-asof').textContent = 'data/positions.json missing';
+    return;
+  }
+  document.getElementById('a-asof').textContent = 'Refreshed ' + (positions._asof || '—');
+
+  // build cluster lookup from core + watch
+  const lookup = {};
+  (data.core || []).forEach(c => { lookup[c.t] = { cluster: c.cluster, sleeve: 'core', name: c.n }; });
+  (data.watch || []).forEach(c => { lookup[c.t] = { cluster: c.cluster, sleeve: 'watch', name: c.n }; });
+
+  const positionsTotal = positions.positions.reduce((s, p) => s + (p.dollars || 0), 0);
+  const totalCapital = positionsTotal + (positions.cash || 0);
+
+  // status bar
+  document.getElementById('a-total').textContent = '$' + totalCapital.toLocaleString();
+  document.getElementById('a-cash').textContent = 'cash $' + (positions.cash || 0).toLocaleString() + ' (' + ((positions.cash / totalCapital) * 100).toFixed(1) + '%)';
+  document.getElementById('a-names').textContent = positions.positions.length;
+  const coreCnt = positions.positions.filter(p => p.sleeve === 'core').length;
+  const watchCnt = positions.positions.filter(p => p.sleeve === 'watch').length;
+  document.getElementById('a-sleeves').textContent = `core ${coreCnt} · watch ${watchCnt}`;
+
+  // regime cash target
+  const regime = (data.macro && data.macro.regime && data.macro.regime.regime_name) || 'Unclassified';
+  const cashTarget = RULES.cash_target_by_regime[regime] || 0.20;
+  document.getElementById('a-cash-target').textContent = (cashTarget * 100).toFixed(0) + '%';
+  document.getElementById('a-regime-note').textContent = regime + ' regime';
+  document.getElementById('rule-cash').textContent = (cashTarget * 100).toFixed(0) + '% (current)';
+
+  // render positions
+  const posListEl = document.getElementById('positions-list');
+  posListEl.innerHTML = '<h4>Positions</h4>';
+  positions.positions.forEach(p => {
+    const meta = lookup[p.t] || { cluster: 'unclassified', sleeve: p.sleeve, name: p.t };
+    const pct = totalCapital > 0 ? (p.dollars / totalCapital * 100) : 0;
+    const row = document.createElement('div');
+    row.className = 'pos-row' + (meta.cluster === 'unclassified' ? ' unclassified' : '');
+    row.innerHTML = `
+      <div class="pos-ticker">${p.t}</div>
+      <div>
+        <div style="font-family:Fraunces,serif;font-size:13px;color:var(--ink-soft);">${meta.name}</div>
+        <div class="pos-cluster">${meta.cluster.toUpperCase()} · ${(p.sleeve || meta.sleeve || 'unknown').toUpperCase()}</div>
+      </div>
+      <div class="pos-dollars">$${(p.dollars || 0).toLocaleString()}</div>
+      <div class="pos-pct">${pct.toFixed(1)}%</div>
+    `;
+    posListEl.appendChild(row);
+  });
+
+  // cash row
+  const cashRow = document.createElement('div');
+  cashRow.className = 'pos-row';
+  cashRow.innerHTML = `
+    <div class="pos-ticker">CASH</div>
+    <div><div style="font-family:Fraunces,serif;font-style:italic;font-size:13px;color:var(--ink-soft);">Dry powder</div></div>
+    <div class="pos-dollars">$${(positions.cash || 0).toLocaleString()}</div>
+    <div class="pos-pct">${((positions.cash / totalCapital) * 100).toFixed(1)}%</div>
+  `;
+  posListEl.appendChild(cashRow);
+
+  // cluster aggregation
+  const clusters = {};
+  positions.positions.forEach(p => {
+    const meta = lookup[p.t] || { cluster: 'unclassified', sleeve: p.sleeve };
+    const sleeve = p.sleeve || meta.sleeve || 'core';
+    const key = sleeve + '::' + meta.cluster;
+    clusters[key] = clusters[key] || { sleeve, cluster: meta.cluster, dollars: 0, names: [] };
+    clusters[key].dollars += (p.dollars || 0);
+    clusters[key].names.push(p.t);
+  });
+
+  const clusterEl = document.getElementById('concentration');
+  clusterEl.innerHTML = '<h4>Cluster concentration</h4>';
+  const sortedClusters = Object.values(clusters).sort((a, b) => b.dollars - a.dollars);
+  sortedClusters.forEach(c => {
+    const pct = totalCapital > 0 ? (c.dollars / totalCapital) : 0;
+    const cap = c.sleeve === 'core' ? RULES.per_cluster_core : RULES.per_cluster_watch;
+    const cls = pct > cap ? 'over' : pct > cap * 0.75 ? 'warn' : 'ok';
+    const row = document.createElement('div');
+    row.className = 'cluster-row';
+    row.innerHTML = `
+      <div class="cluster-label">${c.cluster.toUpperCase()}<span style="color:var(--ink-mute);font-style:italic;font-family:Fraunces,serif;letter-spacing:0;font-size:11px;margin-left:8px;">${c.sleeve} · ${c.names.join(', ')}</span></div>
+      <div class="cluster-pct ${cls}">${(pct * 100).toFixed(1)}% / ${(cap * 100).toFixed(0)}%</div>
+      <div class="cluster-bar">
+        <div class="cluster-bar-fill" style="width:${Math.min(100, pct / cap * 100)}%; background: var(--${cls === 'over' ? 'bear' : cls === 'warn' ? 'gold' : 'bull'});"></div>
+        <div class="cluster-bar-cap" style="left: 100%;"></div>
+      </div>
+    `;
+    clusterEl.appendChild(row);
+  });
+
+  // breach detection
+  const breaches = [];
+  // per-name caps
+  positions.positions.forEach(p => {
+    const meta = lookup[p.t] || { sleeve: p.sleeve };
+    const sleeve = p.sleeve || meta.sleeve || 'core';
+    const cap = sleeve === 'core' ? RULES.per_name_core : RULES.per_name_watch;
+    const pct = totalCapital > 0 ? (p.dollars / totalCapital) : 0;
+    if (pct > cap) {
+      breaches.push(`<strong>${p.t}</strong> at ${(pct * 100).toFixed(1)}% exceeds ${sleeve} per-name cap of ${(cap * 100).toFixed(0)}%. Trim by $${Math.round(p.dollars - cap * totalCapital).toLocaleString()}.`);
+    }
+  });
+  // cluster caps
+  Object.values(clusters).forEach(c => {
+    const cap = c.sleeve === 'core' ? RULES.per_cluster_core : RULES.per_cluster_watch;
+    const pct = totalCapital > 0 ? (c.dollars / totalCapital) : 0;
+    if (pct > cap) {
+      breaches.push(`<strong>${c.cluster}</strong> cluster (${c.sleeve}) at ${(pct * 100).toFixed(1)}% exceeds ${(cap * 100).toFixed(0)}% cap. Diversify or trim.`);
+    }
+  });
+  // sleeve total
+  const watchTotal = positions.positions.filter(p => p.sleeve === 'watch').reduce((s, p) => s + (p.dollars || 0), 0);
+  const watchPct = totalCapital > 0 ? (watchTotal / totalCapital) : 0;
+  if (watchPct > RULES.watch_total) {
+    breaches.push(`<strong>Watch sleeve</strong> at ${(watchPct * 100).toFixed(1)}% exceeds ${(RULES.watch_total * 100).toFixed(0)}% total cap. Trim asymmetric bets by $${Math.round(watchTotal - RULES.watch_total * totalCapital).toLocaleString()}.`);
+  }
+  // cash check
+  const cashPct = totalCapital > 0 ? (positions.cash / totalCapital) : 0;
+  if (cashPct < cashTarget) {
+    breaches.push(`<strong>Cash</strong> at ${(cashPct * 100).toFixed(1)}% is below ${regime}-regime target of ${(cashTarget * 100).toFixed(0)}%. Consider trimming risk to raise $${Math.round((cashTarget - cashPct) * totalCapital).toLocaleString()}.`);
+  }
+  // unclassified positions
+  positions.positions.forEach(p => {
+    if (!lookup[p.t]) {
+      breaches.push(`<strong>${p.t}</strong> is not in core.json or watch.json — cluster concentration cannot be tracked. Add to a ledger or accept blind exposure.`);
+    }
+  });
+
+  document.getElementById('a-breaches').textContent = breaches.length;
+  document.getElementById('a-breaches').classList.add(breaches.length > 0 ? 'red' : 'green');
+
+  const bp = document.getElementById('breaches-panel');
+  if (breaches.length === 0) {
+    bp.innerHTML = `<div class="breaches empty">
+      <h4>✓ No rule breaches</h4>
+      <div class="breach-item">Your current allocation respects every cap. The discipline is intact. The thesis still has to be right — but at least you'll be alive to learn from it if it isn't.</div>
+    </div>`;
+  } else {
+    bp.innerHTML = `<div class="breaches">
+      <h4>✗ ${breaches.length} rule breach${breaches.length === 1 ? '' : 'es'} detected</h4>
+      ${breaches.map(b => `<div class="breach-item">${b}</div>`).join('')}
+    </div>`;
+  }
+})();
+</script>
+</body>
+</html>

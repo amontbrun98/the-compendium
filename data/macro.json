@@ -1,0 +1,268 @@
+{
+  "fred": {
+    "real_gdp_yoy": {
+      "series_id": "A191RL1Q225SBEA",
+      "latest_date": "2026-01-01",
+      "latest_value": 2.0,
+      "prev_date": "2025-10-01",
+      "prev_value": 0.5,
+      "trend": "up"
+    },
+    "core_cpi_yoy": {
+      "series_id": "CORESTICKM159SFRBATL",
+      "latest_date": "2026-03-01",
+      "latest_value": 2.929321192,
+      "prev_date": "2026-02-01",
+      "prev_value": 2.903909284,
+      "trend": "up"
+    },
+    "ism_manufacturing": {
+      "series_id": "MANEMP",
+      "latest_date": "2026-03-01",
+      "latest_value": 12591.0,
+      "prev_date": "2026-02-01",
+      "prev_value": 12576.0,
+      "trend": "up"
+    },
+    "unemployment": {
+      "series_id": "UNRATE",
+      "latest_date": "2026-03-01",
+      "latest_value": 4.3,
+      "prev_date": "2026-02-01",
+      "prev_value": 4.4,
+      "trend": "down"
+    },
+    "federal_debt_to_gdp": {
+      "series_id": "GFDEGDQ188S",
+      "latest_date": "2025-10-01",
+      "latest_value": 122.56815,
+      "prev_date": "2025-07-01",
+      "prev_value": 121.02875,
+      "trend": "up"
+    },
+    "debt_service_ratio": {
+      "series_id": "TDSP",
+      "latest_date": "2025-10-01",
+      "latest_value": 11.323096,
+      "prev_date": "2025-07-01",
+      "prev_value": 11.257951,
+      "trend": "up"
+    },
+    "fed_funds": {
+      "series_id": "DFF",
+      "latest_date": "2026-04-29",
+      "latest_value": 3.64,
+      "prev_date": "2026-04-28",
+      "prev_value": 3.64,
+      "trend": "flat"
+    },
+    "ten_year": {
+      "series_id": "DGS10",
+      "latest_date": "2026-04-29",
+      "latest_value": 4.42,
+      "prev_date": "2026-04-28",
+      "prev_value": 4.36,
+      "trend": "up"
+    },
+    "real_ten_year": {
+      "series_id": "DFII10",
+      "latest_date": "2026-04-29",
+      "latest_value": 1.96,
+      "prev_date": "2026-04-28",
+      "prev_value": 1.92,
+      "trend": "up"
+    },
+    "yield_curve_10_2": {
+      "series_id": "T10Y2Y",
+      "latest_date": "2026-04-30",
+      "latest_value": 0.52,
+      "prev_date": "2026-04-29",
+      "prev_value": 0.5,
+      "trend": "up"
+    },
+    "dxy": {
+      "series_id": "DTWEXBGS",
+      "latest_date": "2026-04-24",
+      "latest_value": 118.7294,
+      "prev_date": "2026-04-23",
+      "prev_value": 118.7155,
+      "trend": "up"
+    },
+    "breakeven_5y": {
+      "series_id": "T5YIE",
+      "latest_date": "2026-04-30",
+      "latest_value": 2.67,
+      "prev_date": "2026-04-29",
+      "prev_value": 2.67,
+      "trend": "flat"
+    },
+    "m2_yoy": {
+      "series_id": "M2SL",
+      "latest_date": "2026-03-01",
+      "latest_value": 22686.0,
+      "prev_date": "2026-02-01",
+      "prev_value": 22627.3,
+      "trend": "up"
+    },
+    "hy_spread": {
+      "series_id": "BAMLH0A0HYM2",
+      "latest_date": "2026-04-30",
+      "latest_value": 2.83,
+      "prev_date": "2026-04-29",
+      "prev_value": 2.82,
+      "trend": "up"
+    }
+  },
+  "etf_proxies": {
+    "equities": {
+      "ticker": "SPY",
+      "label": "S&P 500 ETF",
+      "latest": 721.1400146484375,
+      "1mo_pct": 9.958372727188959,
+      "3mo_pct": 3.9831847841411916
+    },
+    "nasdaq": {
+      "ticker": "QQQ",
+      "label": "Nasdaq 100 ETF",
+      "latest": 673.4099731445312,
+      "1mo_pct": 15.116755381085255,
+      "3mo_pct": 7.685033387960805
+    },
+    "longbonds": {
+      "ticker": "TLT",
+      "label": "20+yr Treasury ETF",
+      "latest": 85.69999694824219,
+      "1mo_pct": -1.2559096160697725,
+      "3mo_pct": -0.25588528610323014
+    },
+    "midbonds": {
+      "ticker": "IEF",
+      "label": "7-10yr Treasury ETF",
+      "latest": 94.81500244140625,
+      "1mo_pct": -0.46714222637517233,
+      "3mo_pct": -0.0350870024132921
+    },
+    "tips": {
+      "ticker": "TIP",
+      "label": "TIPS ETF",
+      "latest": 111.38500213623047,
+      "1mo_pct": 0.5189103784003501,
+      "3mo_pct": 1.084490124645976
+    },
+    "gold": {
+      "ticker": "GLD",
+      "label": "Gold ETF",
+      "latest": 424.2799987792969,
+      "1mo_pct": -1.194663570727883,
+      "3mo_pct": -0.667245585872045
+    },
+    "commodities": {
+      "ticker": "DBC",
+      "label": "Broad commodities ETF",
+      "latest": 30.780099868774414,
+      "1mo_pct": 4.944084380635516,
+      "3mo_pct": 30.75657889406194
+    },
+    "dollar": {
+      "ticker": "UUP",
+      "label": "Dollar bullish ETF",
+      "latest": 27.385000228881836,
+      "1mo_pct": -1.7049546700054208,
+      "3mo_pct": 1.463506710312612
+    },
+    "em": {
+      "ticker": "EEM",
+      "label": "EM equities ETF",
+      "latest": 64.05000305175781,
+      "1mo_pct": 13.182546172565734,
+      "3mo_pct": 8.046566077404904
+    },
+    "intl_dev": {
+      "ticker": "EFA",
+      "label": "Intl developed equities ETF",
+      "latest": 102.25,
+      "1mo_pct": 4.336734693877542,
+      "3mo_pct": 0.8382627823769306
+    },
+    "vix": {
+      "ticker": "^VIX",
+      "label": "VIX index",
+      "latest": 16.969999313354492,
+      "1mo_pct": -28.90658266981655,
+      "3mo_pct": 3.85556398337501
+    }
+  },
+  "regime": {
+    "growth": "up",
+    "inflation": "up",
+    "quadrant": "Q2",
+    "regime_name": "Reflation",
+    "regime_explainer": "Growth and inflation both rising. Commodities, value, EM, real assets.",
+    "growth_evidence": [
+      "Real GDP YoY 2.00% (prev 0.50%)"
+    ],
+    "inflation_evidence": [
+      "Core CPI YoY 2.93% (prev 2.90%)"
+    ]
+  },
+  "big_debt_crisis": [
+    {
+      "key": "federal_debt_to_gdp",
+      "label": "Federal debt / GDP",
+      "value": 122.56815,
+      "units": "%",
+      "threshold": 100,
+      "status": "flag",
+      "note": "Above 100% historically increases vulnerability to confidence shocks"
+    },
+    {
+      "key": "debt_service_ratio",
+      "label": "HH debt service / income",
+      "value": 11.323096,
+      "units": "%",
+      "threshold": 11,
+      "status": "flag",
+      "note": "Above 11% historically pressures consumption (Dalio: ~12% pre-GFC)"
+    },
+    {
+      "key": "real_ten_year",
+      "label": "10y real yield",
+      "value": 1.96,
+      "units": "%",
+      "threshold": 2.0,
+      "status": "ok",
+      "note": "Above 2% real tightens financial conditions on debtors"
+    },
+    {
+      "key": "hy_spread",
+      "label": "HY credit spread (OAS)",
+      "value": 2.83,
+      "units": "%",
+      "threshold": 6.0,
+      "status": "ok",
+      "note": "Above 6% indicates corporate-credit stress"
+    },
+    {
+      "key": "yield_curve_10_2",
+      "label": "10y-2y curve (inverted if <0)",
+      "value": 0.52,
+      "units": "pp",
+      "threshold": 0,
+      "status": "ok",
+      "note": "Persistent inversion historically precedes recession 6-18mo"
+    }
+  ],
+  "all_weather": {
+    "description": "Risk-parity benchmark: equal risk contribution across asset classes, not equal capital. Approximate weights (one common formulation).",
+    "weights": {
+      "long_bonds": 0.4,
+      "stocks": 0.3,
+      "intermediate": 0.15,
+      "commodities": 0.075,
+      "gold": 0.075
+    },
+    "note": "Holds bonds in deflationary/risk-off regimes, gold/commodities in inflationary regimes, equities in growth regimes \u2014 designed to perform across all four quadrants."
+  },
+  "asof": "2026-05-01T18:47:05.009177Z",
+  "fred_key_present": true
+}

@@ -483,6 +483,94 @@ body::after {
   letter-spacing: .02em;
 }
 
+/* APPENDIX — smaller cards for subsidiary systems */
+.appendix {
+  margin-top: 64px;
+  padding-top: 32px;
+  border-top: 1px solid var(--rule);
+}
+.appendix-label {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .3em;
+  text-transform: uppercase;
+  color: var(--ink-mute);
+  text-align: center;
+  margin-bottom: 24px;
+  font-weight: 500;
+}
+.appendix-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 32px;
+}
+.appendix-card {
+  display: block;
+  text-decoration: none;
+  color: inherit;
+  padding: 22px 24px;
+  background: var(--paper-warm);
+  border-left: 3px solid var(--accent);
+  transition: background .25s ease, transform .25s ease;
+}
+.appendix-card:hover { background: var(--paper-deep); transform: translateX(2px); }
+.appendix-folio {
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 9px;
+  letter-spacing: .25em;
+  text-transform: uppercase;
+  color: var(--accent);
+  font-weight: 600;
+  margin-bottom: 8px;
+}
+.appendix-folio .num {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--accent);
+  letter-spacing: 0;
+  margin-right: 8px;
+}
+.appendix-title {
+  font-family: 'Fraunces', serif;
+  font-weight: 700;
+  font-size: 28px;
+  line-height: 1;
+  letter-spacing: -.02em;
+  margin-bottom: 8px;
+  color: var(--ink);
+  font-variation-settings: "SOFT" 30, "opsz" 144;
+}
+.appendix-title em { font-style: italic; font-weight: 500; color: var(--accent); }
+.appendix-sub {
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 14px;
+  color: var(--ink-soft);
+  line-height: 1.55;
+  margin-bottom: 14px;
+}
+.appendix-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: var(--ink);
+  font-weight: 600;
+}
+.appendix-cta::after {
+  content: '→';
+  transition: transform .25s ease;
+  font-family: 'Fraunces', serif;
+  font-style: italic;
+  font-size: 13px;
+}
+.appendix-card:hover .appendix-cta::after { transform: translateX(3px); }
+
 /* RESPONSIVE */
 @media (max-width: 920px) {
   .cover { padding: 24px 22px 60px; }
@@ -505,6 +593,8 @@ body::after {
   .meta-item .value { font-size: 18px; }
   .footer-strip { grid-template-columns: 1fr; gap: 8px; text-align: center; }
   .footer-strip .left, .footer-strip .right { text-align: center; }
+  .appendix-grid { grid-template-columns: 1fr; gap: 18px; }
+  .appendix { margin-top: 40px; }
 }
 
 @media (max-width: 480px) {
@@ -636,6 +726,25 @@ body::after {
   </a>
 
 </main>
+
+<!-- APPENDIX — subsidiary systems -->
+<section class="appendix">
+  <div class="appendix-label">Subsidiary Systems</div>
+  <div class="appendix-grid">
+    <a class="appendix-card" href="allocation.html">
+      <div class="appendix-folio"><span class="num">№ II</span>The Allocation Engine</div>
+      <h3 class="appendix-title">Sizing &amp; <em>Concentration</em></h3>
+      <p class="appendix-sub">Per-name caps, per-cluster caps, sleeve totals, and a regime-adjusted cash floor. A score does not size itself.</p>
+      <span class="appendix-cta">Open the Engine</span>
+    </a>
+    <a class="appendix-card" href="macro.html">
+      <div class="appendix-folio"><span class="num">№ III</span>The Macro Overlay</div>
+      <h3 class="appendix-title">A <em>Dalio</em> Almanac</h3>
+      <p class="appendix-sub">Four economic regimes, debt-cycle tripwires, the Big Cycle, and an All-Weather benchmark for your concentrated bets.</p>
+      <span class="appendix-cta">Open the Almanac</span>
+    </a>
+  </div>
+</section>
 
 <!-- FOOTER -->
 <footer class="footer-strip">

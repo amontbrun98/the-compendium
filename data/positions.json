@@ -1,0 +1,17 @@
+{
+  "_comment": "Edit this file with your actual positions. The allocation page reads it. Dollars (or any consistent unit) — the engine works on relative weights. Ticker must match a t value in core.json or watch.json for cluster classification to work.",
+  "_asof": "2026-05-01",
+  "cash": 50000,
+  "positions": [
+    { "t": "LLY",   "dollars": 8000,  "sleeve": "core",  "note": "GLP-1 thesis anchor" },
+    { "t": "NVO",   "dollars": 6000,  "sleeve": "core",  "note": "Cheaper GLP-1 leader on framework" },
+    { "t": "HIMS",  "dollars": 3000,  "sleeve": "watch", "note": "GLP-1 distribution play" },
+    { "t": "MELI",  "dollars": 5000,  "sleeve": "watch", "note": "EM diversifier" },
+    { "t": "VKTX",  "dollars": 1500,  "sleeve": "watch", "note": "Next-gen GLP-1 lottery (not in universe yet)" }
+  ],
+  "_notes": [
+    "Sleeve must be 'core' or 'watch' — used by allocation engine for sleeve-level caps",
+    "Add a position by appending an object. Save the file. Allocation page re-reads on refresh.",
+    "Tickers not in core.json or watch.json show as 'unclassified' for cluster purposes."
+  ]
+}

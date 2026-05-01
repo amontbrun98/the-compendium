@@ -1,0 +1,509 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Macro Overlay — A Dalio Almanac</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,300;0,9..144,400;0,9..144,500;0,9..144,600;0,9..144,700;0,9..144,900;1,9..144,400;1,9..144,500&family=IBM+Plex+Mono:ital,wght@0,300;0,400;0,500;0,600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="assets/tooltip.css">
+<style>
+:root {
+  --paper: #131210; --paper-warm: #1c1a17; --paper-deep: #0a0908;
+  --ink: #f0ebe2; --ink-soft: #c4bdb0; --ink-mute: #8a8278; --ink-faint: #4a4540;
+  --rule: #2c2824; --rule-strong: #f0ebe2;
+  --accent: #e85d3d; --accent-deep: #b8270d;
+  --gold: #d4a335; --bull: #6db83d; --bear: #e85d3d;
+  --q1: #6db83d; --q2: #d4a335; --q3: #4a82c7; --q4: #b8270d;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+body {
+  background: var(--paper); color: var(--ink);
+  font-family: 'Fraunces', Georgia, serif; font-size: 16px; line-height: 1.55;
+  -webkit-font-smoothing: antialiased; font-optical-sizing: auto;
+  font-variation-settings: "SOFT" 50, "WONK" 0;
+}
+body::before {
+  content: ''; position: fixed; inset: 0;
+  background-image:
+    radial-gradient(circle at 12% 28%, rgba(232,93,61,.02) 0%, transparent 40%),
+    radial-gradient(circle at 88% 72%, rgba(74,130,199,.02) 0%, transparent 40%);
+  pointer-events: none; z-index: 0;
+}
+.broadsheet { position: relative; z-index: 2; max-width: 1200px; margin: 0 auto; padding: 36px 40px 100px; }
+
+.back-link {
+  display: inline-flex; align-items: center; gap: 10px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .22em;
+  text-transform: uppercase; color: var(--ink-mute); text-decoration: none;
+  padding: 4px 0; margin-bottom: 24px; border-bottom: 1px solid transparent;
+  transition: color .2s, border-color .2s;
+}
+.back-link .arrow { color: var(--accent); font-family: 'Fraunces', serif; font-style: italic; font-size: 16px; }
+.back-link:hover { color: var(--ink); border-bottom-color: var(--ink); }
+
+.masthead {
+  text-align: center; border-top: 4px double var(--rule-strong);
+  border-bottom: 4px double var(--rule-strong);
+  padding: 28px 0 32px; margin-bottom: 32px;
+}
+.kicker { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .35em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; font-weight: 500; }
+.masthead-title { font-family: 'Fraunces', serif; font-weight: 900; font-size: clamp(56px, 9vw, 112px); line-height: .9; letter-spacing: -.04em; font-variation-settings: "SOFT" 100, "WONK" 1, "opsz" 144; margin-bottom: 8px; }
+.masthead-title em { font-style: italic; font-weight: 400; color: var(--accent); }
+.masthead-tagline { font-family: 'Fraunces', serif; font-style: italic; font-size: 18px; font-weight: 300; color: var(--ink-soft); letter-spacing: .04em; margin-bottom: 6px; max-width: 720px; margin-left: auto; margin-right: auto; }
+.masthead-volume { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .25em; text-transform: uppercase; color: var(--ink-mute); margin-top: 14px; }
+.masthead-volume .ornament { color: var(--accent); margin: 0 12px; font-family: 'Fraunces', serif; font-style: italic; }
+
+/* status bar */
+.status-bar {
+  display: grid; grid-template-columns: 1fr 1fr 1fr 1fr;
+  gap: 1px; background: var(--rule); border: 1px solid var(--rule);
+  margin-bottom: 48px;
+}
+.status-cell { background: var(--paper-warm); padding: 16px 20px; }
+.status-cell .lbl { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 6px; font-weight: 500; }
+.status-cell .val { font-family: 'Fraunces', serif; font-weight: 700; font-size: 22px; color: var(--ink); font-variation-settings: "opsz" 144; }
+.status-cell .sub { font-family: 'IBM Plex Mono', monospace; font-size: 10px; color: var(--ink-mute); margin-top: 4px; }
+.status-cell.regime .val { color: var(--accent); }
+
+/* section markers */
+.section-marker { display: flex; align-items: center; gap: 16px; margin: 56px 0 28px; }
+.section-marker-line { flex: 1; height: 1px; background: var(--rule-strong); }
+.section-marker-text { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .3em; text-transform: uppercase; color: var(--ink); font-weight: 500; }
+.section-marker-num { font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; color: var(--accent); font-weight: 500; }
+
+.lede { display: grid; grid-template-columns: 7fr 5fr; gap: 56px; margin-bottom: 32px; }
+.lede-headline { font-family: 'Fraunces', serif; font-weight: 700; font-size: clamp(28px, 3.4vw, 42px); line-height: 1.05; letter-spacing: -.02em; margin-bottom: 18px; }
+.lede-headline em { color: var(--accent); font-style: italic; font-weight: 500; }
+.lede-deck { font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 17px; line-height: 1.6; color: var(--ink-soft); border-left: 3px solid var(--accent); padding-left: 18px; }
+
+.callout {
+  background: var(--paper-warm); border: 1px solid var(--rule-strong);
+  padding: 22px 26px; margin-bottom: 24px; position: relative;
+}
+.callout::before { content: 'METHODOLOGY'; position: absolute; top: -10px; left: 16px; background: var(--paper); padding: 0 10px; font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .2em; color: var(--ink-mute); }
+.callout-title { font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px; font-style: italic; margin-bottom: 12px; color: var(--ink); }
+.callout-body { font-family: 'Fraunces', serif; font-size: 14px; line-height: 1.65; color: var(--ink-soft); }
+
+/* ---- Four-Quadrant grid ---- */
+.quadrant-wrap { margin-bottom: 32px; }
+.quadrant-grid {
+  display: grid;
+  grid-template-columns: 110px 1fr 1fr;
+  grid-template-rows: 28px 1fr 1fr 28px;
+  gap: 0;
+  height: 540px;
+  border: 1px solid var(--rule-strong);
+  position: relative;
+}
+.q-axis-x-top, .q-axis-x-bot { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: flex; align-items: center; justify-content: center; background: var(--paper-deep); }
+.q-axis-x-top { grid-column: 2 / 4; grid-row: 1; }
+.q-axis-x-bot { grid-column: 2 / 4; grid-row: 4; border-top: 1px solid var(--rule); }
+.q-axis-y { writing-mode: vertical-rl; transform: rotate(180deg); font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-mute); display: flex; align-items: center; justify-content: center; background: var(--paper-deep); border-right: 1px solid var(--rule); }
+.q-axis-y.top { grid-column: 1; grid-row: 2; }
+.q-axis-y.bot { grid-column: 1; grid-row: 3; }
+
+.q-cell {
+  border: 1px solid var(--rule); padding: 22px 24px;
+  display: flex; flex-direction: column; position: relative;
+  transition: background .25s ease;
+}
+.q-cell.active { background: rgba(232,93,61,.06); border-color: var(--accent); }
+.q-cell.active::before {
+  content: 'CURRENT'; position: absolute; top: 12px; right: 12px;
+  font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .25em;
+  background: var(--accent); color: var(--paper); padding: 4px 10px; font-weight: 600;
+}
+.q-cell .q-id { font-family: 'IBM Plex Mono', monospace; font-size: 11px; letter-spacing: .2em; font-weight: 600; margin-bottom: 6px; }
+.q-cell .q-name { font-family: 'Fraunces', serif; font-weight: 700; font-size: 32px; line-height: 1; margin-bottom: 12px; font-variation-settings: "SOFT" 30, "opsz" 144; letter-spacing: -.01em; }
+.q-cell .q-name em { font-style: italic; font-weight: 500; color: var(--accent); }
+.q-cell .q-desc { font-family: 'Fraunces', serif; font-style: italic; font-size: 14px; line-height: 1.6; color: var(--ink-soft); margin-bottom: 14px; }
+.q-cell .q-tilts { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .08em; color: var(--ink-mute); line-height: 1.7; }
+.q-cell .q-tilts strong { color: var(--ink); font-weight: 600; }
+
+.q-cell.q1 .q-id { color: var(--q1); } .q-cell.q1 .q-name em { color: var(--q1); }
+.q-cell.q2 .q-id { color: var(--q2); } .q-cell.q2 .q-name em { color: var(--q2); }
+.q-cell.q3 .q-id { color: var(--q3); } .q-cell.q3 .q-name em { color: var(--q3); }
+.q-cell.q4 .q-id { color: var(--q4); } .q-cell.q4 .q-name em { color: var(--q4); }
+
+/* signals readout */
+.signals { display: grid; grid-template-columns: 1fr 1fr; gap: 28px; margin-bottom: 24px; }
+.signal-card { border: 1px solid var(--rule); padding: 18px 20px; background: var(--paper-warm); }
+.signal-card .lbl { font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-mute); margin-bottom: 6px; font-weight: 500; }
+.signal-card .dir { font-family: 'Fraunces', serif; font-weight: 700; font-size: 28px; margin-bottom: 8px; }
+.signal-card .dir.up { color: var(--bull); }
+.signal-card .dir.down { color: var(--bear); }
+.signal-card .ev { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-soft); line-height: 1.7; }
+
+/* tripwires table */
+.tripwires { border-top: 3px solid var(--rule-strong); border-bottom: 3px solid var(--rule-strong); margin-bottom: 32px; }
+.trip-row { display: grid; grid-template-columns: 1fr auto auto auto; gap: 24px; padding: 16px 8px; border-bottom: 1px solid var(--rule); align-items: center; }
+.trip-row:last-child { border-bottom: none; }
+.trip-row.flag { background: rgba(184,39,13,.04); }
+.trip-row.no-data { opacity: .55; }
+.trip-label { font-family: 'Fraunces', serif; font-weight: 600; font-size: 16px; }
+.trip-label .note { display: block; font-family: 'Fraunces', serif; font-style: italic; font-weight: 300; font-size: 13px; color: var(--ink-mute); margin-top: 3px; }
+.trip-value { font-family: 'IBM Plex Mono', monospace; font-size: 16px; font-weight: 600; min-width: 80px; text-align: right; }
+.trip-thresh { font-family: 'IBM Plex Mono', monospace; font-size: 11px; color: var(--ink-mute); min-width: 100px; text-align: right; }
+.trip-status { font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .15em; padding: 5px 12px; font-weight: 600; min-width: 80px; text-align: center; }
+.trip-status.flag { background: rgba(184,39,13,.15); color: var(--bear); border: 1px solid var(--bear); }
+.trip-status.ok { background: rgba(45,80,22,.1); color: var(--bull); border: 1px solid var(--bull); }
+.trip-status.no_data { background: var(--paper-deep); color: var(--ink-mute); border: 1px solid var(--rule); }
+
+/* All-Weather panel */
+.aw-grid { display: grid; grid-template-columns: 2fr 3fr; gap: 32px; margin-bottom: 32px; }
+.aw-weights { background: var(--paper-warm); border: 1px solid var(--rule-strong); padding: 22px 26px; }
+.aw-weights h4 { font-family: 'Fraunces', serif; font-weight: 600; font-style: italic; font-size: 18px; margin-bottom: 16px; color: var(--ink); }
+.aw-row { display: grid; grid-template-columns: 1fr auto; padding: 10px 0; border-bottom: 1px dotted var(--rule); align-items: baseline; }
+.aw-row:last-child { border-bottom: none; }
+.aw-row .name { font-family: 'Fraunces', serif; font-size: 14px; }
+.aw-row .pct { font-family: 'IBM Plex Mono', monospace; font-weight: 600; font-size: 16px; color: var(--accent); }
+.aw-bar { height: 6px; background: var(--rule); margin-top: 4px; grid-column: 1 / 3; }
+.aw-bar-fill { height: 100%; background: var(--accent); }
+
+/* Big Cycle visual */
+.bc-curve { background: var(--paper-warm); border: 1px solid var(--rule-strong); padding: 24px; margin-bottom: 24px; }
+
+/* ETF proxy table */
+.etf-table { width: 100%; border-collapse: collapse; font-family: 'IBM Plex Mono', monospace; font-size: 12px; margin-bottom: 24px; }
+.etf-table th { text-align: left; padding: 10px 12px; font-size: 9px; letter-spacing: .18em; text-transform: uppercase; color: var(--ink-soft); border-bottom: 1px solid var(--rule-strong); background: var(--paper-warm); font-weight: 500; }
+.etf-table td { padding: 10px 12px; border-bottom: 1px solid var(--rule); }
+.etf-table td.up { color: var(--bull); }
+.etf-table td.down { color: var(--bear); }
+
+.disclaimer { font-family: 'Fraunces', serif; font-style: italic; font-size: 13px; color: var(--ink-mute); margin-top: 56px; padding-top: 24px; border-top: 1px solid var(--rule); text-align: center; }
+
+@media (max-width: 920px) {
+  .broadsheet { padding: 24px 22px 80px; }
+  .lede { grid-template-columns: 1fr; gap: 24px; }
+  .signals { grid-template-columns: 1fr; }
+  .quadrant-grid { grid-template-columns: 1fr; grid-template-rows: auto; height: auto; }
+  .q-axis-x-top, .q-axis-x-bot, .q-axis-y { display: none; }
+  .q-cell { grid-column: auto; grid-row: auto; min-height: 220px; }
+  .status-bar { grid-template-columns: 1fr 1fr; }
+  .aw-grid { grid-template-columns: 1fr; }
+  .trip-row { grid-template-columns: 1fr auto; gap: 12px; }
+  .trip-thresh, .trip-value { font-size: 13px; }
+}
+</style>
+</head>
+<body>
+<div class="broadsheet">
+
+<a class="back-link" href="index.html"><span class="arrow">←</span>Back to The Compendium</a>
+
+<header class="masthead">
+  <div class="kicker">Vol. III · Macro Almanac</div>
+  <h1 class="masthead-title">The <em>Macro</em> Overlay</h1>
+  <p class="masthead-tagline">Four Dalio frameworks layered on live market data — regime classification, debt-cycle tripwires, and an All-Weather benchmark for your concentrated bets</p>
+  <div class="masthead-volume">
+    <span id="m-asof">Loading…</span> <span class="ornament">&</span> Educational Use Only
+  </div>
+</header>
+
+<!-- STATUS BAR -->
+<div class="status-bar" id="status-bar">
+  <div class="status-cell regime">
+    <div class="lbl">Current Regime</div>
+    <div class="val" id="m-regime">—</div>
+    <div class="sub" id="m-quadrant">Q?</div>
+  </div>
+  <div class="status-cell">
+    <div class="lbl">Tripwires Flagged</div>
+    <div class="val" id="m-tripwires">0/0</div>
+    <div class="sub">Big Debt Crises checks</div>
+  </div>
+  <div class="status-cell">
+    <div class="lbl">VIX Level</div>
+    <div class="val" id="m-vix">—</div>
+    <div class="sub" id="m-vix-trend">—</div>
+  </div>
+  <div class="status-cell">
+    <div class="lbl">Data Source</div>
+    <div class="val" id="m-source" style="font-size: 14px;">—</div>
+    <div class="sub">Set FRED_API_KEY for full series</div>
+  </div>
+</div>
+
+<!-- LEDE -->
+<div class="lede">
+  <div>
+    <h2 class="lede-headline">Where the world is, by Bridgewater's <em>compass</em>.</h2>
+    <p class="lede-deck">Dalio reduces the macro problem to two questions. Is growth rising or falling, and is inflation rising or falling. The answers form four quadrants, and each quadrant has assets that historically outperform. Beneath that sits a longer arc: the rise and fall of credit and debt cycles. This page renders both, then asks how the existing concentrated thesis aligns or fights against them.</p>
+  </div>
+  <div class="callout">
+    <div class="callout-title">How this page is built</div>
+    <div class="callout-body">Macro indicators come from FRED when an API key is configured (free at fred.stlouisfed.org). Without a key, the page falls back to ETF-implied proxies — equity trend for growth, TIPS-vs-Treasuries spread for inflation, HY spreads for credit stress. The classification is rule-based and deliberately mechanical so it does not get talked into the wrong regime by recency bias.</div>
+  </div>
+</div>
+
+<!-- SECTION I — FOUR QUADRANT -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 01</span>
+  <span class="section-marker-text">The Four Economic Regimes</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<div class="quadrant-wrap">
+  <div class="quadrant-grid" id="quad-grid">
+    <div class="q-axis-x-top">Inflation Falling</div>
+    <div class="q-axis-x-bot">Inflation Rising</div>
+    <div class="q-axis-y top">Growth Rising</div>
+    <div class="q-axis-y bot">Growth Falling</div>
+
+    <div class="q-cell q1" data-q="Q1">
+      <div class="q-id">Q1 · GROWTH ↑ INFLATION ↓</div>
+      <div class="q-name"><em>Goldilocks</em></div>
+      <div class="q-desc">Growth is accelerating without forcing inflation higher. The classic risk-on regime — multiple expansion is the dominant return driver.</div>
+      <div class="q-tilts">
+        <strong>Overweight</strong>: equities (growth, large-cap), credit (IG &amp; HY)<br>
+        <strong>Underweight</strong>: gold, long-duration bonds<br>
+        <strong>Compendium read</strong>: AI/Mag 7 leadership, growth software
+      </div>
+    </div>
+
+    <div class="q-cell q2" data-q="Q2">
+      <div class="q-id">Q2 · GROWTH ↑ INFLATION ↑</div>
+      <div class="q-name"><em>Reflation</em></div>
+      <div class="q-desc">Both growth and inflation pressing higher. Real assets, commodity producers, and emerging markets typically lead.</div>
+      <div class="q-tilts">
+        <strong>Overweight</strong>: commodities, EM equities, value, gold<br>
+        <strong>Underweight</strong>: long-duration bonds, growth-tech multiples<br>
+        <strong>Compendium read</strong>: CCJ, NXE, ALB, MELI, NU, XOM
+      </div>
+    </div>
+
+    <div class="q-cell q3" data-q="Q3">
+      <div class="q-id">Q3 · GROWTH ↓ INFLATION ↓</div>
+      <div class="q-name"><em>Deflation</em></div>
+      <div class="q-desc">Growth and inflation both rolling over. Long-duration sovereign bonds shine; defensive equities outperform.</div>
+      <div class="q-tilts">
+        <strong>Overweight</strong>: long-duration Treasuries (TLT), staples, healthcare quality<br>
+        <strong>Underweight</strong>: cyclicals, commodities, EM<br>
+        <strong>Compendium read</strong>: NESN, COST, UNH, WMT, BRK.B
+      </div>
+    </div>
+
+    <div class="q-cell q4" data-q="Q4">
+      <div class="q-id">Q4 · GROWTH ↓ INFLATION ↑</div>
+      <div class="q-name"><em>Stagflation</em></div>
+      <div class="q-desc">The hardest regime. Multiples compress on the equity side while bonds underperform inflation. Hard assets and short-duration cash are the historical winners.</div>
+      <div class="q-tilts">
+        <strong>Overweight</strong>: gold, commodities, TIPS, cash, energy producers<br>
+        <strong>Underweight</strong>: long-duration anything, levered equity<br>
+        <strong>Compendium read</strong>: WPM, GLD via proxies, XOM, CCJ
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="signals">
+  <div class="signal-card">
+    <div class="lbl">Growth Signal</div>
+    <div class="dir" id="m-growth">—</div>
+    <div class="ev" id="m-growth-ev">—</div>
+  </div>
+  <div class="signal-card">
+    <div class="lbl">Inflation Signal</div>
+    <div class="dir" id="m-infl">—</div>
+    <div class="ev" id="m-infl-ev">—</div>
+  </div>
+</div>
+
+<!-- SECTION II — BIG DEBT CRISIS TRIPWIRES -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 02</span>
+  <span class="section-marker-text">Big Debt Crises Tripwires</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<div class="callout">
+  <div class="callout-title">From Dalio's "Big Debt Crises" (2018)</div>
+  <div class="callout-body">Dalio identifies recurring quantitative patterns that historically precede major debt crises. None of these are forecasts — they are conditions that, when present together, raise the probability of a non-linear event. Read the table as a dashboard of stress, not as a prediction.</div>
+</div>
+
+<div class="tripwires" id="tripwires">
+  <div class="trip-row no-data">
+    <div class="trip-label">Loading tripwire data…</div>
+    <div class="trip-value">—</div>
+    <div class="trip-thresh">—</div>
+    <div class="trip-status no_data">…</div>
+  </div>
+</div>
+
+<!-- SECTION III — BIG CYCLE -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 03</span>
+  <span class="section-marker-text">The Long-Term Debt &amp; Order Cycle</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<div class="lede">
+  <div>
+    <p style="font-family: 'Fraunces', serif; font-size: 16px; line-height: 1.7; color: var(--ink-soft);">Dalio's longer arc holds that empires move through five phases — rise on sound money, debt and education; mature into productivity peaks; over-extend as reserve currencies weaken and internal disorder rises; and eventually undergo monetary reset. The United States, by his own framing, sits in late phase four — high debt, internal political disorder, contested reserve-currency status, rising external rival.</p>
+    <p style="font-family: 'Fraunces', serif; font-size: 16px; line-height: 1.7; color: var(--ink-soft); margin-top: 14px;">The implication for a concentrated portfolio is not that crisis is imminent. It is that the next cycle's winners are unlikely to be the same names, sectors, or even currencies as the last cycle's. Hard assets, productive capital outside the dominant power, and protection against monetary debasement deserve a structural sleeve regardless of regime.</p>
+  </div>
+  <div class="bc-curve">
+    <div style="font-family: 'IBM Plex Mono', monospace; font-size: 9px; letter-spacing: .2em; color: var(--accent); margin-bottom: 14px; font-weight: 600;">YOUR ESTIMATED POSITION</div>
+    <div style="font-family: 'Fraunces', serif; font-size: 24px; font-style: italic; color: var(--ink); margin-bottom: 18px;">Late Phase 4</div>
+    <div style="font-family: 'Fraunces', serif; font-size: 14px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 18px;">High debt, contested reserve currency, internal political polarization, rising external rival. Historically followed by either a productivity-led renewal or a monetary reset.</div>
+    <div style="border-top: 1px solid var(--rule); padding-top: 14px; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .15em; color: var(--ink-mute); line-height: 1.9;">
+      P1 · Foundation<br>
+      P2 · Productivity peak<br>
+      P3 · Excess &amp; debt build<br>
+      <strong style="color: var(--accent); font-family: 'Fraunces', serif; font-style: italic; letter-spacing: 0; font-size: 12px;">→ P4 · Late cycle (current)</strong><br>
+      P5 · Reset
+    </div>
+  </div>
+</div>
+
+<!-- SECTION IV — ALL WEATHER BENCHMARK -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 04</span>
+  <span class="section-marker-text">All-Weather Benchmark vs. Your Bet</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<div class="callout">
+  <div class="callout-title">Why this matters for a concentrated GLP-1 thesis</div>
+  <div class="callout-body">All-Weather is the canonical risk-parity portfolio — equal risk contribution across asset classes, not equal capital. Every concentrated thematic bet you take on the Five-Pillar or Watch ledgers should be measured against what you would have held in All-Weather instead. If your active bet does not measurably improve on the All-Weather expected return after considering the risk you are adding, the active bet is not earning its keep.</div>
+</div>
+
+<div class="aw-grid">
+  <div class="aw-weights" id="aw-weights">
+    <h4>All-Weather template</h4>
+  </div>
+  <div>
+    <p style="font-family: 'Fraunces', serif; font-size: 16px; line-height: 1.7; color: var(--ink-soft); margin-bottom: 14px;">The 40% long bond weight looks high to a tech-investor's eye. It is high on purpose — bonds are the regime hedge for the deflationary quadrant. The 15% in gold and commodities is the hedge for the stagflationary quadrant. Equities are the smallest single weight, despite being the highest expected return, because equities deliver that return most violently.</p>
+    <p style="font-family: 'Fraunces', serif; font-size: 16px; line-height: 1.7; color: var(--ink-soft);">Your concentrated thesis (rotate from AI mega-cap to GLP-1) is a much more aggressive allocation. The All-Weather row is here as the diversified counter-example: every dollar you put into GLP-1 instead of into this template is a dollar betting that your thesis improves on regime-balanced returns. That bet may be defensible — but it deserves to be sized.</p>
+  </div>
+</div>
+
+<!-- SECTION V — MARKET PROXY READOUT -->
+<div class="section-marker">
+  <span class="section-marker-num">№ 05</span>
+  <span class="section-marker-text">Market Proxy Readout</span>
+  <div class="section-marker-line"></div>
+</div>
+
+<table class="etf-table" id="etf-table">
+  <thead>
+    <tr><th>Asset Class</th><th>Ticker</th><th>Latest</th><th>1-mo</th><th>3-mo</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<p class="disclaimer">Educational use only. Not investment advice. Macro classification is rule-based and intentionally simple — it will be wrong at turning points. Always pair regime calls with primary sources before acting.</p>
+
+</div>
+
+<script src="assets/data-loader.js"></script>
+<script src="assets/glossary.js"></script>
+<script src="assets/tooltip.js"></script>
+<script>
+(async function () {
+  const data = await window.COMPENDIUM.loadAll();
+  if (!data.macro) {
+    document.getElementById('m-asof').textContent = 'data/macro.json missing — run scripts/refresh_data.py';
+    return;
+  }
+  const m = data.macro;
+  const r = m.regime || {};
+
+  // status bar
+  document.getElementById('m-asof').textContent = 'Refreshed ' + (m.asof ? m.asof.split('T')[0] : '—');
+  document.getElementById('m-regime').textContent = r.regime_name || '—';
+  document.getElementById('m-quadrant').textContent = r.quadrant || '';
+  const flagged = (m.big_debt_crisis || []).filter(x => x.status === 'flag').length;
+  const total = (m.big_debt_crisis || []).filter(x => x.status !== 'no_data').length;
+  document.getElementById('m-tripwires').textContent = flagged + '/' + total;
+  const vix = (m.etf_proxies || {}).vix;
+  if (vix && vix.latest) {
+    document.getElementById('m-vix').textContent = vix.latest.toFixed(1);
+    const d = vix['1mo_pct'];
+    document.getElementById('m-vix-trend').textContent = (d > 0 ? '+' : '') + d.toFixed(1) + '% 1mo';
+  }
+  document.getElementById('m-source').textContent = m.fred_key_present ? 'FRED + yfinance' : 'yfinance proxies only';
+
+  // active quadrant
+  if (r.quadrant) {
+    const cell = document.querySelector('.q-cell[data-q="' + r.quadrant + '"]');
+    if (cell) cell.classList.add('active');
+  }
+
+  // signal cards
+  const gEl = document.getElementById('m-growth');
+  gEl.textContent = (r.growth || '—').toUpperCase();
+  if (r.growth === 'up') gEl.classList.add('up'); else if (r.growth === 'down') gEl.classList.add('down');
+  document.getElementById('m-growth-ev').innerHTML = (r.growth_evidence || []).join('<br>') || '—';
+
+  const iEl = document.getElementById('m-infl');
+  iEl.textContent = (r.inflation || '—').toUpperCase();
+  if (r.inflation === 'up') iEl.classList.add('up'); else if (r.inflation === 'down') iEl.classList.add('down');
+  document.getElementById('m-infl-ev').innerHTML = (r.inflation_evidence || []).join('<br>') || '—';
+
+  // tripwires
+  const tw = document.getElementById('tripwires');
+  tw.innerHTML = '';
+  (m.big_debt_crisis || []).forEach(t => {
+    const row = document.createElement('div');
+    row.className = 'trip-row ' + (t.status === 'flag' ? 'flag' : t.status === 'no_data' ? 'no-data' : '');
+    const valStr = t.value !== null && t.value !== undefined
+      ? t.value.toFixed(2) + (t.units || '')
+      : 'no data';
+    const threshStr = t.threshold !== undefined
+      ? (t.key === 'yield_curve_10_2' ? 'flag if < 0' : 'flag ≥ ' + t.threshold + (t.units || ''))
+      : '';
+    row.innerHTML = `
+      <div class="trip-label">${t.label}<span class="note">${t.note}</span></div>
+      <div class="trip-value">${valStr}</div>
+      <div class="trip-thresh">${threshStr}</div>
+      <div class="trip-status ${t.status}">${t.status === 'flag' ? 'FLAG' : t.status === 'ok' ? 'OK' : 'NO DATA'}</div>
+    `;
+    tw.appendChild(row);
+  });
+
+  // all weather
+  const aw = m.all_weather || { weights: {} };
+  const awEl = document.getElementById('aw-weights');
+  awEl.innerHTML = '<h4>All-Weather template</h4>';
+  Object.entries(aw.weights || {}).forEach(([k, v]) => {
+    const pct = Math.round(v * 100);
+    const row = document.createElement('div');
+    row.className = 'aw-row';
+    row.innerHTML = `
+      <div class="name">${k.replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase())}</div>
+      <div class="pct">${pct}%</div>
+      <div class="aw-bar"><div class="aw-bar-fill" style="width:${pct}%"></div></div>
+    `;
+    awEl.appendChild(row);
+  });
+  if (aw.note) {
+    const note = document.createElement('div');
+    note.style.cssText = 'font-family:Fraunces,serif;font-style:italic;font-size:13px;color:var(--ink-mute);margin-top:14px;line-height:1.6;';
+    note.textContent = aw.note;
+    awEl.appendChild(note);
+  }
+
+  // ETF table
+  const tbody = document.querySelector('#etf-table tbody');
+  Object.entries(m.etf_proxies || {}).forEach(([k, v]) => {
+    if (!v || !v.latest) return;
+    const tr = document.createElement('tr');
+    const fmt = n => (n > 0 ? '+' : '') + n.toFixed(2) + '%';
+    const cls = n => n > 0 ? 'up' : n < 0 ? 'down' : '';
+    tr.innerHTML = `
+      <td>${(v.label || k)}</td>
+      <td>${v.ticker}</td>
+      <td>${v.latest.toFixed(2)}</td>
+      <td class="${cls(v['1mo_pct'])}">${fmt(v['1mo_pct'])}</td>
+      <td class="${cls(v['3mo_pct'])}">${fmt(v['3mo_pct'])}</td>
+    `;
+    tbody.appendChild(tr);
+  });
+})();
+</script>
+</body>
+</html>

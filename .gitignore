@@ -12,3 +12,20 @@ Thumbs.db
 
 # Node (just in case)
 node_modules/
+package.json
+package-lock.json
+
+# Local Python
+__pycache__/
+*.pyc
+.venv/
+
+# Local-only positions file (uncomment to keep real positions private)
+# data/positions.json
+
+# Secrets — never commit API keys
+.env
+.env.*
+*.key
+secrets.json
+.secrets/
