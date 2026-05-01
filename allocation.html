@@ -194,7 +194,7 @@ body::before {
 
 <div class="callout">
   <div class="callout-title">How this workflow goes</div>
-  <div class="callout-body">Step 1 (this section): pick a handful of tickers and let the engine size them so every cap is respected — per-name (8% Core / 3% Watch), per-cluster (25% / 12%), Watch sleeve total (20%), and regime cash floor. Step 2 (below): refine the result manually — add more names, trim positions, or drop entire clusters. Step 3: stress test what you built. Empty seeds will use a default diversified set (LLY, NVO, GOOGL, MSFT, V, TSM, BRK.B, NESN, MELI, NU, HIMS, CCJ, WPM, CRSP).</div>
+  <div class="callout-body">Step 1 (this section): pick a handful of tickers and let the engine size them so every cap is respected — per-name (8% Core / 3% Watch), per-cluster (25% / 12%), Watch sleeve total (20%), and regime cash floor. <strong>You don't enter dollar amounts per ticker</strong> — set total capital once, the engine does the math. Tickers you've added from the ledger pages (the "+ add" button) appear here automatically. Step 2 (below): refine the result manually — add more names, trim positions, or drop entire clusters. Step 3: stress test what you built. Empty seeds will use a default diversified set (LLY, NVO, GOOGL, MSFT, V, TSM, BRK.B, NESN, MELI, NU, HIMS, CCJ, WPM, CRSP).</div>
 </div>
 
 <div class="add-panel">
@@ -715,6 +715,18 @@ function populateStressScopes() {
 
 // ---------- auto-balance ----------
 let abSeeds = [];
+const SEEDS_KEY = 'compendium_seeds_v1';
+
+function loadQueuedSeeds() {
+  try {
+    const raw = JSON.parse(localStorage.getItem(SEEDS_KEY) || '[]');
+    if (!Array.isArray(raw)) return [];
+    return raw.filter(s => s && s.t).map(s => s.t);
+  } catch (_) { return []; }
+}
+function clearQueuedSeeds() {
+  try { localStorage.removeItem(SEEDS_KEY); } catch (_) { /* ignore */ }
+}
 
 function setupAbSearch() {
   const input = document.getElementById('ab-input');
@@ -766,6 +778,15 @@ function renderSeeds() {
   el.querySelectorAll('.ab-chip').forEach(c => c.onclick = e => {
     const t = e.currentTarget.getAttribute('data-t');
     abSeeds = abSeeds.filter(x => x !== t);
+    // Also drop from the cross-page seed list so the ledger button reflects it
+    try {
+      const raw = JSON.parse(localStorage.getItem(SEEDS_KEY) || '[]');
+      if (Array.isArray(raw)) {
+        const filtered = raw.filter(s => s && s.t !== t);
+        if (filtered.length === 0) localStorage.removeItem(SEEDS_KEY);
+        else localStorage.setItem(SEEDS_KEY, JSON.stringify(filtered));
+      }
+    } catch (_) { /* ignore */ }
     renderSeeds();
   });
 }
@@ -872,11 +893,13 @@ function renderBalancedPreview(result) {
     state.cash = result.cash;
     state.positions = result.positions.map(p => ({ id: newId(), t: p.t, sleeve: p.sleeve, dollars: p.dollars, note: 'auto-balanced' }));
     saveState(); render();
+    clearQueuedSeeds();
     el.style.display = 'none';
   };
   document.getElementById('ab-append').onclick = () => {
     result.positions.forEach(p => state.positions.push({ id: newId(), t: p.t, sleeve: p.sleeve, dollars: p.dollars, note: 'auto-balanced' }));
     saveState(); render();
+    clearQueuedSeeds();
     el.style.display = 'none';
   };
   document.getElementById('ab-discard').onclick = () => { el.style.display = 'none'; };
@@ -900,6 +923,16 @@ function renderBalancedPreview(result) {
   attachMagnitudePreview('ab-capital', 'ab-cap-preview');
   // Auto-balance UI
   setupAbSearch();
+  // Pull queued seeds from the cross-page seed list (set by the "+ add" button
+  // on the ledger pages) so the user lands here with their picks already loaded.
+  const queued = loadQueuedSeeds();
+  if (queued.length > 0) {
+    queued.forEach(t => { if (!abSeeds.includes(t)) abSeeds.push(t); });
+    const banner = document.createElement('div');
+    banner.style.cssText = 'margin-top: 14px; padding: 10px 14px; background: rgba(212,163,53,.08); border-left: 3px solid var(--gold, #d4a335); font-family: \'Fraunces\', serif; font-style: italic; font-size: 13px; color: var(--ink-soft); line-height: 1.5;';
+    banner.innerHTML = `<strong style="color: var(--gold, #d4a335); font-style: normal; font-family: \'IBM Plex Mono\', monospace; font-size: 9px; letter-spacing: .15em; text-transform: uppercase; font-weight: 600;">From your ledger sessions</strong><br>${queued.length} ticker${queued.length===1?'':'s'} loaded into the seed list. Set total capital, then click Generate.`;
+    document.getElementById('ab-chips').parentElement.appendChild(banner);
+  }
   renderSeeds();
   document.getElementById('ab-generate').onclick = () => {
     const totalCapital = parseFloat(document.getElementById('ab-capital').value) || 0;

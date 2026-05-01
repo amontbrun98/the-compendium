@@ -1,9 +1,11 @@
 // The Compendium — portfolio bridge
 // Auto-injects "+" buttons next to every ticker on Five Pillar and Watch pages.
-// Click adds the ticker to the localStorage portfolio used by allocation.html,
-// runs cluster/sleeve saturation checks, and shows a toast with results.
+// Click queues the ticker into a "seed list" (no dollar prompt). The allocation
+// engine reads this list on load and sizes everything respecting all caps —
+// no per-ticker dollar amount required from the user.
 (function () {
-  const STORAGE_KEY = 'compendium_positions_v1';
+  const POSITIONS_KEY = 'compendium_positions_v1';   // committed portfolio (with $ amounts)
+  const SEEDS_KEY     = 'compendium_seeds_v1';        // queued tickers (no $ amounts)
   const RULES = {
     per_name_core: 0.08, per_name_watch: 0.03,
     per_cluster_core: 0.25, per_cluster_watch: 0.12,
@@ -14,11 +16,22 @@
   let universeLoaded = false;
 
   // -------- storage --------
-  function load() {
-    try { return JSON.parse(localStorage.getItem(STORAGE_KEY) || '{"cash":50000,"positions":[]}'); }
+  function loadPositions() {
+    try { return JSON.parse(localStorage.getItem(POSITIONS_KEY) || '{"cash":50000,"positions":[]}'); }
     catch (_) { return { cash: 0, positions: [] }; }
   }
-  function save(s) { localStorage.setItem(STORAGE_KEY, JSON.stringify(s)); }
+  function savePositions(s) { localStorage.setItem(POSITIONS_KEY, JSON.stringify(s)); }
+
+  function loadSeeds() {
+    try {
+      const raw = JSON.parse(localStorage.getItem(SEEDS_KEY) || '[]');
+      // Normalise: array of {t, sleeve} objects
+      return Array.isArray(raw)
+        ? raw.filter(s => s && s.t).map(s => ({ t: s.t, sleeve: s.sleeve || 'core' }))
+        : [];
+    } catch (_) { return []; }
+  }
+  function saveSeeds(seeds) { localStorage.setItem(SEEDS_KEY, JSON.stringify(seeds)); }
   function newId() { return Math.random().toString(36).slice(2, 9); }
 
   // -------- universe lookup --------
@@ -53,13 +66,7 @@
     return '$' + Math.round(n).toLocaleString();
   }
 
-  function defaultDollarsFor(sleeve, currentTotal) {
-    if (currentTotal <= 0) return sleeve === 'watch' ? 1500 : 5000;
-    const cap = sleeve === 'watch' ? RULES.per_name_watch : RULES.per_name_core;
-    return Math.round(cap * currentTotal);
-  }
-
-  // -------- saturation check --------
+  // -------- saturation check (used only for committed portfolio) --------
   function analyzePortfolio(state) {
     const total = (state.cash || 0) + state.positions.reduce((s, p) => s + (p.dollars || 0), 0);
     const clusters = {};
@@ -91,64 +98,57 @@
   }
 
   // -------- core action --------
-  async function addToPortfolio(ticker, sleeveHint) {
+  // Toggle the ticker in the seed list. No dollar prompt — the allocation
+  // engine sizes everything in one pass when the user clicks Generate.
+  async function toggleSeed(ticker, sleeveHint) {
     await loadUniverse();
-    const state = load();
     const meta = universe[ticker];
     const sleeve = sleeveHint || (meta && meta.sleeve) || 'core';
-
-    const existing = state.positions.find(p => p.t === ticker);
-    const currentTotal = (state.cash || 0) + state.positions.reduce((s, p) => s + p.dollars, 0);
-    const suggested = defaultDollarsFor(sleeve, currentTotal);
-
-    const promptMsg = existing
-      ? `${ticker} is already in your portfolio at ${magShort(existing.dollars)}.\n\nEnter NEW dollar amount (replaces current), or cancel:`
-      : `Add ${ticker} to your portfolio.\n\nDollar amount?\n\nSuggested: ${magShort(suggested)} (per-name cap of ${(sleeve==='watch'?3:8)}% × current total)`;
-    const raw = prompt(promptMsg, suggested);
-    if (raw === null) return;
-    const dollars = parseFloat(raw);
-    if (!dollars || dollars <= 0) { showToast('Invalid amount — cancelled.', 'warn'); return; }
-
-    if (existing) {
-      existing.dollars = dollars;
-      existing.sleeve = sleeve;
+    const seeds = loadSeeds();
+    const idx = seeds.findIndex(s => s.t === ticker);
+    if (idx >= 0) {
+      seeds.splice(idx, 1);
+      saveSeeds(seeds);
+      showToast(`Removed <strong>${ticker}</strong> from seeds. ${seeds.length} ticker${seeds.length===1?'':'s'} queued.`, 'info');
     } else {
-      state.positions.push({ id: newId(), t: ticker, sleeve, dollars, note: 'added from ledger' });
+      seeds.push({ t: ticker, sleeve });
+      saveSeeds(seeds);
+      const sleeveLabel = sleeve === 'watch' ? 'Watch' : 'Core';
+      showToast(`✓ Added <strong>${ticker}</strong> (${sleeveLabel}) to seed list. ${seeds.length} ticker${seeds.length===1?'':'s'} queued — open the allocation engine to size them.`, 'ok');
     }
-    save(state);
-
-    const a = analyzePortfolio(state);
-    const breachesForThis = a.breaches.filter(b =>
-      (b.kind === 'name' && b.t === ticker) ||
-      (b.kind === 'cluster' && (universe[ticker] || {}).cluster === b.cluster) ||
-      (b.kind === 'sleeve' && b.sleeve === sleeve)
-    );
-
-    if (breachesForThis.length === 0) {
-      showToast(`✓ Added ${ticker} at ${magShort(dollars)}. Portfolio total: ${magShort(a.total)}.`, 'ok');
-    } else {
-      const lines = breachesForThis.map(b => {
-        if (b.kind === 'name') return `${b.t} now ${b.pct.toFixed(1)}% — over ${b.cap.toFixed(0)}% cap. Trim ${magShort(b.trim)}.`;
-        if (b.kind === 'cluster') return `Cluster "${b.cluster}" now ${b.pct.toFixed(1)}% — over ${b.cap.toFixed(0)}% cap. Names: ${b.names.join(', ')}.`;
-        if (b.kind === 'sleeve') return `${b.sleeve} sleeve now ${b.pct.toFixed(1)}% — over ${b.cap.toFixed(0)}% cap. Trim ${magShort(b.trim)}.`;
-      });
-      showToast(`Added ${ticker} at ${magShort(dollars)}. <strong>${breachesForThis.length} cap breach${breachesForThis.length===1?'':'es'}:</strong><br>${lines.join('<br>')}`, 'warn', 8000);
-    }
-
     refreshAllButtons();
   }
 
   function isInPortfolio(ticker) {
-    const state = load();
+    const state = loadPositions();
     return state.positions.some(p => p.t === ticker);
   }
+  function isInSeeds(ticker) {
+    return loadSeeds().some(s => s.t === ticker);
+  }
+  function getSeedCount() { return loadSeeds().length; }
 
   // -------- DOM --------
-  function styleButton(btn, inPortfolio) {
+  // Three button states:
+  //   "+ add"      — not queued, not committed
+  //   "✓ in seeds" — queued in seed list (allocation engine will size it)
+  //   "✓ in port"  — already committed in portfolio with a $ amount
+  function styleButton(btn, state) {
+    let bg, color, border, label;
+    if (state === 'port') {
+      bg = 'rgba(109,184,61,.10)'; color = 'var(--bull, #6db83d)';
+      border = 'var(--bull, #6db83d)'; label = '✓ in port';
+    } else if (state === 'seed') {
+      bg = 'rgba(212,163,53,.12)'; color = 'var(--gold, #d4a335)';
+      border = 'var(--gold, #d4a335)'; label = '✓ in seeds';
+    } else {
+      bg = 'transparent'; color = 'var(--accent, #e85d3d)';
+      border = 'var(--accent, #e85d3d)'; label = '+ add';
+    }
     btn.style.cssText = `
-      background: ${inPortfolio ? 'rgba(109,184,61,.1)' : 'transparent'};
-      color: ${inPortfolio ? 'var(--bull, #6db83d)' : 'var(--accent, #e85d3d)'};
-      border: 1px solid ${inPortfolio ? 'var(--bull, #6db83d)' : 'var(--accent, #e85d3d)'};
+      background: ${bg};
+      color: ${color};
+      border: 1px solid ${border};
       padding: 2px 8px;
       margin-left: 8px;
       font-family: 'IBM Plex Mono', monospace;
@@ -162,7 +162,13 @@
       vertical-align: middle;
       line-height: 1.4;
     `;
-    btn.textContent = inPortfolio ? '✓ in port' : '+ add';
+    btn.textContent = label;
+  }
+
+  function buttonStateFor(ticker) {
+    if (isInPortfolio(ticker)) return 'port';
+    if (isInSeeds(ticker)) return 'seed';
+    return 'add';
   }
 
   function injectButtons() {
@@ -175,8 +181,16 @@
       const btn = document.createElement('button');
       btn.className = 'add-to-port-btn';
       btn.dataset.ticker = ticker;
-      styleButton(btn, isInPortfolio(ticker));
-      btn.onclick = e => { e.stopPropagation(); e.preventDefault(); addToPortfolio(ticker, sleeve); };
+      styleButton(btn, buttonStateFor(ticker));
+      btn.onclick = e => {
+        e.stopPropagation(); e.preventDefault();
+        // Already committed → don't re-add. Tell the user how to remove.
+        if (isInPortfolio(ticker)) {
+          showToast(`<strong>${ticker}</strong> is already in your committed portfolio. Edit or remove it from the allocation engine.`, 'info');
+          return;
+        }
+        toggleSeed(ticker, sleeve);
+      };
       btn.onmouseover = () => { btn.style.transform = 'scale(1.05)'; };
       btn.onmouseout  = () => { btn.style.transform = 'scale(1)'; };
       el.parentElement.appendChild(btn);
@@ -185,7 +199,7 @@
 
   function refreshAllButtons() {
     document.querySelectorAll('.add-to-port-btn').forEach(btn => {
-      styleButton(btn, isInPortfolio(btn.dataset.ticker));
+      styleButton(btn, buttonStateFor(btn.dataset.ticker));
     });
   }
 
@@ -224,7 +238,12 @@
     init();
   }
 
-  window.PORTFOLIO_BRIDGE = { addToPortfolio, isInPortfolio, injectButtons, analyzePortfolio };
+  window.PORTFOLIO_BRIDGE = {
+    toggleSeed, isInSeeds, isInPortfolio, getSeedCount,
+    loadSeeds, saveSeeds,
+    injectButtons, analyzePortfolio,
+    SEEDS_KEY,
+  };
 })();
 
 // keyframes for toast fade
