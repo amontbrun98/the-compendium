@@ -1,11 +1,27 @@
 {
-  "asof": "2026-05-01T19:38:27.639674Z",
+  "asof": "2026-05-03T22:42:05.521141Z",
   "prices": {
-    "count": 86,
-    "failed": []
+    "count": 85,
+    "failed": [
+      "VIX"
+    ]
   },
   "macro": {
     "regime": "Reflation",
     "fred_key": true
+  },
+  "returns": {
+    "count": 84,
+    "failed": [
+      "VIX"
+    ],
+    "windows": [
+      "1m",
+      "3m",
+      "ytd",
+      "1y",
+      "3y_ann",
+      "5y_ann"
+    ]
   }
 }
