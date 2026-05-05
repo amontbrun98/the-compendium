@@ -418,7 +418,27 @@ body::before {
 
 <div id="cm-flags-panel" style="margin-bottom: 24px;"></div>
 
-<table class="etf-table" id="cm-table">
+<!-- Sovereign yields table -->
+<div class="callout" style="margin-bottom: 16px;">
+  <div class="callout-title">G4 Sovereign 10-year Yields — capital flow incentive</div>
+  <div class="callout-body">When a sovereign's long yield rises, its domestic investors have less incentive to chase yield abroad. Rising JGBs = Japanese capital coming home (Japan owns ~$1.1T of USTs). Rising gilts = UK fiscal credibility under stress. Falling China yields = disinflation / capital flight to perceived safety. The spread-vs-US column is the relative carry signal. <em>FRED's free series cover 10Y; 30Y data for non-US sovereigns is paywalled — update manually below.</em></div>
+</div>
+
+<table class="etf-table" id="sov-table" style="margin-bottom: 24px;">
+  <thead>
+    <tr><th>Country</th><th style="text-align: right;">10Y Yield</th><th style="text-align: right;">vs US 10Y</th><th>Trend</th><th>Signal</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<table class="etf-table" id="cm-30y-table" style="margin-bottom: 24px;">
+  <thead>
+    <tr><th colspan="2" style="background: var(--paper-warm); color: var(--ink); font-style: italic; font-family: 'Fraunces', serif; text-transform: none; letter-spacing: 0; font-size: 13px; padding: 12px 14px;">30-year sovereign yields (manual quarterly update)</th></tr>
+  </thead>
+  <tbody></tbody>
+</table>
+
+<table class="etf-table" id="cm-table"
   <thead>
     <tr><th>Cross-Border Instrument</th><th>Ticker</th><th>Latest</th><th>1-mo</th><th>3-mo</th></tr>
   </thead>
@@ -568,6 +588,37 @@ body::before {
       ${cm.flags.map(f => `<div style="font-family: Fraunces, serif; font-size: 14px; line-height: 1.6; color: var(--ink-soft); padding: 4px 0;"><strong style="color: var(--ink); text-transform: uppercase; font-family: 'IBM Plex Mono', monospace; font-size: 10px; letter-spacing: .15em; margin-right: 10px;">${f.level}</strong>${f.msg}</div>`).join('')}
     </div>`;
   }
+
+  // sovereign 10Y yields
+  const sovTbody = document.querySelector('#sov-table tbody');
+  // include US as reference row first
+  const us10y = (m.fred && m.fred.ten_year && m.fred.ten_year.latest_value) || null;
+  if (us10y !== null) {
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td><strong>United States</strong></td><td style="text-align: right;"><strong>${us10y.toFixed(2)}%</strong></td><td style="text-align: right;">— (ref)</td><td>${(m.fred.ten_year.trend || '').toUpperCase()}</td><td style="font-style: italic; color: var(--ink-mute);">reference rate</td>`;
+    sovTbody.appendChild(tr);
+  }
+  (cm.sovereigns_10y || []).forEach(s => {
+    const tr = document.createElement('tr');
+    const spr = s.spread_vs_us_10y;
+    const sprStr = spr !== null && spr !== undefined ? (spr >= 0 ? '+' : '') + spr.toFixed(2) + 'pp' : '—';
+    const sprColor = spr === null || spr === undefined ? 'var(--ink-mute)' : spr > 0 ? 'var(--bear)' : 'var(--bull)';
+    const trendU = (s.trend || '').toUpperCase();
+    const trendColor = s.trend === 'up' ? 'var(--bear)' : s.trend === 'down' ? 'var(--bull)' : 'var(--ink-mute)';
+    tr.innerHTML = `<td>${s.country}</td><td style="text-align: right;">${s.yield_10y.toFixed(2)}%</td><td style="text-align: right; color: ${sprColor};">${sprStr}</td><td style="color: ${trendColor};">${trendU}</td><td style="font-family: 'Fraunces', serif; font-style: italic; font-size: 12px; color: var(--ink-soft);">${s.signal || '—'}</td>`;
+    sovTbody.appendChild(tr);
+  });
+
+  // 30Y manual override readout
+  const m30y = cm.manual_30y || {};
+  const m30Tbody = document.querySelector('#cm-30y-table tbody');
+  const labels = { us_30y: 'United States 30Y', japan_30y: 'Japan 30Y', uk_30y: 'United Kingdom 30Y', china_30y: 'China 30Y', germany_30y: 'Germany 30Y' };
+  Object.entries(labels).forEach(([k, label]) => {
+    const v = m30y[k];
+    const tr = document.createElement('tr');
+    tr.innerHTML = `<td>${label}</td><td style="text-align: right; color: ${v === null || v === undefined ? 'var(--ink-mute)' : 'var(--ink)'}; font-style: ${v === null || v === undefined ? 'italic' : 'normal'};">${v === null || v === undefined ? 'set manually in macro.json' : v.toFixed(2) + '%'}</td>`;
+    m30Tbody.appendChild(tr);
+  });
 
   // capital migration ETF table — subset of the proxies that are cross-border
   const cmTbody = document.querySelector('#cm-table tbody');

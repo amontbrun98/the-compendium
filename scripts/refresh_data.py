@@ -312,6 +312,11 @@ FRED_SERIES = [
     ("thirty_year",           "DGS30",           "30-year Treasury yield (%)"),
     ("term_premium_10y",      "THREEFYTP10",     "10-year ACM term premium estimate (%)"),
     ("foreign_treasuries",    "FDHBFIN",         "Foreign holdings of US Treasuries ($B, monthly)"),
+    # International long yields (10Y proxies for 30Y — free FRED data only goes to 10Y reliably)
+    ("japan_10y",             "IRLTLT01JPM156N", "Japan 10-year sovereign yield (%, monthly)"),
+    ("uk_10y",                "IRLTLT01GBM156N", "UK 10-year sovereign yield (%, monthly)"),
+    ("china_10y",             "IRLTLT01CNM156N", "China 10-year sovereign yield (%, monthly)"),
+    ("germany_10y",           "IRLTLT01DEM156N", "Germany 10-year sovereign yield (%, monthly)"),
 ]
 
 
@@ -573,6 +578,54 @@ def capital_migration(snap: dict) -> dict:
     if yen_3mo is not None and yen_3mo > 5:
         flags.append({"level": "watch", "msg": f"Yen +{yen_3mo:.1f}% over 3mo - possible carry unwind / Japan repatriation pressure."})
 
+    # International sovereign 10Y yields + spreads vs US 10Y
+    us_10y_val = (fred.get("ten_year") or {}).get("latest_value")
+    sovereigns = []
+    for code, label in [("japan_10y", "Japan"), ("uk_10y", "United Kingdom"),
+                        ("china_10y", "China"), ("germany_10y", "Germany")]:
+        s = fred.get(code) or {}
+        v = s.get("latest_value")
+        if v is None: continue
+        spread = (v - us_10y_val) if us_10y_val is not None else None
+        sovereigns.append({
+            "country": label, "yield_10y": v, "trend": s.get("trend"),
+            "latest_date": s.get("latest_date"),
+            "spread_vs_us_10y": spread,
+            # interpretation hint
+            "signal": (
+                "Capital staying home — repatriation pressure on USTs" if (s.get("trend") == "up" and label == "Japan")
+                else "Fiscal stress — UK pension/LDI risk if extreme" if (s.get("trend") == "up" and label == "United Kingdom")
+                else "Disinflation / capital flight to safety" if (s.get("trend") == "down" and label == "China")
+                else None
+            ),
+        })
+
+    # Manual 30Y override panel — the user can populate these when they have current data
+    # since FRED doesn't carry international 30Y reliably.
+    manual_30y = {
+        "_doc": (
+            "FRED's international yield series only go to 10Y. Update these quarterly from "
+            "tradingeconomics.com / worldgovernmentbonds.com. Set value=null when unsure."
+        ),
+        "us_30y": (fred.get("thirty_year") or {}).get("latest_value"),
+        "japan_30y": None,           # tradingeconomics: ~3.72% as of May 2026
+        "uk_30y": None,              # tradingeconomics: ~5.78% as of May 2026 (28-year high)
+        "china_30y": None,           # tradingeconomics: ~2.28% as of April 2026
+        "germany_30y": None,
+    }
+
+    if any(s.get("country") == "Japan" and s.get("trend") == "up" for s in sovereigns):
+        flags.append({
+            "level": "watch",
+            "msg": "Japan 10Y yield trending up — JGB sell-off raises Japanese investor incentive to repatriate from USTs."
+        })
+    uk = next((s for s in sovereigns if s.get("country") == "United Kingdom"), None)
+    if uk and uk.get("yield_10y") and us_10y_val and uk["yield_10y"] - us_10y_val > 0.5:
+        flags.append({
+            "level": "alert",
+            "msg": f"UK 10Y at {uk['yield_10y']:.2f}% trades {(uk['yield_10y']-us_10y_val):+.2f}pp over US 10Y — gilt market under fiscal stress."
+        })
+
     return {
         "long_end_slope_pp": long_end_slope,
         "long_end_source": long_end_source,
@@ -583,11 +636,15 @@ def capital_migration(snap: dict) -> dict:
         "gold_3mo_pct": gold_3mo,
         "foreign_treasuries_value": foreign_treasuries_value,
         "foreign_treasuries_trend": foreign_treasuries_trend,
+        "sovereigns_10y": sovereigns,
+        "manual_30y": manual_30y,
         "flags": flags,
         "explainer": (
             "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. "
-            "TLT-gold correlation flags flight-to-safety. Yen and sterling proxy JGB/BoJ and gilt/UK fiscal stress. "
-            "Foreign Treasury holdings tell you whether the marginal buyer is sticking around."
+            "TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative "
+            "incentive for foreign investors to repatriate from USTs (when their own yields rise) or "
+            "flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. "
+            "30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
         ),
     }
 
