@@ -18,19 +18,19 @@
     },
     "ism_manufacturing": {
       "series_id": "MANEMP",
-      "latest_date": "2026-03-01",
-      "latest_value": 12591.0,
-      "prev_date": "2026-02-01",
-      "prev_value": 12576.0,
-      "trend": "up"
+      "latest_date": "2026-04-01",
+      "latest_value": 12596.0,
+      "prev_date": "2026-03-01",
+      "prev_value": 12598.0,
+      "trend": "down"
     },
     "unemployment": {
       "series_id": "UNRATE",
-      "latest_date": "2026-03-01",
+      "latest_date": "2026-04-01",
       "latest_value": 4.3,
-      "prev_date": "2026-02-01",
-      "prev_value": 4.4,
-      "trend": "down"
+      "prev_date": "2026-03-01",
+      "prev_value": 4.3,
+      "trend": "flat"
     },
     "federal_debt_to_gdp": {
       "series_id": "GFDEGDQ188S",
@@ -74,11 +74,7 @@
     },
     "yield_curve_10_2": {
       "series_id": "T10Y2Y",
-      "latest_date": "2026-05-07",
-      "latest_value": 0.49,
-      "prev_date": "2026-05-06",
-      "prev_value": 0.49,
-      "trend": "flat"
+      "error": "500 Server Error: Internal Server Error for url: https://api.stlouisfed.org/fred/series/observations?series_id=T10Y2Y&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
     },
     "dxy": {
       "series_id": "DTWEXBGS",
@@ -106,11 +102,11 @@
     },
     "hy_spread": {
       "series_id": "BAMLH0A0HYM2",
-      "latest_date": "2026-05-06",
-      "latest_value": 2.75,
-      "prev_date": "2026-05-05",
-      "prev_value": 2.77,
-      "trend": "down"
+      "latest_date": "2026-05-07",
+      "latest_value": 2.79,
+      "prev_date": "2026-05-06",
+      "prev_value": 2.75,
+      "trend": "up"
     },
     "thirty_year": {
       "series_id": "DGS30",
@@ -169,128 +165,128 @@
     "equities": {
       "ticker": "SPY",
       "label": "S&P 500 ETF",
-      "latest": 731.5800170898438,
-      "1mo_pct": 7.599541996176717,
-      "3mo_pct": 5.710490372318344
+      "latest": 736.7550048828125,
+      "1mo_pct": 8.432428848987094,
+      "3mo_pct": 6.458256145694152
     },
     "nasdaq": {
       "ticker": "QQQ",
       "label": "Nasdaq 100 ETF",
-      "latest": 694.9400024414062,
-      "1mo_pct": 13.889116449124073,
-      "3mo_pct": 13.266089978615936
+      "latest": 709.1599731445312,
+      "1mo_pct": 16.05216499658253,
+      "3mo_pct": 15.58375837516106
     },
     "longbonds": {
       "ticker": "TLT",
       "label": "20+yr Treasury ETF",
-      "latest": 85.6500015258789,
-      "1mo_pct": -0.8462803920179729,
-      "3mo_pct": -1.0548824061757833
+      "latest": 86.0250015258789,
+      "1mo_pct": -0.1703540861164199,
+      "3mo_pct": -0.6216726170729325
     },
     "midbonds": {
       "ticker": "IEF",
       "label": "7-10yr Treasury ETF",
-      "latest": 94.70999908447266,
-      "1mo_pct": -0.4273884761763602,
-      "3mo_pct": -0.49438475681867766
+      "latest": 94.95500183105469,
+      "1mo_pct": -0.0021452315319470117,
+      "3mo_pct": -0.23697635991678512
     },
     "tips": {
       "ticker": "TIP",
       "label": "TIPS ETF",
-      "latest": 111.02999877929688,
-      "1mo_pct": 0.5688148801989312,
-      "3mo_pct": 0.7504085802439775
+      "latest": 111.34500122070312,
+      "1mo_pct": 0.7996304573739232,
+      "3mo_pct": 1.0362468674129932
     },
     "gold": {
       "ticker": "GLD",
       "label": "Gold ETF",
-      "latest": 431.67999267578125,
-      "1mo_pct": -1.4226692549218822,
-      "3mo_pct": -7.569108236282885
+      "latest": 433.760009765625,
+      "1mo_pct": -0.7709365816905955,
+      "3mo_pct": -7.123737040582312
     },
     "commodities": {
       "ticker": "DBC",
       "label": "Broad commodities ETF",
-      "latest": 30.25,
-      "1mo_pct": 5.363988034260259,
-      "3mo_pct": 24.742268041237114
+      "latest": 30.385000228881836,
+      "1mo_pct": 6.614035890813463,
+      "3mo_pct": 25.29897001600756
     },
     "dollar": {
       "ticker": "UUP",
       "label": "Dollar bullish ETF",
-      "latest": 27.40999984741211,
-      "1mo_pct": -0.25472960695152036,
-      "3mo_pct": 2.3142923131645565
+      "latest": 27.336999893188477,
+      "1mo_pct": -0.37536675971014954,
+      "3mo_pct": 2.0418027583720466
     },
     "em": {
       "ticker": "EEM",
       "label": "EM equities ETF",
-      "latest": 66.58999633789062,
-      "1mo_pct": 10.467813016547222,
-      "3mo_pct": 10.047922963160595
+      "latest": 67.8550033569336,
+      "1mo_pct": 12.045907890054842,
+      "3mo_pct": 12.13849816417294
     },
     "intl_dev": {
       "ticker": "EFA",
       "label": "Intl developed equities ETF",
-      "latest": 102.88999938964844,
-      "1mo_pct": 0.922023020641638,
-      "3mo_pct": -1.0577925730531623
+      "latest": 103.79499816894531,
+      "1mo_pct": 1.5805420424213068,
+      "3mo_pct": -0.18751774096550378
     },
     "vix": {
       "ticker": "^VIX",
       "label": "VIX index",
-      "latest": 17.079999923706055,
-      "1mo_pct": -12.365314908743297,
-      "3mo_pct": -1.6129071244303184
+      "latest": 17.450000762939453,
+      "1mo_pct": -9.256364127244654,
+      "3mo_pct": 0.5184340404586374
     },
     "us_30y_yield": {
       "ticker": "^TYX",
       "label": "US 30-year Treasury yield (index)",
-      "latest": 4.968999862670898,
-      "1mo_pct": 1.4702885259265663,
-      "3mo_pct": 2.4958707063140517
+      "latest": 4.943999767303467,
+      "1mo_pct": 0.6104951721936258,
+      "3mo_pct": 1.9801921767822694
     },
     "us_10y_yield": {
       "ticker": "^TNX",
       "label": "US 10-year Treasury yield (index)",
-      "latest": 4.3919997215271,
-      "1mo_pct": 2.3060679052510302,
-      "3mo_pct": 4.621242720793317
+      "latest": 4.361999988555908,
+      "1mo_pct": 1.0423923374686117,
+      "3mo_pct": 3.906623061471781
     },
     "intl_sovereign": {
       "ticker": "BWX",
       "label": "International developed sovereign ex-US ETF",
-      "latest": 22.309999465942383,
-      "1mo_pct": 0.6038104487771312,
-      "3mo_pct": -1.7081071033497763
+      "latest": 22.3799991607666,
+      "1mo_pct": 1.1470626266109285,
+      "3mo_pct": -1.399707162912145
     },
     "em_sovereign": {
       "ticker": "EMB",
       "label": "USD EM sovereign bond ETF",
-      "latest": 95.9000015258789,
-      "1mo_pct": 0.839904340996589,
-      "3mo_pct": 0.47740698081810695
+      "latest": 96.11499786376953,
+      "1mo_pct": 1.076557279257817,
+      "3mo_pct": 0.7026572647565343
     },
     "intl_treasury": {
       "ticker": "IGOV",
       "label": "International Treasury ex-US ETF",
-      "latest": 42.060001373291016,
-      "1mo_pct": 0.8633108003957446,
-      "3mo_pct": -1.4988275836376852
+      "latest": 42.279998779296875,
+      "1mo_pct": 1.5857757432725217,
+      "3mo_pct": -0.983611185335409
     },
     "yen": {
       "ticker": "FXY",
       "label": "Japanese yen ETF (JGB / BoJ proxy)",
-      "latest": 58.560001373291016,
-      "1mo_pct": 1.4904689757022194,
-      "3mo_pct": -0.6784221801098722
+      "latest": 58.626399993896484,
+      "1mo_pct": 1.7113126556090652,
+      "3mo_pct": -0.5658057933451088
     },
     "sterling": {
       "ticker": "FXB",
       "label": "British pound ETF (gilt / UK fiscal proxy)",
-      "latest": 130.35499572753906,
-      "1mo_pct": 1.119398833432328,
-      "3mo_pct": -0.4864813107213428
+      "latest": 130.9864959716797,
+      "1mo_pct": 1.3267700103211544,
+      "3mo_pct": -0.004391529682779005
     }
   },
   "regime": {
@@ -337,7 +333,7 @@
     {
       "key": "hy_spread",
       "label": "HY credit spread (OAS)",
-      "value": 2.75,
+      "value": 2.79,
       "units": "%",
       "threshold": 6.0,
       "status": "ok",
@@ -346,10 +342,8 @@
     {
       "key": "yield_curve_10_2",
       "label": "10y-2y curve (inverted if <0)",
-      "value": 0.49,
-      "units": "pp",
-      "threshold": 0,
-      "status": "ok",
+      "value": null,
+      "status": "no_data",
       "note": "Persistent inversion historically precedes recession 6-18mo"
     }
   ],
@@ -369,9 +363,9 @@
     "long_end_source": "FRED DGS30-DGS10",
     "term_premium_10y": 0.7036,
     "tlt_gold_30d_corr": null,
-    "us_intl_sov_spread_3mo": 0.653224697173993,
-    "yen_3mo_pct": -0.6784221801098722,
-    "gold_3mo_pct": -7.569108236282885,
+    "us_intl_sov_spread_3mo": 0.7780345458392124,
+    "yen_3mo_pct": -0.5658057933451088,
+    "gold_3mo_pct": -7.123737040582312,
     "foreign_treasuries_value": 9248.4,
     "foreign_treasuries_trend": "up",
     "sovereigns_10y": [
@@ -416,6 +410,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-05-07T23:05:54.245048Z",
+  "asof": "2026-05-08T19:03:40.486716Z",
   "fred_key_present": true
 }
