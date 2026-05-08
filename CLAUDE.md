@@ -206,6 +206,7 @@ Without FRED_API_KEY, the script falls back to ETF-based proxies for macro.
 - `data_cloud` (SNOW)
 - `commerce_infra` (SHOP)
 - `uranium_cycle` (CCJ, NXE)
+- `nuclear_smr` (OKLO, SMR)
 - `precious_metals` (WPM)
 - `lithium_cycle` (ALB)
 - `crypto_infra` (COIN)
