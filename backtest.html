@@ -528,7 +528,7 @@ body::after { content: ''; position: fixed; inset: 0; background-image: repeatin
       if (n == null || baseline == null) return '<span class="ret-na">—</span>';
       const d = n - baseline;
       const cls = d > 0 ? 'pos' : d < 0 ? 'neg' : 'flat';
-      return `<span class="ret ${cls}">${(d>=0?'+':'') + (d*100).toFixed(1) + 'pp</span>`;
+      return `<span class="ret ${cls}">${(d>=0?'+':'') + (d*100).toFixed(1)}pp</span>`;
     }
     // Sort by composite desc
     const sorted = [...allRows].sort((a, b) => b.composite - a.composite);
