@@ -185,7 +185,7 @@
       "label": "20+yr Treasury ETF",
       "latest": 86.08000183105469,
       "1mo_pct": -0.10652774617497807,
-      "3mo_pct": -0.5581260643065189
+      "3mo_pct": -0.5581348287908239
     },
     "midbonds": {
       "ticker": "IEF",
@@ -288,9 +288,9 @@
     "sterling": {
       "ticker": "FXB",
       "label": "British pound ETF (gilt / UK fiscal proxy)",
-      "latest": 130.97900390625,
-      "1mo_pct": 1.3209743992158574,
-      "3mo_pct": -0.01012264946895769
+      "latest": 130.97999572753906,
+      "1mo_pct": 1.3217416389752046,
+      "3mo_pct": -0.00935384173812448
     }
   },
   "regime": {
@@ -369,7 +369,7 @@
     "long_end_source": "FRED DGS30-DGS10",
     "term_premium_10y": 0.7036,
     "tlt_gold_30d_corr": null,
-    "us_intl_sov_spread_3mo": 0.7975227637905147,
+    "us_intl_sov_spread_3mo": 0.7975139993062097,
     "yen_3mo_pct": -0.6105844910814673,
     "gold_3mo_pct": -7.121600293890884,
     "foreign_treasuries_value": 9248.4,
@@ -416,6 +416,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-05-08T23:03:34.970126Z",
+  "asof": "2026-05-10T22:50:52.850306Z",
   "fred_key_present": true
 }
