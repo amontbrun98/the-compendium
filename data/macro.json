@@ -192,7 +192,7 @@
       "label": "7-10yr Treasury ETF",
       "latest": 93.87999725341797,
       "1mo_pct": -1.434272968925665,
-      "3mo_pct": -2.7329542315141175
+      "3mo_pct": -2.732946542892456
     },
     "tips": {
       "ticker": "TIP",
@@ -239,23 +239,23 @@
     "vix": {
       "ticker": "^VIX",
       "label": "VIX index",
-      "latest": 16.700000762939453,
-      "1mo_pct": -10.742909780264453,
-      "3mo_pct": -20.51403816748918
+      "latest": 16.59000015258789,
+      "1mo_pct": -7.935628572970899,
+      "3mo_pct": -7.4735088108229375
     },
     "us_30y_yield": {
       "ticker": "^TYX",
       "label": "US 30-year Treasury yield (index)",
       "latest": 5.064000129699707,
       "1mo_pct": 3.0105826618474607,
-      "3mo_pct": 7.836457043126344
+      "3mo_pct": 7.8824111789164375
     },
     "us_10y_yield": {
       "ticker": "^TNX",
       "label": "US 10-year Treasury yield (index)",
       "latest": 4.558000087738037,
       "1mo_pct": 5.75406376452432,
-      "3mo_pct": 13.129816525976622
+      "3mo_pct": 12.598820322734428
     },
     "intl_sovereign": {
       "ticker": "BWX",
@@ -269,7 +269,7 @@
       "label": "USD EM sovereign bond ETF",
       "latest": 95.16999816894531,
       "1mo_pct": -0.6454715598253502,
-      "3mo_pct": -1.2977392545037492
+      "3mo_pct": -1.2977314446257937
     },
     "intl_treasury": {
       "ticker": "IGOV",
@@ -416,6 +416,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-05-24T22:59:01.001576Z",
+  "asof": "2026-05-25T23:15:56.314285Z",
   "fred_key_present": true
 }
