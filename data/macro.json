@@ -2,75 +2,147 @@
   "fred": {
     "real_gdp_yoy": {
       "series_id": "A191RL1Q225SBEA",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=A191RL1Q225SBEA&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit="
+      "latest_date": "2026-01-01",
+      "latest_value": 1.6,
+      "prev_date": "2025-10-01",
+      "prev_value": 0.5,
+      "trend": "up"
     },
     "core_cpi_yoy": {
       "series_id": "CORESTICKM159SFRBATL",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=CORESTICKM159SFRBATL&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&l"
+      "latest_date": "2026-04-01",
+      "latest_value": 3.03893235,
+      "prev_date": "2026-03-01",
+      "prev_value": 2.929321192,
+      "trend": "up"
     },
     "ism_manufacturing": {
       "series_id": "MANEMP",
-      "error": "502 Server Error: Bad Gateway for url: https://api.stlouisfed.org/fred/series/observations?series_id=MANEMP&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-04-01",
+      "latest_value": 12596.0,
+      "prev_date": "2026-03-01",
+      "prev_value": 12598.0,
+      "trend": "down"
     },
     "unemployment": {
       "series_id": "UNRATE",
-      "error": "HTTPSConnectionPool(host='api.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
+      "latest_date": "2026-04-01",
+      "latest_value": 4.3,
+      "prev_date": "2026-03-01",
+      "prev_value": 4.3,
+      "trend": "flat"
     },
     "federal_debt_to_gdp": {
       "series_id": "GFDEGDQ188S",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=GFDEGDQ188S&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2025-10-01",
+      "latest_value": 122.56815,
+      "prev_date": "2025-07-01",
+      "prev_value": 121.02875,
+      "trend": "up"
     },
     "debt_service_ratio": {
       "series_id": "TDSP",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=TDSP&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2025-10-01",
+      "latest_value": 11.323096,
+      "prev_date": "2025-07-01",
+      "prev_value": 11.257951,
+      "trend": "up"
     },
     "fed_funds": {
       "series_id": "DFF",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=DFF&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-05-28",
+      "latest_value": 3.62,
+      "prev_date": "2026-05-27",
+      "prev_value": 3.62,
+      "trend": "flat"
     },
     "ten_year": {
       "series_id": "DGS10",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=DGS10&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-05-28",
+      "latest_value": 4.45,
+      "prev_date": "2026-05-27",
+      "prev_value": 4.48,
+      "trend": "down"
     },
     "real_ten_year": {
       "series_id": "DFII10",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=DFII10&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-05-28",
+      "latest_value": 2.06,
+      "prev_date": "2026-05-27",
+      "prev_value": 2.09,
+      "trend": "down"
     },
     "yield_curve_10_2": {
       "series_id": "T10Y2Y",
-      "error": "502 Server Error: Bad Gateway for url: https://api.stlouisfed.org/fred/series/observations?series_id=T10Y2Y&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-05-28",
+      "latest_value": 0.46,
+      "prev_date": "2026-05-27",
+      "prev_value": 0.48,
+      "trend": "down"
     },
     "dxy": {
       "series_id": "DTWEXBGS",
-      "error": "HTTPSConnectionPool(host='api.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
+      "latest_date": "2026-05-22",
+      "latest_value": 119.2868,
+      "prev_date": "2026-05-21",
+      "prev_value": 119.369,
+      "trend": "down"
     },
     "breakeven_5y": {
       "series_id": "T5YIE",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=T5YIE&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-05-28",
+      "latest_value": 2.54,
+      "prev_date": "2026-05-27",
+      "prev_value": 2.53,
+      "trend": "up"
     },
     "m2_yoy": {
       "series_id": "M2SL",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=M2SL&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-04-01",
+      "latest_value": 22804.5,
+      "prev_date": "2026-03-01",
+      "prev_value": 22686.4,
+      "trend": "up"
     },
     "hy_spread": {
       "series_id": "BAMLH0A0HYM2",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=BAMLH0A0HYM2&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-05-28",
+      "latest_value": 2.72,
+      "prev_date": "2026-05-27",
+      "prev_value": 2.71,
+      "trend": "up"
     },
     "thirty_year": {
       "series_id": "DGS30",
-      "error": "502 Server Error: Bad Gateway for url: https://api.stlouisfed.org/fred/series/observations?series_id=DGS30&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-05-28",
+      "latest_value": 4.98,
+      "prev_date": "2026-05-27",
+      "prev_value": 5.01,
+      "trend": "down"
     },
     "term_premium_10y": {
       "series_id": "THREEFYTP10",
-      "error": "HTTPSConnectionPool(host='api.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
+      "latest_date": "2026-05-22",
+      "latest_value": 0.8285,
+      "prev_date": "2026-05-21",
+      "prev_value": 0.8273,
+      "trend": "up"
     },
     "foreign_treasuries": {
       "series_id": "FDHBFIN",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=FDHBFIN&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2025-07-01",
+      "latest_value": 9248.4,
+      "prev_date": "2025-04-01",
+      "prev_value": 9126.8,
+      "trend": "up"
     },
     "japan_10y": {
       "series_id": "IRLTLT01JPM156N",
-      "error": "504 Server Error: Gateway Time-out for url: https://api.stlouisfed.org/fred/series/observations?series_id=IRLTLT01JPM156N&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit="
+      "latest_date": "2026-04-01",
+      "latest_value": 2.515,
+      "prev_date": "2026-03-01",
+      "prev_value": 2.345,
+      "trend": "up"
     },
     "uk_10y": {
       "series_id": "IRLTLT01GBM156N",
@@ -97,128 +169,128 @@
     "equities": {
       "ticker": "SPY",
       "label": "S&P 500 ETF",
-      "latest": 754.5999755859375,
-      "1mo_pct": 6.04569513798785,
-      "3mo_pct": 10.239337916590795
+      "latest": 756.47998046875,
+      "1mo_pct": 5.262573224822242,
+      "3mo_pct": 10.513987400113889
     },
     "nasdaq": {
       "ticker": "QQQ",
       "label": "Nasdaq 100 ETF",
-      "latest": 735.5999755859375,
-      "1mo_pct": 11.190042995017224,
-      "3mo_pct": 21.12146245377071
+      "latest": 738.3099975585938,
+      "1mo_pct": 10.568485990999111,
+      "3mo_pct": 21.567685721177043
     },
     "longbonds": {
       "ticker": "TLT",
       "label": "20+yr Treasury ETF",
-      "latest": 85.73999786376953,
-      "1mo_pct": 0.4161088050049111,
-      "3mo_pct": -3.5816839300733205
+      "latest": 85.76000213623047,
+      "1mo_pct": 0.5333823684742223,
+      "3mo_pct": -3.559188265121793
     },
     "midbonds": {
       "ticker": "IEF",
       "label": "7-10yr Treasury ETF",
-      "latest": 94.54000091552734,
-      "1mo_pct": 0.054405360631726296,
-      "3mo_pct": -2.0102239842540004
+      "latest": 94.6500015258789,
+      "1mo_pct": -0.01901143135849548,
+      "3mo_pct": -1.8962094394522122
     },
     "tips": {
       "ticker": "TIP",
       "label": "TIPS ETF",
-      "latest": 111.18000030517578,
-      "1mo_pct": 0.31592879617250436,
-      "3mo_pct": 0.1540875996938862
+      "latest": 111.20999908447266,
+      "1mo_pct": 0.19009048199718492,
+      "3mo_pct": 0.18111134822182962
     },
     "gold": {
       "ticker": "GLD",
       "label": "Gold ETF",
-      "latest": 412.7699890136719,
-      "1mo_pct": -1.1116203751057152,
-      "3mo_pct": -15.7612267319037
+      "latest": 417.1199951171875,
+      "1mo_pct": -1.5436926989543909,
+      "3mo_pct": -14.873470384247444
     },
     "commodities": {
       "ticker": "DBC",
       "label": "Broad commodities ETF",
-      "latest": 29.719999313354492,
-      "1mo_pct": -4.3758063503540505,
-      "3mo_pct": 15.149166711807016
+      "latest": 29.479999542236328,
+      "1mo_pct": -5.209005850040571,
+      "3mo_pct": 14.219295436781
     },
     "dollar": {
       "ticker": "UUP",
       "label": "Dollar bullish ETF",
-      "latest": 27.700000762939453,
-      "1mo_pct": 0.3259693973137745,
-      "3mo_pct": 1.3538267115488
+      "latest": 27.65999984741211,
+      "1mo_pct": 1.096488415088137,
+      "3mo_pct": 1.2074640491301691
     },
     "em": {
       "ticker": "EEM",
       "label": "EM equities ETF",
-      "latest": 68.61000061035156,
-      "1mo_pct": 9.443295762205306,
-      "3mo_pct": 11.560976602197659
+      "latest": 68.5999984741211,
+      "1mo_pct": 7.204245467625303,
+      "3mo_pct": 11.544712966050552
     },
     "intl_dev": {
       "ticker": "EFA",
       "label": "Intl developed equities ETF",
-      "latest": 104.69000244140625,
-      "1mo_pct": 4.7633364572139625,
-      "3mo_pct": 1.3455947227339227
+      "latest": 104.80000305175781,
+      "1mo_pct": 2.4237718572423406,
+      "3mo_pct": 1.45208127365537
     },
     "vix": {
       "ticker": "^VIX",
       "label": "VIX index",
-      "latest": 15.739999771118164,
-      "1mo_pct": -6.808760568902605,
-      "3mo_pct": -26.585823791771624
+      "latest": 15.319999694824219,
+      "1mo_pct": -9.829311941091557,
+      "3mo_pct": -28.54477932270443
     },
     "us_30y_yield": {
       "ticker": "^TYX",
       "label": "US 30-year Treasury yield (index)",
-      "latest": 4.984999656677246,
-      "1mo_pct": -0.04011092607283384,
-      "3mo_pct": 6.108976271819522
+      "latest": 4.993000030517578,
+      "1mo_pct": 0.12031365501179447,
+      "3mo_pct": 6.279269458671077
     },
     "us_10y_yield": {
       "ticker": "^TNX",
       "label": "US 10-year Treasury yield (index)",
-      "latest": 4.454999923706055,
-      "1mo_pct": 0.8374762471859754,
-      "3mo_pct": 10.054349778679473
+      "latest": 4.453000068664551,
+      "1mo_pct": 1.4350843757403142,
+      "3mo_pct": 10.004946243322888
     },
     "intl_sovereign": {
       "ticker": "BWX",
       "label": "International developed sovereign ex-US ETF",
-      "latest": 22.110000610351562,
-      "1mo_pct": 0.7905952492639701,
-      "3mo_pct": -2.2918908057002474
+      "latest": 22.170000076293945,
+      "1mo_pct": -0.2519560707382129,
+      "3mo_pct": -2.026742266212944
     },
     "em_sovereign": {
       "ticker": "EMB",
       "label": "USD EM sovereign bond ETF",
-      "latest": 96.2300033569336,
-      "1mo_pct": 1.197499479492814,
-      "3mo_pct": 0.12788811004951217
+      "latest": 96.43000030517578,
+      "1mo_pct": 1.090253915093209,
+      "3mo_pct": 0.33598611854346316
     },
     "intl_treasury": {
       "ticker": "IGOV",
       "label": "International Treasury ex-US ETF",
-      "latest": 41.93000030517578,
-      "1mo_pct": 1.5008446169784584,
-      "3mo_pct": -1.3179603463626455
+      "latest": 41.97999954223633,
+      "1mo_pct": 0.23877380986321306,
+      "3mo_pct": -1.2002873995858865
     },
     "yen": {
       "ticker": "FXY",
       "label": "Japanese yen ETF (JGB / BoJ proxy)",
-      "latest": 57.650001525878906,
-      "1mo_pct": 0.6811093534367707,
-      "3mo_pct": -1.2842465417875926
+      "latest": 57.619998931884766,
+      "1mo_pct": -1.7226711885218404,
+      "3mo_pct": -1.335620845229768
     },
     "sterling": {
       "ticker": "FXB",
       "label": "British pound ETF (gilt / UK fiscal proxy)",
-      "latest": 129.29400634765625,
-      "1mo_pct": -0.14440822912427098,
-      "3mo_pct": 0.7524018047750491
+      "latest": 129.5500030517578,
+      "1mo_pct": -0.8487809401264923,
+      "3mo_pct": 0.9518753266148483
     }
   },
   "regime": {
@@ -228,46 +300,56 @@
     "regime_name": "Reflation",
     "regime_explainer": "Growth and inflation both rising. Commodities, value, EM, real assets.",
     "growth_evidence": [
-      "SPY 3-mo +10.2% (proxy)"
+      "Real GDP YoY 1.60% (prev 0.50%)"
     ],
     "inflation_evidence": [
-      "TIP - IEF 3-mo spread +2.16pp (proxy)"
+      "Core CPI YoY 3.04% (prev 2.93%)"
     ]
   },
   "big_debt_crisis": [
     {
       "key": "federal_debt_to_gdp",
       "label": "Federal debt / GDP",
-      "value": null,
-      "status": "no_data",
+      "value": 122.56815,
+      "units": "%",
+      "threshold": 100,
+      "status": "flag",
       "note": "Above 100% historically increases vulnerability to confidence shocks"
     },
     {
       "key": "debt_service_ratio",
       "label": "HH debt service / income",
-      "value": null,
-      "status": "no_data",
+      "value": 11.323096,
+      "units": "%",
+      "threshold": 11,
+      "status": "flag",
       "note": "Above 11% historically pressures consumption (Dalio: ~12% pre-GFC)"
     },
     {
       "key": "real_ten_year",
       "label": "10y real yield",
-      "value": null,
-      "status": "no_data",
+      "value": 2.06,
+      "units": "%",
+      "threshold": 2.0,
+      "status": "flag",
       "note": "Above 2% real tightens financial conditions on debtors"
     },
     {
       "key": "hy_spread",
       "label": "HY credit spread (OAS)",
-      "value": null,
-      "status": "no_data",
+      "value": 2.72,
+      "units": "%",
+      "threshold": 6.0,
+      "status": "ok",
       "note": "Above 6% indicates corporate-credit stress"
     },
     {
       "key": "yield_curve_10_2",
       "label": "10y-2y curve (inverted if <0)",
-      "value": null,
-      "status": "no_data",
+      "value": 0.46,
+      "units": "pp",
+      "threshold": 0,
+      "status": "ok",
       "note": "Persistent inversion historically precedes recession 6-18mo"
     }
   ],
@@ -283,22 +365,30 @@
     "note": "Holds bonds in deflationary regimes, gold/commodities in inflationary regimes, equities in growth regimes - designed to perform across all four quadrants."
   },
   "capital_migration": {
-    "long_end_slope_pp": 0.05299997329711914,
-    "long_end_source": "yfinance ^TYX-^TNX",
-    "term_premium_10y": null,
+    "long_end_slope_pp": 0.5300000000000002,
+    "long_end_source": "FRED DGS30-DGS10",
+    "term_premium_10y": 0.8285,
     "tlt_gold_30d_corr": null,
-    "us_intl_sov_spread_3mo": -1.2897931243730731,
-    "yen_3mo_pct": -1.2842465417875926,
-    "gold_3mo_pct": -15.7612267319037,
-    "foreign_treasuries_value": null,
-    "foreign_treasuries_trend": null,
+    "us_intl_sov_spread_3mo": -1.532445998908849,
+    "yen_3mo_pct": -1.335620845229768,
+    "gold_3mo_pct": -14.873470384247444,
+    "foreign_treasuries_value": 9248.4,
+    "foreign_treasuries_trend": "up",
     "sovereigns_10y": [
+      {
+        "country": "Japan",
+        "yield_10y": 2.515,
+        "trend": "up",
+        "latest_date": "2026-04-01",
+        "spread_vs_us_10y": -1.935,
+        "signal": "Capital staying home \u2014 repatriation pressure on USTs"
+      },
       {
         "country": "United Kingdom",
         "yield_10y": 4.8207,
         "trend": "up",
         "latest_date": "2026-04-01",
-        "spread_vs_us_10y": null,
+        "spread_vs_us_10y": 0.37070000000000025,
         "signal": "Fiscal stress \u2014 UK pension/LDI risk if extreme"
       },
       {
@@ -306,21 +396,26 @@
         "yield_10y": 2.9963157895,
         "trend": "up",
         "latest_date": "2026-04-01",
-        "spread_vs_us_10y": null,
+        "spread_vs_us_10y": -1.4536842105,
         "signal": null
       }
     ],
     "manual_30y": {
       "_doc": "FRED's international yield series only go to 10Y. Update these quarterly from tradingeconomics.com / worldgovernmentbonds.com. Set value=null when unsure.",
-      "us_30y": null,
+      "us_30y": 4.98,
       "japan_30y": null,
       "uk_30y": null,
       "china_30y": null,
       "germany_30y": null
     },
-    "flags": [],
+    "flags": [
+      {
+        "level": "watch",
+        "msg": "Japan 10Y yield trending up \u2014 JGB sell-off raises Japanese investor incentive to repatriate from USTs."
+      }
+    ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-05-28T23:28:43.113361Z",
+  "asof": "2026-05-29T23:21:31.530307Z",
   "fred_key_present": true
 }
