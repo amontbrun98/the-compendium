@@ -18,7 +18,11 @@
     },
     "ism_manufacturing": {
       "series_id": "MANEMP",
-      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=MANEMP&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-04-01",
+      "latest_value": 12596.0,
+      "prev_date": "2026-03-01",
+      "prev_value": 12598.0,
+      "trend": "down"
     },
     "unemployment": {
       "series_id": "UNRATE",
@@ -30,55 +34,55 @@
     },
     "federal_debt_to_gdp": {
       "series_id": "GFDEGDQ188S",
-      "latest_date": "2025-10-01",
-      "latest_value": 122.56815,
-      "prev_date": "2025-07-01",
-      "prev_value": 121.02875,
-      "trend": "up"
+      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=GFDEGDQ188S&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
     },
     "debt_service_ratio": {
       "series_id": "TDSP",
-      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=TDSP&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2025-10-01",
+      "latest_value": 11.323096,
+      "prev_date": "2025-07-01",
+      "prev_value": 11.257951,
+      "trend": "up"
     },
     "fed_funds": {
       "series_id": "DFF",
-      "latest_date": "2026-05-28",
+      "latest_date": "2026-05-29",
       "latest_value": 3.62,
-      "prev_date": "2026-05-27",
+      "prev_date": "2026-05-28",
       "prev_value": 3.62,
       "trend": "flat"
     },
     "ten_year": {
       "series_id": "DGS10",
-      "latest_date": "2026-05-28",
-      "latest_value": 4.45,
-      "prev_date": "2026-05-27",
-      "prev_value": 4.48,
-      "trend": "down"
+      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=DGS10&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
     },
     "real_ten_year": {
       "series_id": "DFII10",
-      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=DFII10&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-05-29",
+      "latest_value": 2.07,
+      "prev_date": "2026-05-28",
+      "prev_value": 2.06,
+      "trend": "up"
     },
     "yield_curve_10_2": {
       "series_id": "T10Y2Y",
-      "latest_date": "2026-05-29",
-      "latest_value": 0.47,
-      "prev_date": "2026-05-28",
-      "prev_value": 0.46,
-      "trend": "up"
+      "latest_date": "2026-06-01",
+      "latest_value": 0.42,
+      "prev_date": "2026-05-29",
+      "prev_value": 0.47,
+      "trend": "down"
     },
     "dxy": {
       "series_id": "DTWEXBGS",
-      "latest_date": "2026-05-22",
-      "latest_value": 119.2868,
-      "prev_date": "2026-05-21",
-      "prev_value": 119.369,
-      "trend": "down"
+      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=DTWEXBGS&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
     },
     "breakeven_5y": {
       "series_id": "T5YIE",
-      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=T5YIE&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-06-01",
+      "latest_value": 2.54,
+      "prev_date": "2026-05-29",
+      "prev_value": 2.52,
+      "trend": "up"
     },
     "m2_yoy": {
       "series_id": "M2SL",
@@ -90,15 +94,15 @@
     },
     "hy_spread": {
       "series_id": "BAMLH0A0HYM2",
-      "latest_date": "2026-05-28",
-      "latest_value": 2.72,
-      "prev_date": "2026-05-27",
-      "prev_value": 2.71,
-      "trend": "up"
+      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=BAMLH0A0HYM2&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
     },
     "thirty_year": {
       "series_id": "DGS30",
-      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=DGS30&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "latest_date": "2026-05-29",
+      "latest_value": 4.99,
+      "prev_date": "2026-05-28",
+      "prev_value": 4.98,
+      "trend": "up"
     },
     "term_premium_10y": {
       "series_id": "THREEFYTP10",
@@ -110,15 +114,15 @@
     },
     "foreign_treasuries": {
       "series_id": "FDHBFIN",
-      "latest_date": "2025-07-01",
-      "latest_value": 9248.4,
-      "prev_date": "2025-04-01",
-      "prev_value": 9126.8,
-      "trend": "up"
+      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=FDHBFIN&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
     },
     "japan_10y": {
       "series_id": "IRLTLT01JPM156N",
-      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=IRLTLT01JPM156N&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit"
+      "latest_date": "2026-04-01",
+      "latest_value": 2.515,
+      "prev_date": "2026-03-01",
+      "prev_value": 2.345,
+      "trend": "up"
     },
     "uk_10y": {
       "series_id": "IRLTLT01GBM156N",
@@ -130,139 +134,143 @@
     },
     "china_10y": {
       "series_id": "IRLTLT01CNM156N",
-      "error": "400 Client Error: Bad Request for url: https://api.stlouisfed.org/fred/series/observations?series_id=IRLTLT01CNM156N&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit=12"
+      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=IRLTLT01CNM156N&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit"
     },
     "germany_10y": {
       "series_id": "IRLTLT01DEM156N",
-      "error": "429 Client Error: Too Many Requests for url: https://api.stlouisfed.org/fred/series/observations?series_id=IRLTLT01DEM156N&api_key=6eca93249acbe65e69ad3de0b042e651&file_type=json&sort_order=desc&limit"
+      "latest_date": "2026-04-01",
+      "latest_value": 2.9963157895,
+      "prev_date": "2026-03-01",
+      "prev_value": 2.91,
+      "trend": "up"
     }
   },
   "etf_proxies": {
     "equities": {
       "ticker": "SPY",
       "label": "S&P 500 ETF",
-      "latest": 756.47998046875,
-      "1mo_pct": 5.262573224822242,
-      "3mo_pct": 10.513987400113889
+      "latest": 758.5399780273438,
+      "1mo_pct": 5.257746802144125,
+      "3mo_pct": 10.814931972491904
     },
     "nasdaq": {
       "ticker": "QQQ",
       "label": "Nasdaq 100 ETF",
-      "latest": 738.3099975585938,
-      "1mo_pct": 10.568485990999111,
-      "3mo_pct": 21.567685721177043
+      "latest": 742.739990234375,
+      "1mo_pct": 10.174288116347308,
+      "3mo_pct": 22.297113683871995
     },
     "longbonds": {
       "ticker": "TLT",
       "label": "20+yr Treasury ETF",
-      "latest": 85.76000213623047,
-      "1mo_pct": 0.5333823684742223,
-      "3mo_pct": -3.559188265121793
+      "latest": 85.47000122070312,
+      "1mo_pct": -0.16353158351865016,
+      "3mo_pct": -3.8853067702599775
     },
     "midbonds": {
       "ticker": "IEF",
       "label": "7-10yr Treasury ETF",
-      "latest": 94.6500015258789,
-      "1mo_pct": -0.01901143135849548,
-      "3mo_pct": -1.8962094394522122
+      "latest": 94.16999816894531,
+      "1mo_pct": -0.6016463032264885,
+      "3mo_pct": -2.3937281720229464
     },
     "tips": {
       "ticker": "TIP",
       "label": "TIPS ETF",
-      "latest": 111.20999908447266,
-      "1mo_pct": 0.19009048199718492,
-      "3mo_pct": 0.18111134822182962
+      "latest": 109.9800033569336,
+      "1mo_pct": -1.2303503690715423,
+      "3mo_pct": -0.9269035780693935
     },
     "gold": {
       "ticker": "GLD",
       "label": "Gold ETF",
-      "latest": 417.1199951171875,
-      "1mo_pct": -1.5436926989543909,
-      "3mo_pct": -14.873470384247444
+      "latest": 411.260009765625,
+      "1mo_pct": -2.8167642885916666,
+      "3mo_pct": -16.06938576211735
     },
     "commodities": {
       "ticker": "DBC",
       "label": "Broad commodities ETF",
-      "latest": 29.479999542236328,
-      "1mo_pct": -5.209005850040571,
-      "3mo_pct": 14.219295436781
+      "latest": 29.989999771118164,
+      "1mo_pct": -2.661472603174342,
+      "3mo_pct": 16.195274667446256
     },
     "dollar": {
       "ticker": "UUP",
       "label": "Dollar bullish ETF",
-      "latest": 27.65999984741211,
-      "1mo_pct": 1.096488415088137,
-      "3mo_pct": 1.2074640491301691
+      "latest": 27.760000228881836,
+      "1mo_pct": 1.2769076374247845,
+      "3mo_pct": 1.5733637262208555
     },
     "em": {
       "ticker": "EEM",
       "label": "EM equities ETF",
-      "latest": 68.5999984741211,
-      "1mo_pct": 7.204245467625303,
-      "3mo_pct": 11.544712966050552
+      "latest": 70.08000183105469,
+      "1mo_pct": 9.278036539007651,
+      "3mo_pct": 13.951222489519811
     },
     "intl_dev": {
       "ticker": "EFA",
       "label": "Intl developed equities ETF",
-      "latest": 104.80000305175781,
-      "1mo_pct": 2.4237718572423406,
-      "3mo_pct": 1.45208127365537
+      "latest": 104.44000244140625,
+      "1mo_pct": 2.291874634922997,
+      "3mo_pct": 1.1035811771247017
     },
     "vix": {
       "ticker": "^VIX",
       "label": "VIX index",
-      "latest": 15.319999694824219,
-      "1mo_pct": -9.829311941091557,
-      "3mo_pct": -28.54477932270443
+      "latest": 16.049999237060547,
+      "1mo_pct": -12.247138142924541,
+      "3mo_pct": -25.13993079634027
     },
     "us_30y_yield": {
       "ticker": "^TYX",
       "label": "US 30-year Treasury yield (index)",
-      "latest": 4.993000030517578,
-      "1mo_pct": 0.12031365501179447,
-      "3mo_pct": 6.279269458671077
+      "latest": 4.991000175476074,
+      "1mo_pct": 0.5034251905788212,
+      "3mo_pct": 6.236701236853492
     },
     "us_10y_yield": {
       "ticker": "^TNX",
       "label": "US 10-year Treasury yield (index)",
-      "latest": 4.453000068664551,
-      "1mo_pct": 1.4350843757403142,
-      "3mo_pct": 10.004946243322888
+      "latest": 4.474999904632568,
+      "1mo_pct": 2.215626470715404,
+      "3mo_pct": 10.548420470968601
     },
     "intl_sovereign": {
       "ticker": "BWX",
       "label": "International developed sovereign ex-US ETF",
-      "latest": 22.170000076293945,
-      "1mo_pct": -0.2519560707382129,
-      "3mo_pct": -2.026742266212944
+      "latest": 22.030000686645508,
+      "1mo_pct": -0.8996799806982869,
+      "3mo_pct": -2.6454250013233427
     },
     "em_sovereign": {
       "ticker": "EMB",
       "label": "USD EM sovereign bond ETF",
-      "latest": 96.43000030517578,
-      "1mo_pct": 1.090253915093209,
-      "3mo_pct": 0.33597815344190707
+      "latest": 96.01000213623047,
+      "1mo_pct": 0.460398077651214,
+      "3mo_pct": -0.10102446235195073
     },
     "intl_treasury": {
       "ticker": "IGOV",
       "label": "International Treasury ex-US ETF",
-      "latest": 41.97999954223633,
-      "1mo_pct": 0.23877380986321306,
-      "3mo_pct": -1.2002873995858865
+      "latest": 41.77000045776367,
+      "1mo_pct": -0.1195581956609515,
+      "3mo_pct": -1.6945191627704914
     },
     "yen": {
       "ticker": "FXY",
       "label": "Japanese yen ETF (JGB / BoJ proxy)",
-      "latest": 57.619998931884766,
-      "1mo_pct": -1.7226711885218404,
-      "3mo_pct": -1.335620845229768
+      "latest": 57.5099983215332,
+      "1mo_pct": -1.5913763296201422,
+      "3mo_pct": -1.5239780498144562
     },
     "sterling": {
       "ticker": "FXB",
       "label": "British pound ETF (gilt / UK fiscal proxy)",
-      "latest": 129.5500030517578,
-      "1mo_pct": -0.8487809401264923,
-      "3mo_pct": 0.9518753266148483
+      "latest": 129.30499267578125,
+      "1mo_pct": -0.8625316745945799,
+      "3mo_pct": 0.7609509240933621
     }
   },
   "regime": {
@@ -282,39 +290,39 @@
     {
       "key": "federal_debt_to_gdp",
       "label": "Federal debt / GDP",
-      "value": 122.56815,
-      "units": "%",
-      "threshold": 100,
-      "status": "flag",
+      "value": null,
+      "status": "no_data",
       "note": "Above 100% historically increases vulnerability to confidence shocks"
     },
     {
       "key": "debt_service_ratio",
       "label": "HH debt service / income",
-      "value": null,
-      "status": "no_data",
+      "value": 11.323096,
+      "units": "%",
+      "threshold": 11,
+      "status": "flag",
       "note": "Above 11% historically pressures consumption (Dalio: ~12% pre-GFC)"
     },
     {
       "key": "real_ten_year",
       "label": "10y real yield",
-      "value": null,
-      "status": "no_data",
+      "value": 2.07,
+      "units": "%",
+      "threshold": 2.0,
+      "status": "flag",
       "note": "Above 2% real tightens financial conditions on debtors"
     },
     {
       "key": "hy_spread",
       "label": "HY credit spread (OAS)",
-      "value": 2.72,
-      "units": "%",
-      "threshold": 6.0,
-      "status": "ok",
+      "value": null,
+      "status": "no_data",
       "note": "Above 6% indicates corporate-credit stress"
     },
     {
       "key": "yield_curve_10_2",
       "label": "10y-2y curve (inverted if <0)",
-      "value": 0.47,
+      "value": 0.42,
       "units": "pp",
       "threshold": 0,
       "status": "ok",
@@ -333,36 +341,57 @@
     "note": "Holds bonds in deflationary regimes, gold/commodities in inflationary regimes, equities in growth regimes - designed to perform across all four quadrants."
   },
   "capital_migration": {
-    "long_end_slope_pp": 0.05399999618530273,
+    "long_end_slope_pp": 0.05160002708435059,
     "long_end_source": "yfinance ^TYX-^TNX",
     "term_premium_10y": 0.8285,
     "tlt_gold_30d_corr": null,
-    "us_intl_sov_spread_3mo": -1.532445998908849,
-    "yen_3mo_pct": -1.335620845229768,
-    "gold_3mo_pct": -14.873470384247444,
-    "foreign_treasuries_value": 9248.4,
-    "foreign_treasuries_trend": "up",
+    "us_intl_sov_spread_3mo": -1.2398817689366348,
+    "yen_3mo_pct": -1.5239780498144562,
+    "gold_3mo_pct": -16.06938576211735,
+    "foreign_treasuries_value": null,
+    "foreign_treasuries_trend": null,
     "sovereigns_10y": [
+      {
+        "country": "Japan",
+        "yield_10y": 2.515,
+        "trend": "up",
+        "latest_date": "2026-04-01",
+        "spread_vs_us_10y": null,
+        "signal": "Capital staying home \u2014 repatriation pressure on USTs"
+      },
       {
         "country": "United Kingdom",
         "yield_10y": 4.8207,
         "trend": "up",
         "latest_date": "2026-04-01",
-        "spread_vs_us_10y": 0.37070000000000025,
+        "spread_vs_us_10y": null,
         "signal": "Fiscal stress \u2014 UK pension/LDI risk if extreme"
+      },
+      {
+        "country": "Germany",
+        "yield_10y": 2.9963157895,
+        "trend": "up",
+        "latest_date": "2026-04-01",
+        "spread_vs_us_10y": null,
+        "signal": null
       }
     ],
     "manual_30y": {
       "_doc": "FRED's international yield series only go to 10Y. Update these quarterly from tradingeconomics.com / worldgovernmentbonds.com. Set value=null when unsure.",
-      "us_30y": null,
+      "us_30y": 4.99,
       "japan_30y": null,
       "uk_30y": null,
       "china_30y": null,
       "germany_30y": null
     },
-    "flags": [],
+    "flags": [
+      {
+        "level": "watch",
+        "msg": "Japan 10Y yield trending up \u2014 JGB sell-off raises Japanese investor incentive to repatriate from USTs."
+      }
+    ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-05-31T23:01:16.440694Z",
+  "asof": "2026-06-01T23:40:51.157261Z",
   "fred_key_present": true
 }
