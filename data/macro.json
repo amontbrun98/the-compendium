@@ -185,7 +185,7 @@
       "label": "20+yr Treasury ETF",
       "latest": 85.7699966430664,
       "1mo_pct": 1.3982109718341906,
-      "3mo_pct": 0.2665141418297212
+      "3mo_pct": 0.26650519917474913
     },
     "midbonds": {
       "ticker": "IEF",
@@ -262,21 +262,21 @@
       "label": "International developed sovereign ex-US ETF",
       "latest": 21.940000534057617,
       "1mo_pct": -0.29648737094335464,
-      "3mo_pct": 0.7917797625186518
+      "3mo_pct": 0.7917885942065661
     },
     "em_sovereign": {
       "ticker": "EMB",
       "label": "USD EM sovereign bond ETF",
       "latest": 96.36000061035156,
       "1mo_pct": 1.285774030224296,
-      "3mo_pct": 3.4725715429860804
+      "3mo_pct": 3.4725630659559137
     },
     "intl_treasury": {
       "ticker": "IGOV",
       "label": "International Treasury ex-US ETF",
-      "latest": 41.49599838256836,
-      "1mo_pct": -0.03372666714269723,
-      "3mo_pct": 1.7058802904966752
+      "latest": 41.5,
+      "1mo_pct": -0.02408653803297467,
+      "3mo_pct": 1.7156881765419518
     },
     "yen": {
       "ticker": "FXY",
@@ -288,9 +288,9 @@
     "sterling": {
       "ticker": "FXB",
       "label": "British pound ETF (gilt / UK fiscal proxy)",
-      "latest": 128.87600708007812,
-      "1mo_pct": 0.21830599860932498,
-      "3mo_pct": 1.899954750773647
+      "latest": 128.8800048828125,
+      "1mo_pct": 0.22141482411404123,
+      "3mo_pct": 1.9031218891532031
     }
   },
   "regime": {
@@ -369,7 +369,7 @@
     "long_end_source": "FRED DGS30-DGS10",
     "term_premium_10y": 0.8019,
     "tlt_gold_30d_corr": null,
-    "us_intl_sov_spread_3mo": -0.5252656206889306,
+    "us_intl_sov_spread_3mo": -0.525283395031817,
     "yen_3mo_pct": -0.48662250528150874,
     "gold_3mo_pct": -16.122729880956676,
     "foreign_treasuries_value": 9248.4,
@@ -416,6 +416,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-06-12T23:25:52.845430Z",
+  "asof": "2026-06-14T23:10:45.728032Z",
   "fred_key_present": true
 }
