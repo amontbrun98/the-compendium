@@ -170,8 +170,8 @@
       "ticker": "SPY",
       "label": "S&P 500 ETF",
       "latest": 746.739990234375,
-      "1mo_pct": 0.7406394919898807,
-      "3mo_pct": 13.485804891899168
+      "1mo_pct": 1.0001706370109886,
+      "3mo_pct": 13.778167787111695
     },
     "nasdaq": {
       "ticker": "QQQ",
@@ -239,23 +239,23 @@
     "vix": {
       "ticker": "^VIX",
       "label": "VIX index",
-      "latest": 16.399999618530273,
-      "1mo_pct": -2.147974972763944,
-      "3mo_pct": -34.63531479158358
+      "latest": 16.780000686645508,
+      "1mo_pct": 0.47904143743269234,
+      "3mo_pct": -30.257684708604927
     },
     "us_30y_yield": {
       "ticker": "^TYX",
       "label": "US 30-year Treasury yield (index)",
-      "latest": 4.901000022888184,
-      "1mo_pct": -4.4266725682396535,
-      "3mo_pct": 0.40975170568684494
+      "latest": 4.974999904632568,
+      "1mo_pct": -0.738231817063506,
+      "3mo_pct": 2.5350301344951864
     },
     "us_10y_yield": {
       "ticker": "^TNX",
       "label": "US 10-year Treasury yield (index)",
-      "latest": 4.450999736785889,
-      "1mo_pct": -3.133842437014689,
-      "3mo_pct": 4.508098618750811
+      "latest": 4.486999988555908,
+      "1mo_pct": 0.5828294796745626,
+      "3mo_pct": 4.811956192912636
     },
     "intl_sovereign": {
       "ticker": "BWX",
@@ -290,7 +290,7 @@
       "label": "British pound ETF (gilt / UK fiscal proxy)",
       "latest": 126.93000030517578,
       "1mo_pct": -1.5929060638449566,
-      "3mo_pct": -1.231383413870546
+      "3mo_pct": -1.2313716866854008
     }
   },
   "regime": {
@@ -416,6 +416,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-06-18T23:53:17.678241Z",
+  "asof": "2026-06-19T23:07:47.684560Z",
   "fred_key_present": true
 }
