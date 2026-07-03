@@ -106,11 +106,11 @@
     },
     "hy_spread": {
       "series_id": "BAMLH0A0HYM2",
-      "latest_date": "2026-07-01",
-      "latest_value": 2.74,
-      "prev_date": "2026-06-30",
-      "prev_value": 2.75,
-      "trend": "down"
+      "latest_date": "2026-07-02",
+      "latest_value": 2.75,
+      "prev_date": "2026-07-01",
+      "prev_value": 2.74,
+      "trend": "up"
     },
     "thirty_year": {
       "series_id": "DGS30",
@@ -185,7 +185,7 @@
       "label": "20+yr Treasury ETF",
       "latest": 85.51000213623047,
       "1mo_pct": 0.6046349180076183,
-      "3mo_pct": -0.19437576554157676
+      "3mo_pct": -0.1943846531139104
     },
     "midbonds": {
       "ticker": "IEF",
@@ -239,23 +239,23 @@
     "vix": {
       "ticker": "^VIX",
       "label": "VIX index",
-      "latest": 16.149999618530273,
-      "1mo_pct": 0.5603994743508478,
-      "3mo_pct": -32.341855673562925
+      "latest": 15.8100004196167,
+      "1mo_pct": 2.6623429301458224,
+      "3mo_pct": -34.58833111414334
     },
     "us_30y_yield": {
       "ticker": "^TYX",
       "label": "US 30-year Treasury yield (index)",
-      "latest": 4.984999656677246,
-      "1mo_pct": -0.1602318003491532,
-      "3mo_pct": 1.9427360487828782
+      "latest": 4.863999843597412,
+      "1mo_pct": -2.42728759631321,
+      "3mo_pct": -0.5316978240915482
     },
     "us_10y_yield": {
       "ticker": "^TNX",
       "label": "US 10-year Treasury yield (index)",
-      "latest": 4.484999656677246,
-      "1mo_pct": 0.7186073999386311,
-      "3mo_pct": 3.9879305920596853
+      "latest": 4.372000217437744,
+      "1mo_pct": -1.863068635010534,
+      "3mo_pct": 1.3679576279403305
     },
     "intl_sovereign": {
       "ticker": "BWX",
@@ -290,7 +290,7 @@
       "label": "British pound ETF (gilt / UK fiscal proxy)",
       "latest": 128.19000244140625,
       "1mo_pct": -0.39075097794455393,
-      "3mo_pct": 1.319691313029181
+      "3mo_pct": 1.3196974227822622
     }
   },
   "regime": {
@@ -337,7 +337,7 @@
     {
       "key": "hy_spread",
       "label": "HY credit spread (OAS)",
-      "value": 2.74,
+      "value": 2.75,
       "units": "%",
       "threshold": 6.0,
       "status": "ok",
@@ -369,7 +369,7 @@
     "long_end_source": "FRED DGS30-DGS10",
     "term_premium_10y": 0.6842,
     "tlt_gold_30d_corr": null,
-    "us_intl_sov_spread_3mo": 0.028097941233440338,
+    "us_intl_sov_spread_3mo": 0.0280890536611067,
     "yen_3mo_pct": -1.0081662239946776,
     "gold_3mo_pct": -11.579560322794846,
     "foreign_treasuries_value": 9270.9,
@@ -416,6 +416,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-07-02T23:17:08.805068Z",
+  "asof": "2026-07-03T23:13:49.311854Z",
   "fred_key_present": true
 }
