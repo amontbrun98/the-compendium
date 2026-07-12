@@ -192,14 +192,14 @@
       "label": "7-10yr Treasury ETF",
       "latest": 93.62999725341797,
       "1mo_pct": 0.2656834877046599,
-      "3mo_pct": -0.9580754913289358
+      "3mo_pct": -0.9580674982658799
     },
     "tips": {
       "ticker": "TIP",
       "label": "TIPS ETF",
       "latest": 108.12999725341797,
       "1mo_pct": -0.022305340929940076,
-      "3mo_pct": -0.23975010410451914
+      "3mo_pct": -0.23974308213452478
     },
     "gold": {
       "ticker": "GLD",
@@ -247,14 +247,14 @@
       "ticker": "^TYX",
       "label": "US 30-year Treasury yield (index)",
       "latest": 5.071000099182129,
-      "1mo_pct": 1.1973646159814777,
+      "1mo_pct": 0.9154229441130646,
       "3mo_pct": 3.1949544923270956
     },
     "us_10y_yield": {
       "ticker": "^TNX",
       "label": "US 10-year Treasury yield (index)",
       "latest": 4.568999767303467,
-      "1mo_pct": 0.9054746130542135,
+      "1mo_pct": 0.5944507154867384,
       "3mo_pct": 5.837383835142695
     },
     "intl_sovereign": {
@@ -416,6 +416,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-07-10T23:06:43.229047Z",
+  "asof": "2026-07-12T22:50:54.554965Z",
   "fred_key_present": true
 }
