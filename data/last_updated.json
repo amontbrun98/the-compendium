@@ -1,5 +1,5 @@
 {
-  "asof": "2026-07-13T23:02:26.859445Z",
+  "asof": "2026-07-14T23:02:47.956375Z",
   "prices": {
     "count": 86,
     "failed": [
@@ -7,7 +7,7 @@
     ]
   },
   "macro": {
-    "regime": "Reflation",
+    "regime": "Goldilocks",
     "fred_key": true
   },
   "returns": {
