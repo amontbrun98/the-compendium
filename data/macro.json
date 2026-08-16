@@ -185,21 +185,21 @@
       "label": "20+yr Treasury ETF",
       "latest": 82.04000091552734,
       "1mo_pct": -2.5431953957296694,
-      "3mo_pct": -0.789036069745841
+      "3mo_pct": -0.7890452231727019
     },
     "midbonds": {
       "ticker": "IEF",
       "label": "7-10yr Treasury ETF",
       "latest": 93.04000091552734,
-      "1mo_pct": -0.38476424112905416,
+      "1mo_pct": -0.5121427189208827,
       "3mo_pct": 0.5049585578772664
     },
     "tips": {
       "ticker": "TIP",
       "label": "TIPS ETF",
       "latest": 106.98999786376953,
-      "1mo_pct": -0.944360940919553,
-      "3mo_pct": -1.1929787329536645
+      "1mo_pct": -0.45713334941818173,
+      "3mo_pct": -0.4679571235669533
     },
     "gold": {
       "ticker": "GLD",
@@ -212,7 +212,7 @@
       "ticker": "DBC",
       "label": "Broad commodities ETF",
       "latest": 30.0,
-      "1mo_pct": 4.785193431338941,
+      "1mo_pct": 3.5196703722410128,
       "3mo_pct": -3.8153270717588117
     },
     "dollar": {
@@ -233,22 +233,22 @@
       "ticker": "EFA",
       "label": "Intl developed equities ETF",
       "latest": 108.63999938964844,
-      "1mo_pct": 3.8127069331985064,
+      "1mo_pct": 5.138872993804489,
       "3mo_pct": 8.49309269644345
     },
     "vix": {
       "ticker": "^VIX",
       "label": "VIX index",
       "latest": 14.25,
-      "1mo_pct": -13.636363636363635,
+      "1mo_pct": -24.080982139209826,
       "3mo_pct": -17.43916679586762
     },
     "us_30y_yield": {
       "ticker": "^TYX",
       "label": "US 30-year Treasury yield (index)",
-      "latest": 5.265000343322754,
-      "1mo_pct": 1.8178367711992216,
-      "3mo_pct": 1.8178367711992216
+      "latest": 5.264999866485596,
+      "1mo_pct": 3.9691890133858987,
+      "3mo_pct": 5.047880652951031
     },
     "us_10y_yield": {
       "ticker": "^TNX",
@@ -369,7 +369,7 @@
     "long_end_source": "FRED DGS30-DGS10",
     "term_premium_10y": 0.8257,
     "tlt_gold_30d_corr": null,
-    "us_intl_sov_spread_3mo": -1.266265807258049,
+    "us_intl_sov_spread_3mo": -1.26627496068491,
     "yen_3mo_pct": -0.4667184964355475,
     "gold_3mo_pct": -3.788731394198186,
     "foreign_treasuries_value": 9270.9,
@@ -416,6 +416,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-08-14T22:31:56.471364Z",
+  "asof": "2026-08-16T22:21:07.424514Z",
   "fred_key_present": true
 }
