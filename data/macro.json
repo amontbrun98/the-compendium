@@ -185,7 +185,7 @@
       "label": "20+yr Treasury ETF",
       "latest": 82.87999725341797,
       "1mo_pct": 1.1718739086063357,
-      "3mo_pct": -2.2274849994199264
+      "3mo_pct": -2.227476199596501
     },
     "midbonds": {
       "ticker": "IEF",
@@ -199,7 +199,7 @@
       "label": "TIPS ETF",
       "latest": 106.94000244140625,
       "1mo_pct": 0.08798589141019164,
-      "3mo_pct": -1.0512183856375312
+      "3mo_pct": -1.051211400566665
     },
     "gold": {
       "ticker": "GLD",
@@ -246,16 +246,16 @@
     "us_30y_yield": {
       "ticker": "^TYX",
       "label": "US 30-year Treasury yield (index)",
-      "latest": 5.206000328063965,
-      "1mo_pct": -1.3080524370807756,
-      "3mo_pct": 4.433303683660217
+      "latest": 5.205999851226807,
+      "1mo_pct": -1.3080614766475929,
+      "3mo_pct": 4.433294118220976
     },
     "us_10y_yield": {
       "ticker": "^TNX",
       "label": "US 10-year Treasury yield (index)",
-      "latest": 4.720000267028809,
-      "1mo_pct": -0.5268623631869196,
-      "3mo_pct": 5.948380423367183
+      "latest": 4.71999979019165,
+      "1mo_pct": -0.5268724124423474,
+      "3mo_pct": 5.948369719951563
     },
     "intl_sovereign": {
       "ticker": "BWX",
@@ -274,9 +274,9 @@
     "intl_treasury": {
       "ticker": "IGOV",
       "label": "International Treasury ex-US ETF",
-      "latest": 41.20109939575195,
-      "1mo_pct": 0.4659865448431555,
-      "3mo_pct": -1.8554077059975138
+      "latest": 41.20000076293945,
+      "1mo_pct": 0.46330760590762576,
+      "3mo_pct": -1.8580247446456366
     },
     "yen": {
       "ticker": "FXY",
@@ -288,9 +288,9 @@
     "sterling": {
       "ticker": "FXB",
       "label": "British pound ETF (gilt / UK fiscal proxy)",
-      "latest": 130.218994140625,
-      "1mo_pct": 0.5909430536462201,
-      "3mo_pct": 1.038033443061126
+      "latest": 130.22000122070312,
+      "1mo_pct": 0.5917209980272009,
+      "3mo_pct": 1.0388148451237367
     }
   },
   "regime": {
@@ -369,7 +369,7 @@
     "long_end_source": "FRED DGS30-DGS10",
     "term_premium_10y": 0.8682,
     "tlt_gold_30d_corr": null,
-    "us_intl_sov_spread_3mo": -1.1639088219058569,
+    "us_intl_sov_spread_3mo": -1.1639000220824314,
     "yen_3mo_pct": -0.6421363046572703,
     "gold_3mo_pct": -1.9730486586810203,
     "foreign_treasuries_value": 9270.9,
@@ -416,6 +416,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-08-29T03:38:39.708114Z",
+  "asof": "2026-08-31T00:14:11.063332Z",
   "fred_key_present": true
 }
