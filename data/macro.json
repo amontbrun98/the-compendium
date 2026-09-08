@@ -192,7 +192,7 @@
       "label": "7-10yr Treasury ETF",
       "latest": 92.25,
       "1mo_pct": -0.631709052896634,
-      "3mo_pct": -0.4424654161791608
+      "3mo_pct": -0.4424572188570397
     },
     "tips": {
       "ticker": "TIP",
@@ -239,9 +239,9 @@
     "vix": {
       "ticker": "^VIX",
       "label": "VIX index",
-      "latest": 14.529999732971191,
-      "1mo_pct": -2.4832207720256183,
-      "3mo_pct": -5.6493500461665125
+      "latest": 15.300000190734863,
+      "1mo_pct": -1.034927859102952,
+      "3mo_pct": -19.133191706985286
     },
     "us_30y_yield": {
       "ticker": "^TYX",
@@ -416,6 +416,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-09-06T23:32:30.322798Z",
+  "asof": "2026-09-08T00:09:47.200051Z",
   "fred_key_present": true
 }
