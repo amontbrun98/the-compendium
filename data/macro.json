@@ -42,43 +42,35 @@
     },
     "debt_service_ratio": {
       "series_id": "TDSP",
-      "latest_date": "2026-01-01",
-      "latest_value": 11.164138,
-      "prev_date": "2025-10-01",
-      "prev_value": 11.322759,
-      "trend": "down"
+      "error": "HTTPSConnectionPool(host='api.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
     },
     "fed_funds": {
       "series_id": "DFF",
-      "latest_date": "2026-09-14",
+      "latest_date": "2026-09-15",
       "latest_value": 3.63,
-      "prev_date": "2026-09-13",
+      "prev_date": "2026-09-14",
       "prev_value": 3.63,
       "trend": "flat"
     },
     "ten_year": {
       "series_id": "DGS10",
-      "latest_date": "2026-09-14",
-      "latest_value": 4.97,
-      "prev_date": "2026-09-11",
-      "prev_value": 4.96,
-      "trend": "up"
+      "error": "HTTPSConnectionPool(host='api.stlouisfed.org', port=443): Read timed out. (read timeout=20)"
     },
     "real_ten_year": {
       "series_id": "DFII10",
-      "latest_date": "2026-09-14",
-      "latest_value": 2.6,
-      "prev_date": "2026-09-11",
+      "latest_date": "2026-09-15",
+      "latest_value": 2.62,
+      "prev_date": "2026-09-14",
       "prev_value": 2.6,
-      "trend": "flat"
+      "trend": "up"
     },
     "yield_curve_10_2": {
       "series_id": "T10Y2Y",
-      "latest_date": "2026-09-15",
-      "latest_value": 0.33,
-      "prev_date": "2026-09-14",
-      "prev_value": 0.32,
-      "trend": "up"
+      "latest_date": "2026-09-16",
+      "latest_value": 0.27,
+      "prev_date": "2026-09-15",
+      "prev_value": 0.33,
+      "trend": "down"
     },
     "dxy": {
       "series_id": "DTWEXBGS",
@@ -90,11 +82,11 @@
     },
     "breakeven_5y": {
       "series_id": "T5YIE",
-      "latest_date": "2026-09-15",
-      "latest_value": 2.41,
-      "prev_date": "2026-09-14",
-      "prev_value": 2.4,
-      "trend": "up"
+      "latest_date": "2026-09-16",
+      "latest_value": 2.35,
+      "prev_date": "2026-09-15",
+      "prev_value": 2.41,
+      "trend": "down"
     },
     "m2_yoy": {
       "series_id": "M2SL",
@@ -106,19 +98,19 @@
     },
     "hy_spread": {
       "series_id": "BAMLH0A0HYM2",
-      "latest_date": "2026-09-14",
-      "latest_value": 2.71,
-      "prev_date": "2026-09-11",
-      "prev_value": 2.65,
+      "latest_date": "2026-09-15",
+      "latest_value": 2.76,
+      "prev_date": "2026-09-14",
+      "prev_value": 2.71,
       "trend": "up"
     },
     "thirty_year": {
       "series_id": "DGS30",
-      "latest_date": "2026-09-14",
-      "latest_value": 5.34,
-      "prev_date": "2026-09-11",
-      "prev_value": 5.35,
-      "trend": "down"
+      "latest_date": "2026-09-15",
+      "latest_value": 5.36,
+      "prev_date": "2026-09-14",
+      "prev_value": 5.34,
+      "trend": "up"
     },
     "term_premium_10y": {
       "series_id": "THREEFYTP10",
@@ -239,23 +231,23 @@
     "vix": {
       "ticker": "^VIX",
       "label": "VIX index",
-      "latest": 17.200000762939453,
-      "1mo_pct": 8.585862356379902,
-      "3mo_pct": 6.172839215462811
+      "latest": 17.709999084472656,
+      "1mo_pct": 18.938876266812834,
+      "3mo_pct": 7.921994205658445
     },
     "us_30y_yield": {
       "ticker": "^TYX",
       "label": "US 30-year Treasury yield (index)",
-      "latest": 5.363999843597412,
-      "1mo_pct": 1.0359734070549242,
-      "3mo_pct": 7.905846583525689
+      "latest": 5.348999977111816,
+      "1mo_pct": 1.210976945080633,
+      "3mo_pct": 8.54301960421935
     },
     "us_10y_yield": {
       "ticker": "^TNX",
       "label": "US 10-year Treasury yield (index)",
-      "latest": 4.995999813079834,
-      "1mo_pct": 5.757828901055895,
-      "3mo_pct": 11.79234653397312
+      "latest": 5.00600004196167,
+      "1mo_pct": 6.37484488353004,
+      "3mo_pct": 13.053298829046023
     },
     "intl_sovereign": {
       "ticker": "BWX",
@@ -319,16 +311,14 @@
     {
       "key": "debt_service_ratio",
       "label": "HH debt service / income",
-      "value": 11.164138,
-      "units": "%",
-      "threshold": 11,
-      "status": "flag",
+      "value": null,
+      "status": "no_data",
       "note": "Above 11% historically pressures consumption (Dalio: ~12% pre-GFC)"
     },
     {
       "key": "real_ten_year",
       "label": "10y real yield",
-      "value": 2.6,
+      "value": 2.62,
       "units": "%",
       "threshold": 2.0,
       "status": "flag",
@@ -337,7 +327,7 @@
     {
       "key": "hy_spread",
       "label": "HY credit spread (OAS)",
-      "value": 2.71,
+      "value": 2.76,
       "units": "%",
       "threshold": 6.0,
       "status": "ok",
@@ -346,7 +336,7 @@
     {
       "key": "yield_curve_10_2",
       "label": "10y-2y curve (inverted if <0)",
-      "value": 0.33,
+      "value": 0.27,
       "units": "pp",
       "threshold": 0,
       "status": "ok",
@@ -365,8 +355,8 @@
     "note": "Holds bonds in deflationary regimes, gold/commodities in inflationary regimes, equities in growth regimes - designed to perform across all four quadrants."
   },
   "capital_migration": {
-    "long_end_slope_pp": 0.3700000000000001,
-    "long_end_source": "FRED DGS30-DGS10",
+    "long_end_slope_pp": 0.03429999351501465,
+    "long_end_source": "yfinance ^TYX-^TNX",
     "term_premium_10y": 0.961,
     "tlt_gold_30d_corr": null,
     "us_intl_sov_spread_3mo": NaN,
@@ -380,7 +370,7 @@
         "yield_10y": 2.94,
         "trend": "up",
         "latest_date": "2026-08-01",
-        "spread_vs_us_10y": -2.03,
+        "spread_vs_us_10y": null,
         "signal": "Capital staying home \u2014 repatriation pressure on USTs"
       },
       {
@@ -388,7 +378,7 @@
         "yield_10y": 4.9886,
         "trend": "up",
         "latest_date": "2026-08-01",
-        "spread_vs_us_10y": 0.018600000000000172,
+        "spread_vs_us_10y": null,
         "signal": "Fiscal stress \u2014 UK pension/LDI risk if extreme"
       },
       {
@@ -396,13 +386,13 @@
         "yield_10y": 3.18,
         "trend": "up",
         "latest_date": "2026-08-01",
-        "spread_vs_us_10y": -1.7899999999999996,
+        "spread_vs_us_10y": null,
         "signal": null
       }
     ],
     "manual_30y": {
       "_doc": "FRED's international yield series only go to 10Y. Update these quarterly from tradingeconomics.com / worldgovernmentbonds.com. Set value=null when unsure.",
-      "us_30y": 5.34,
+      "us_30y": 5.36,
       "japan_30y": null,
       "uk_30y": null,
       "china_30y": null,
@@ -416,6 +406,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-09-16T00:07:11.523824Z",
+  "asof": "2026-09-17T00:20:08.201229Z",
   "fred_key_present": true
 }
