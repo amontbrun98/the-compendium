@@ -290,7 +290,7 @@
       "label": "British pound ETF (gilt / UK fiscal proxy)",
       "latest": 127.25,
       "1mo_pct": -1.9653007410566636,
-      "3mo_pct": -0.6755929482216927
+      "3mo_pct": -0.6756047779341579
     }
   },
   "regime": {
@@ -416,6 +416,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-10-10T01:39:26.894308Z",
+  "asof": "2026-10-12T01:03:25.129364Z",
   "fred_key_present": true
 }
