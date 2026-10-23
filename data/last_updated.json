@@ -1,5 +1,5 @@
 {
-  "asof": "2026-10-22T00:33:55.459142Z",
+  "asof": "2026-10-23T00:31:26.148138Z",
   "prices": {
     "count": 86,
     "failed": [
@@ -7,7 +7,7 @@
     ]
   },
   "macro": {
-    "regime": "Deflation",
+    "regime": "Stagflation",
     "fred_key": true
   },
   "returns": {
