@@ -185,7 +185,7 @@
       "label": "20+yr Treasury ETF",
       "latest": 81.83999633789062,
       "1mo_pct": 5.627249344416629,
-      "3mo_pct": 0.6890584457366788
+      "3mo_pct": 0.6890489944923361
     },
     "midbonds": {
       "ticker": "IEF",
@@ -369,7 +369,7 @@
     "long_end_source": "FRED DGS30-DGS10",
     "term_premium_10y": 0.9358,
     "tlt_gold_30d_corr": null,
-    "us_intl_sov_spread_3mo": 1.4643984748336836,
+    "us_intl_sov_spread_3mo": 1.4643890235893409,
     "yen_3mo_pct": 0.9191792936167786,
     "gold_3mo_pct": -4.241806912624724,
     "foreign_treasuries_value": 9355.0,
@@ -416,6 +416,6 @@
     ],
     "explainer": "Tracks the cross-border transmission channel. Long-end curve slope is the term-premium signal. TLT-gold correlation flags flight-to-safety. International 10Y yields proxy the relative incentive for foreign investors to repatriate from USTs (when their own yields rise) or flee to USTs (when they fall sharply). Spreads vs US 10Y are the carry signal. 30Y data for non-US sovereigns is paywalled; update manual_30y quarterly."
   },
-  "asof": "2026-10-31T01:29:58.902982Z",
+  "asof": "2026-11-02T01:18:30.732064Z",
   "fred_key_present": true
 }
